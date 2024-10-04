@@ -18,11 +18,6 @@ function ProjectCreateModal(props) {
 
     // 프로젝트 생성
     const handleCreateProject = async () => {
-        // if (!siteName || !address || !startDate || !endDate || !contractor || !measurer) {
-        //     alert("모든 필드를 입력해주세요.")
-        //     return;
-        // }
-
         console.log(geometryData);
         const wkt = `POLYGON((${geometryData.map(coord => `${coord[1]} ${coord[0]}`).join(', ')}))`;
         console.log(wkt);
@@ -40,13 +35,32 @@ function ProjectCreateModal(props) {
             geometry:wkt
         })
             .then(res => {
-                console.log(res);
-                closeModal();
+                if (!siteName || !address || !startDate || !endDate || !contractor || !measurer || !status) {
+                    alert("모든 필드를 입력해주세요.")
+                    return;
+                }
+                else {
+                    console.log(res);
+                    handleCloseModal();
+                }
             })
             .catch(err => {
                 console.log(err);
             })
     }
+
+    // 모달 닫기
+    const handleCloseModal = () => {
+        setSiteName('');
+        setAddress('');
+        setStartDate('');
+        setEndDate('');
+        setContractor('');
+        setMeasurer('');
+        setStatus('N');
+        setSiteGroup('');
+        closeModal();
+    };
 
     return (
         <div className={`modal fade ${isOpen ? 'show d-block' : ''}`} id={'createProject'} tabIndex={'-1'}
@@ -59,7 +73,7 @@ function ProjectCreateModal(props) {
                             공사개요
                         </span>
                         <button type={'button'} className={'btn-close'} data-bs-dismiss={'modal'}
-                                aria-label={'Close'} onClick={closeModal}/>
+                                aria-label={'Close'} onClick={handleCloseModal}/>
                     </div>
                     <div className={'modal-body'}>
                         <div className={'d-flex flex-column'}>
@@ -170,7 +184,7 @@ function ProjectCreateModal(props) {
                         </div>
                         <div className={'modal-footer'}>
                             <button type={'button'} className={'btn btn-outline-dark opacity-50'}
-                                    data-bs-dismiss={'modal'} onClick={closeModal}>
+                                    data-bs-dismiss={'modal'} onClick={handleCloseModal}>
                                 Close
                             </button>
                             <button type={'button'} className={'btn btn-success opacity-50'} onClick={handleCreateProject}>
