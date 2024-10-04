@@ -24,7 +24,4 @@ public class MeausreProUser {
 
     @Column(name = "tel", nullable = false, length = 45)
     private String tel; // 전화번호
-
-    @Column(name = "role", nullable = false, length = 1)
-    private char role; // A: 총 책임자, B: 현장 관리자
 }

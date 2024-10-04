@@ -3,7 +3,6 @@ package bitc.fullstack.meausrepro_spring.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.locationtech.jts.geom.Geometry;
 
 @Getter
 @Setter
@@ -18,9 +17,6 @@ public class MeausreProProject {
     @ManyToOne
     @JoinColumn(name="manager_id", nullable = false)
     private MeausreProUser manager; // 총 책임자
-
-    @Column(name = "site_id", nullable = false, length = 45)
-    private String siteId; // 관려지 ID
 
     @Column(name = "site_name", nullable = false, length = 45)
     private String siteName; // 현장명

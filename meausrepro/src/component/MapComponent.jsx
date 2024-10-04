@@ -8,6 +8,9 @@ function MapComponent(props) {
     const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
     const [mapInstance, setMapInstance] = useState(null);
     const [drawingEnabled, setDrawingEnabled] = useState(false);
+    const [polygons, setPolygons] = useState([]); // 기존에 저장된 폴리곤 관리
+    const [currentPolygonId, setCurrentPolygonId] = useState(null);  // 저장된 폴리곤의 ID 저장
+    const [searchAddress, setSearchAddress] = useState('');  // 주소 검색 입력 필드
 
     useEffect(() => {
         const initMap = () => {
@@ -85,18 +88,31 @@ function MapComponent(props) {
         }
     }, [isDrawingEnabled, mapInstance]);
 
+    // 좌표 저장
     const handleSave = () => {
         if (polygonCoords.length > 0) {
             // 현재 그려진 폴리곤을 저장
-            const wkt = `POLYGON((${polygonCoords.map(coord => `${coord[1]} ${coord[0]}`).join(', ')}))`;
-            console.log("전송할 WKT 데이터:", wkt);
             sendGeometry(polygonCoords);  // 부모 컴포넌트로 좌표 전송
+            currentPolygon.setMap(null); // 현재 그려진 폴리곤 지도에서 제거
+            setPolygonCoords([]); // 폴리곤 좌표 초기화
+            setCurrentPolygon(null);
             setIsDrawingEnabled(false);
             setContextMenuVisible(false);
         } else {
             console.log('저장할 좌표가 없습니다.');
         }
     };
+
+    // 다시 그리기
+    const handleReset = () => {
+        if (currentPolygon) {
+            currentPolygon.setMap(null); // 기존 폴리곤 제거
+        }
+        setPolygonCoords([]); // 폴리곤 좌표 초기화
+        setCurrentPolygon(null); // 현재 폴리곤 초기화
+        setIsDrawingEnabled(true); // 그리기 활성화
+        setContextMenuVisible(false); // 컨텍스트 메뉴 숨기기
+    }
 
     return (
         <>
@@ -113,6 +129,7 @@ function MapComponent(props) {
                         zIndex: '1000'
                     }}>
                     <button onClick={handleSave}>저장</button>
+                    <button onClick={handleReset}>다시 그리기</button>
                 </div>
             )}
         </>

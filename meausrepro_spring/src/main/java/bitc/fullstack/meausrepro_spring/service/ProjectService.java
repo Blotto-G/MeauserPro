@@ -29,8 +29,14 @@ public class ProjectService {
         }
     }
 
+    // 진행 중인 프로젝트 모두 보기
+    public List<MeausreProProject> inProgress(String id) {
+        return projectRepository.findAllByIdInProgress(id);
+    }
+
     // 공사 현장 검색
     public List<MeausreProProject> searchSite(String id, String siteName) {
         return projectRepository.searchSite(id, siteName);
     }
+
 }

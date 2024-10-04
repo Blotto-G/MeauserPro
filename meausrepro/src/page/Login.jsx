@@ -44,14 +44,12 @@ function Login() {
             pass: '1234',
             name: '',
             tel: '',
-            role: ''
         })
             .then(res => {
                 setUser({
                     id: res.data.id,
                     name: res.data.name,
                     tel: res.data.tel,
-                    role: res.data.role,
                     pass: res.data.pass
                 })
                 navigate('/MeausrePro');
