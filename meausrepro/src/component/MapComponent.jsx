@@ -90,7 +90,7 @@ function MapComponent(props) {
             // 현재 그려진 폴리곤을 저장
             const wkt = `POLYGON((${polygonCoords.map(coord => `${coord[1]} ${coord[0]}`).join(', ')}))`;
             console.log("전송할 WKT 데이터:", wkt);
-            sendGeometry(wkt);  // 부모 컴포넌트로 좌표 전송
+            sendGeometry(polygonCoords);  // 부모 컴포넌트로 좌표 전송
             setIsDrawingEnabled(false);
             setContextMenuVisible(false);
         } else {

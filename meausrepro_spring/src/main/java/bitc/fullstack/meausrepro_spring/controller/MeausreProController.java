@@ -1,8 +1,12 @@
 package bitc.fullstack.meausrepro_spring.controller;
 
 import bitc.fullstack.meausrepro_spring.dto.GeometryDto;
+import bitc.fullstack.meausrepro_spring.geometry.GeometryUtil;
 import bitc.fullstack.meausrepro_spring.model.MeausreProProject;
 import bitc.fullstack.meausrepro_spring.service.ProjectService;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +23,6 @@ public class MeausreProController {
         if (project.getGeometry() == null || project.getGeometry().isEmpty()) {
             return ResponseEntity.badRequest().body("유효하지 않은 데이터");
         }
-
         System.out.println("받은 지오메트리 : " + project.getGeometry());
 
         projectService.save(project);

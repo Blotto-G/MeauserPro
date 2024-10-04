@@ -3,6 +3,7 @@ package bitc.fullstack.meausrepro_spring.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.locationtech.jts.geom.Geometry;
 
 @Getter
 @Setter
@@ -45,6 +46,6 @@ public class MeausreProProject {
     @Column(name="site_group", nullable = true, length = 45)
     private String siteGroup;
 
-    @Column(name = "geometry", nullable = false, columnDefinition = "GEOMETRY")
+    @Column(name = "geometry", nullable = false, columnDefinition = "TEXT")
     private String geometry; // 지오매트리 정보 (지도에 표시될 영역)
 }

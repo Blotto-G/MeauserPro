@@ -1,5 +1,52 @@
+import {useContext, useState} from "react";
+import axios from "axios";
+import UserContext from "../context/UserContext.jsx";
+
 function ProjectCreateModal(props) {
+    const {user} = useContext(UserContext);
     const {geometryData, isOpen, closeModal} = props;
+
+    // 입력 필드 상태 관리
+    const [siteName, setSiteName] = useState('');
+    const [address, setAddress] = useState('');
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [contractor, setContractor] = useState('');
+    const [measurer, setMeasurer] = useState('');
+    const [status, setStatus] = useState('N');
+    const [siteGroup, setSiteGroup] = useState('');
+
+    // 프로젝트 생성
+    const handleCreateProject = async () => {
+        // if (!siteName || !address || !startDate || !endDate || !contractor || !measurer) {
+        //     alert("모든 필드를 입력해주세요.")
+        //     return;
+        // }
+
+        console.log(geometryData);
+        const wkt = `POLYGON((${geometryData.map(coord => `${coord[1]} ${coord[0]}`).join(', ')}))`;
+        console.log(wkt);
+        axios.post(`http://localhost:8080/MeausrePro/Maps/save`, {
+            manager: user,
+            siteId: '',
+            siteName: siteName,
+            siteAddress: address,
+            startDate: startDate,
+            endDate: endDate,
+            contractor: contractor,
+            measurer: measurer,
+            siteCheck: status,
+            siteGroup: siteGroup,
+            geometry:wkt
+        })
+            .then(res => {
+                console.log(res);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
+
     return (
         <div className={`modal fade ${isOpen ? 'show d-block' : ''}`} id={'createProject'} tabIndex={'-1'}
              aria-labelledby={'cpModalLabel'}
@@ -21,7 +68,7 @@ function ProjectCreateModal(props) {
                                     현장명
                                 </label>
                             </div>
-                            <input type={'text'} className={'form-control'} id={'siteName'}
+                            <input type={'text'} className={'form-control'} id={'siteName'} value={siteName} onChange={(e) => setSiteName(e.target.value)}
                                    placeholder={'현장명을 입력하세요'}/>
                             <div className={'d-flex align-items-center mt-2'}>
                                 <span className={'text-danger'}>*</span>
@@ -29,7 +76,7 @@ function ProjectCreateModal(props) {
                                     주소
                                 </label>
                             </div>
-                            <input type={'text'} className={'form-control'} id={'address'}
+                            <input type={'text'} className={'form-control'} id={'address'} value={address} onChange={(e) => setAddress(e.target.value)}
                                    placeholder={'주소를 입력하세요'}/>
                             <div className={'row mt-2'}>
                                 <div className={'col d-flex flex-column'}>
@@ -39,7 +86,7 @@ function ProjectCreateModal(props) {
                                             시작일자
                                         </label>
                                     </div>
-                                    <input type={'date'} className={'form-control'} id={'startDate'}
+                                    <input type={'date'} className={'form-control'} id={'startDate'} value={startDate} onChange={(e) => setStartDate(e.target.value)}
                                            placeholder={'시작일자를 입력하세요'}/>
                                 </div>
                                 <div className={'col d-flex flex-column'}>
@@ -49,7 +96,7 @@ function ProjectCreateModal(props) {
                                             종료일자
                                         </label>
                                     </div>
-                                    <input type={'date'} className={'form-control'} id={'endDate'}
+                                    <input type={'date'} className={'form-control'} id={'endDate'} value={endDate} onChange={(e) => setEndDate(e.target.value)}
                                            placeholder={'종료일자를 입력하세요'}/>
                                 </div>
                             </div>
@@ -61,7 +108,7 @@ function ProjectCreateModal(props) {
                                             시공사
                                         </label>
                                     </div>
-                                    <input type={'text'} className={'form-control'} id={'contractor'}
+                                    <input type={'text'} className={'form-control'} id={'contractor'} value={contractor} onChange={(e) => setContractor(e.target.value)}
                                            placeholder={'시공사를 입력하세요'}/>
                                 </div>
                                 <div className={'col d-flex flex-column'}>
@@ -72,7 +119,7 @@ function ProjectCreateModal(props) {
                                         </label>
                                     </div>
                                     <input type={'text'} className={'form-control'} id={'measurer'}
-                                           placeholder={'계측사를 입력하세요'}/>
+                                           placeholder={'계측사를 입력하세요'} value={measurer} onChange={(e) => setMeasurer(e.target.value)}/>
                                 </div>
                             </div>
                             <div className={'d-flex align-items-center mt-2'}>
@@ -84,15 +131,17 @@ function ProjectCreateModal(props) {
                             <div className={'d-flex gap-2'}>
                                 <div className={'form-check form-check-inline'}>
                                     <input className={'form-check-input'} type={'radio'} name={'status'}
-                                           id={'ongoing'}
-                                           value={'ongoing'} checked/>
-                                    <label className={'form-check-label'} htmlFor={'ongoing'}>진행</label>
+                                           id={'going'}
+                                           checked={status === 'N'}
+                                           onChange={() => setStatus('N')}/>
+                                    <label className={'form-check-label'} htmlFor={'going'}>진행</label>
                                 </div>
                                 <div className={'form-check form-check-inline'}>
                                     <input className={'form-check-input'} type={'radio'} name={'status'}
-                                           id={'finished'}
-                                           value={'finished'}/>
-                                    <label className={'form-check-label'} htmlFor={'finished'}>종료</label>
+                                           id={'finish'}
+                                           checked={status === 'Y'}
+                                           onChange={() => setStatus('Y')}/>
+                                    <label className={'form-check-label'} htmlFor={'finish'}>종료</label>
                                 </div>
                             </div>
                             <div className={'row mt-2'}>
@@ -111,7 +160,7 @@ function ProjectCreateModal(props) {
                                         작업그룹
                                     </label>
                                     <select className={'form-select'} id={'workGroup'}>
-                                        <option selected>선택하세요</option>
+                                        <option value={''} selected>선택하세요</option>
                                         <option value={'group1'}>그룹 1</option>
                                         <option value={'group2'}>그룹 2</option>
                                     </select>
@@ -123,7 +172,7 @@ function ProjectCreateModal(props) {
                                     data-bs-dismiss={'modal'} onClick={closeModal}>
                                 Close
                             </button>
-                            <button type={'button'} className={'btn btn-success opacity-50'}>
+                            <button type={'button'} className={'btn btn-success opacity-50'} onClick={handleCreateProject}>
                                 프로젝트 생성
                             </button>
                         </div>
