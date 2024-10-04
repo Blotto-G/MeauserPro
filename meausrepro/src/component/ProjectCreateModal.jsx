@@ -41,6 +41,7 @@ function ProjectCreateModal(props) {
         })
             .then(res => {
                 console.log(res);
+                closeModal();
             })
             .catch(err => {
                 console.log(err);
