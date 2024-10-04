@@ -13,7 +13,7 @@ public class ProjectController {
     @Autowired private ProjectService projectService;
 
     // 진행 중인 프로젝트 모두 보기
-    @PostMapping("/inProgress/{id}")
+    @GetMapping("/inProgress/{id}")
     public List<MeausreProProject> inProgress(@PathVariable String id) {
         return projectService.inProgress(id);
     }

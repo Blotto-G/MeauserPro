@@ -3,9 +3,11 @@ import UserContext from "../context/UserContext.jsx";
 import {useNavigate} from "react-router";
 import MapComponent from "../component/MapComponent.jsx";
 import ProjectCreateModal from "../component/ProjectCreateModal.jsx";
+import axios from "axios";
 
 function Main() {
     const {user} = useContext(UserContext);
+    const [projectList, setProjectList] = useState([]);
     const navigate = useNavigate();
 
     // 좌표 저장
@@ -21,6 +23,19 @@ function Main() {
             navigate('/');
         }
     }, [user, navigate]);
+
+    // 진행 중인 프로젝트
+    useEffect(() => {
+        axios.get(`http://localhost:8080/MeausrePro/Project/inProgress/${user.id}`)
+            .then(res => {
+                console.log(res);
+                const { data } = res;
+                setProjectList(data);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }, []);
 
     // 좌표 데이터 받는 함수
     const handleGeometryData = (coordinates) => {
@@ -38,13 +53,19 @@ function Main() {
     const closeModal = () => {
         setIsModalOpen(false);
     }
-
     return (
         <div className={'container-fluid p-3'}>
             <div className={'sideBar'}>
                 <span>{user.name}</span>
                 <hr/>
                 <ul className={'nav nav-pills flex-column mb-auto'}>
+                    {projectList.map(item => {
+                        return (
+                            <li key={item.idx} className={'nav-link link-dark'}>
+                                <span>{item.siteName}</span>
+                            </li>
+                        )
+                    })}
                     <li>
                         <button className={'nav-link link-dark'} type={'button'} onClick={enableDrawing}>
                             프로젝트 생성
