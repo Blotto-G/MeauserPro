@@ -42,6 +42,9 @@ public class MeausreProProject {
     @Column(name = "site_check", nullable = false, length = 1)
     private char siteCheck = 'N'; // 검사 종료 여부 (N: 진행, Y: 종료)
 
+    @Column(name="site_group", nullable = true, length = 45)
+    private String siteGroup;
+
     @Column(name = "geometry", nullable = false, columnDefinition = "GEOMETRY")
     private String geometry; // 지오매트리 정보 (지도에 표시될 영역)
 }
