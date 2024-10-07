@@ -5,6 +5,8 @@ import MapComponent from "../component/MapComponent.jsx";
 import ProjectCreateModal from "../component/ProjectCreateModal.jsx";
 import SectionCreateModal from "../component/SectionCreateModal.jsx";
 import MainSideBar from "../component/MainSideBar.jsx";
+import NavBar from "../component/NavBar.jsx";
+import Header from "../layout/Header.jsx";
 
 function Main() {
     const {user} = useContext(UserContext);
@@ -60,24 +62,30 @@ function Main() {
         setIsSelectedProject(project);
     }
     return (
-        <div className={'container-fluid p-3'}>
-            <MainSideBar
-                enableDrawing = {enableDrawing}
-                handleProjectClick = {handleProjectClick}
-                openSectionModal = {openSectionModal} />
-            <div className={'mainSection'}>
-                <MapComponent
-                    sendGeometry = {handleGeometryData}
-                    isDrawingEnabled = {isDrawingEnabled}
-                    setIsDrawingEnabled = {setIsDrawingEnabled} />
-                <ProjectCreateModal
-                    geometryData = {geometryData}
-                    isOpen = {isProjectModalOpen}
-                    closeModal = {closeProjectModal} />
-                <SectionCreateModal
-                    project = {isSelectedProject}
-                    isOpen = {isSectionModalOpen}
-                    closeModal = {closeSectionModal} />
+        <div>
+            <header>
+                <Header />
+            </header>
+            <div className={'container-fluid p-0 mx-0 my-5'}>
+                <NavBar />
+                <MainSideBar
+                    enableDrawing = {enableDrawing}
+                    handleProjectClick = {handleProjectClick}
+                    openSectionModal = {openSectionModal} />
+                <div className={'mainSection'}>
+                    <MapComponent
+                        sendGeometry = {handleGeometryData}
+                        isDrawingEnabled = {isDrawingEnabled}
+                        setIsDrawingEnabled = {setIsDrawingEnabled} />
+                    <ProjectCreateModal
+                        geometryData = {geometryData}
+                        isOpen = {isProjectModalOpen}
+                        closeModal = {closeProjectModal} />
+                    <SectionCreateModal
+                        project = {isSelectedProject}
+                        isOpen = {isSectionModalOpen}
+                        closeModal = {closeSectionModal} />
+                </div>
             </div>
         </div>
     )
