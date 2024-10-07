@@ -12,6 +12,7 @@ function Login() {
     const { setUser } = useContext(UserContext);
     const navigate = useNavigate();
 
+    // 로그인
     const loginEvent = async (e) => {
         e.preventDefault();
 
@@ -35,6 +36,10 @@ function Login() {
             .catch(err=> {
                 setError(err);
             })
+    }
+    // 회원가입 페이지 이동
+    const signUpPage = () => {
+        navigate('/SignUp')
     }
 
     // test server login
@@ -73,7 +78,15 @@ function Login() {
                     value={pass}
                     onChange={(e) => setPass(e.target.value)}
                 />
-                <button type={'submit'} className={'btn btn-primary opacity-25'}>로그인</button>
+                <button type={'submit'}
+                        className={'btn btn-primary opacity-25'}>
+                    로그인
+                </button>
+                <button type={'button'}
+                        className={'btn btn-outline-primary opacity-25'}
+                        onClick={signUpPage}>
+                    회원가입
+                </button>
             </form>
             <button type={'button'} className={'btn btn-success opacity-50'} onClick={testLogin}>
                 test

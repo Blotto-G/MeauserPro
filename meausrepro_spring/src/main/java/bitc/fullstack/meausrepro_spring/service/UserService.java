@@ -16,4 +16,14 @@ public class UserService {
     public Optional<MeausreProUser> findById(String id) {
         return userRepository.findById(id);
     }
+
+    // 회원가입
+    public MeausreProUser signUp(MeausreProUser signUpUser) {
+        return  userRepository.save(signUpUser);
+    }
+
+    // 아이디 중복 확인
+    public int checkId(String id) {
+        return userRepository.countById(id);
+    }
 }
