@@ -13,6 +13,7 @@ function MapComponent(props) {
     const [mapInstance, setMapInstance] = useState(null);
     const [polygons, setPolygons] = useState([]); // 저장된 폴리곤 목록
     const [drawnPolygons, setDrawnPolygons] = useState([]); // 새로 그린 폴리곤 관리
+    const [markers, setMarkers] = useState([]);
 
     // 지도 로드
     useEffect(() => {
@@ -186,6 +187,78 @@ function MapComponent(props) {
         setIsDrawingEnabled(true); // 그리기 활성화
         setContextMenuVisible(false); // 컨텍스트 메뉴 숨기기
     };
+
+    // 마커 크기 계산 함수
+    const calculateMarkerSize = (zoom) => {
+        const baseSize = 30; // 기본 크기 (확대/축소 레벨 30에서)
+        return Math.max(15, baseSize + (zoom - 30) * 2); // 확대/축소 레벨에 따라 크기 조정
+    };
+
+    // 마커 추가 및 원 그리기
+    const addMarkerAndCircle = (latlng) => {
+        const markerIcon = 'src/assets/location.svg';
+        const zoomLevel = mapInstance.getZoom(); // 현재 확대/축소 레벨 가져오기
+        const markerSize = calculateMarkerSize(zoomLevel); // 마커 크기 계산
+
+        // 동적 크기를 가진 마커 생성
+        const marker = new naver.maps.Marker({
+            position: latlng,
+            map: mapInstance,
+            icon: {
+                url: markerIcon,
+                scaledSize: new naver.maps.Size(markerSize, markerSize), // 아이콘 크기 조정
+            },
+        });
+
+        // 마커를 배열에 추가
+        setMarkers(prevMarkers => [...prevMarkers, marker]);
+
+        // 원 그리기
+        new naver.maps.Circle({
+            map: mapInstance,
+            center: latlng, // 계측기 추가 - 설치 위치 작성 시 지도에서 설치 위치 클릭할 수 있게 해야 할 듯
+            radius: 5,
+            fillColor: '#FF0000',
+            fillOpacity: 0.3,
+            strokeColor: '#FF0000',
+            strokeOpacity: 0.6,
+            strokeWeight: 2,
+        });
+    };
+
+    // 확대/축소 레벨 변경 시 마커 크기 업데이트
+    useEffect(() => {
+        if (mapInstance) {
+            naver.maps.Event.addListener(mapInstance, 'zoom_changed', () => {
+                const zoomLevel = mapInstance.getZoom();
+                markers.forEach(marker => {
+                    const newSize = calculateMarkerSize(zoomLevel);
+                    marker.setIcon({
+                        url: marker.getIcon().url,
+                        scaledSize: new naver.maps.Size(newSize, newSize),
+                    });
+                });
+            });
+        }
+    }, [mapInstance, markers]);
+
+    // 클릭 이벤트 처리
+    const handleMapClick = (e) => {
+        if (!isDrawingEnabled) {
+            addMarkerAndCircle(e.latlng);
+        }
+    };
+
+    useEffect(() => {
+        if (mapInstance) {
+            naver.maps.Event.addListener(mapInstance, 'click', handleMapClick);
+        }
+        return () => {
+            if (mapInstance) {
+                naver.maps.Event.removeListener(mapInstance, 'click', handleMapClick);
+            }
+        };
+    }, [mapInstance, isDrawingEnabled]);
 
     return (
         <>
