@@ -3,8 +3,10 @@ import UserContext from "../context/UserContext.jsx";
 import {useNavigate} from "react-router";
 import MapComponent from "../component/MapComponent.jsx";
 import ProjectCreateModal from "../component/ProjectCreateModal.jsx";
-import Sidebar from "../component/Sidebar.jsx";
-import Navbar from "../component/Navbar.jsx";
+import SectionCreateModal from "../component/SectionCreateModal.jsx";
+import MainSideBar from "../component/MainSideBar.jsx";
+import NavBar from "../component/NavBar.jsx";
+import Header from "../layout/Header.jsx";
 
 function Main() {
     const {user} = useContext(UserContext);
@@ -14,8 +16,13 @@ function Main() {
     const [geometryData, setGeometryData] = useState('');
     // 폴리곤 생성
     const [isDrawingEnabled, setIsDrawingEnabled] = useState(false);
-    // 모달 상태
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    // 프로젝트 생성 모달
+    const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
+    // 프로젝트 선택 시, 프로젝트 정보 보여주기
+    const [isSelectedProject, setIsSelectedProject] = useState(null);
+
+    // 구간 생성 모달
+    const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
 
     useEffect(() => {
         if (!user.id) {
@@ -25,9 +32,10 @@ function Main() {
     }, [user, navigate]);
 
     // 좌표 데이터 받는 함수
+    // 프로젝트 생성 모달
     const handleGeometryData = (coordinates) => {
         setGeometryData(coordinates);
-        setIsModalOpen(true);
+        setIsProjectModalOpen(true);
         console.log(coordinates);
     }
 
@@ -36,43 +44,47 @@ function Main() {
         setIsDrawingEnabled(true);
     }
 
-    // 모달 닫기
-    const closeModal = () => {
-        setIsModalOpen(false);
+    // 프로젝트 생성 모달 닫기
+    const closeProjectModal = () => {
+        setIsProjectModalOpen(false);
+    }
+    // 구간 생성 모달 열기
+    const openSectionModal = () => {
+        setIsSectionModalOpen(true);
+    }
+    // 구간 생성 모달 닫기
+    const closeSectionModal = () => {
+        setIsSectionModalOpen(false);
     }
 
+    // 프로젝트 선택 시 해당 프로젝트 정보 표시
+    const handleProjectClick = (project) => {
+        setIsSelectedProject(project);
+    }
     return (
-        <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-            <Navbar />
-            <div className={'d-flex'} style={{ flexGrow: 1, overflow: 'hidden' }}>
-                <Sidebar />
-                <div className={'sideBar'} style={{position: 'relative', height: '100%', width: '250px',
-                display: 'flex', flexDirection: 'column', overflow: 'auto'}}>
-                    <span>계측관리시스템 / 메인 {user.name}</span>
-                    <hr/>
-                    <p className={"mt-4"}>공사현장 검색</p>
-                    <form className={"d-flex"}>
-                        <input className={"form-control me-2"} type="search"/>
-                        <button className={"btn btn-outline-success"} type="submit">Search</button>
-                    </form>
-                    <div>
-                        <p className={"mt-3"}>현장 리스트</p>
-                        <ul className={"list-group mt-2"}>
-                            <li className={"list-group-item"}></li>
-                        </ul>
-                    </div>
-                    <button className={'btn btn-outline-dark'} type={'button'} onClick={enableDrawing}
-                            style={{position: 'sticky', bottom: '0px', width: '100%', left: '0', right: '0',
-                            marginTop: 'auto'}}>
-                        프로젝트 생성
-                    </button>
-                    {/*</li>*/}
-                    {/*</ul>*/}
-                </div>
-                <div className={'mainSection'} style={{ flexGrow: 1, overflow: 'auto', height: '100%' }}>
-                    <MapComponent sendGeometry={handleGeometryData} isDrawingEnabled={isDrawingEnabled}
-                                  setIsDrawingEnabled={setIsDrawingEnabled}/>
-                    <ProjectCreateModal geometryData={geometryData} isOpen={isModalOpen} closeModal={closeModal} />
+        <div>
+            <header>
+                <Header />
+            </header>
+            <div className={'container-fluid p-0 mx-0 my-5'}>
+                <NavBar />
+                <MainSideBar
+                    enableDrawing = {enableDrawing}
+                    handleProjectClick = {handleProjectClick}
+                    openSectionModal = {openSectionModal} />
+                <div className={'mainSection'}>
+                    <MapComponent
+                        sendGeometry = {handleGeometryData}
+                        isDrawingEnabled = {isDrawingEnabled}
+                        setIsDrawingEnabled = {setIsDrawingEnabled} />
+                    <ProjectCreateModal
+                        geometryData = {geometryData}
+                        isOpen = {isProjectModalOpen}
+                        closeModal = {closeProjectModal} />
+                    <SectionCreateModal
+                        project = {isSelectedProject}
+                        isOpen = {isSectionModalOpen}
+                        closeModal = {closeSectionModal} />
                 </div>
             </div>
         </div>

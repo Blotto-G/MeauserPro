@@ -12,6 +12,20 @@
   box-sizing: border-box;
   line-height: 1;
 }
+/* header */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 0.5em 1em;
+  background-color: white;
+  color: black;
+  border-bottom: 1px solid gray;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
 .sideBar {
   background-color: #ffffff;
@@ -20,6 +34,7 @@
   padding: 1rem;
   width: 200px;
   height: 100%;
+  max-height: 100vh;
 }
 .mainSection {
   display: inline-block;

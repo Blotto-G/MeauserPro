@@ -18,9 +18,6 @@ public class MeausreProProject {
     @JoinColumn(name="manager_id", nullable = false)
     private MeausreProUser manager; // 총 책임자
 
-    @Column(name = "site_id", nullable = false, length = 45)
-    private String siteId; // 관려지 ID
-
     @Column(name = "site_name", nullable = false, length = 45)
     private String siteName; // 현장명
 
@@ -45,6 +42,6 @@ public class MeausreProProject {
     @Column(name="site_group", nullable = true, length = 45)
     private String siteGroup;
 
-    @Column(name = "geometry", nullable = false, columnDefinition = "GEOMETRY")
+    @Column(name = "geometry", nullable = false, columnDefinition = "TEXT")
     private String geometry; // 지오매트리 정보 (지도에 표시될 영역)
 }

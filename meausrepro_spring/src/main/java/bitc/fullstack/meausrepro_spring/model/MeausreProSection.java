@@ -31,7 +31,7 @@ public class MeausreProSection {
     private String groundStr; // 지지종
 
     @Column(name = "rear_target", nullable = false, length = 45)
-    private String rearTarget; // 대상물타겟
+    private String rearTarget; // 대상물 배면
 
     @Column(name = "under_str", nullable = false, length = 45)
     private String underStr; // 대상물 도로하부

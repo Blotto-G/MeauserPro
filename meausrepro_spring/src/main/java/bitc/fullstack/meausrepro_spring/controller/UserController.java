@@ -30,4 +30,16 @@ public class UserController {
             throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
         }
     }
+
+    // 아이디 중복 확인
+    @PostMapping("/checkId/{id}")
+    public boolean checkId(@PathVariable String id) {
+        return userService.checkId(id) == 0;
+    }
+
+    // 회원가입
+    @PostMapping("/SignUp")
+    public MeausreProUser signUp(@RequestBody MeausreProUser signUpUser) {
+        return userService.signUp(signUpUser);
+    }
 }
