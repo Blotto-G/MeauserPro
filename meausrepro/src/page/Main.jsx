@@ -3,6 +3,7 @@ import UserContext from "../context/UserContext.jsx";
 import {useNavigate} from "react-router";
 import MapComponent from "../component/MapComponent.jsx";
 import ProjectCreateModal from "../component/ProjectCreateModal.jsx";
+import Sidebar from "../component/Sidebar.jsx";
 
 function Main() {
     const {user} = useContext(UserContext);
@@ -40,20 +41,22 @@ function Main() {
     }
 
     return (
-        <div className={'container-fluid p-3'}>
-            <div className={'sideBar'}>
+        <div className={'d-flex'}>
+            <Sidebar />
+            <div className={'sideBar'} style={{position: 'relative', height:'100vh', width: '250px'}}>
                 <span>{user.name}</span>
                 <hr/>
-                <ul className={'nav nav-pills flex-column mb-auto'}>
-                    <li>
-                        <button className={'nav-link link-dark'} type={'button'} onClick={enableDrawing}>
+                {/*<ul className={'nav nav-pills flex-column'}>*/}
+                {/*    <li>*/}
+                        <button className={'btn btn-outline-dark'} type={'button'} onClick={enableDrawing}
+                        style={{position:'absolute',bottom: '50px', width: '100%', left: '0', right: '0'}}>
                             프로젝트 생성
                         </button>
-                    </li>
-                </ul>
+                    {/*</li>*/}
+                {/*</ul>*/}
             </div>
             <div className={'mainSection'}>
-                <MapComponent sendGeometry={handleGeometryData} isDrawingEnabled = {isDrawingEnabled} setIsDrawingEnabled = {setIsDrawingEnabled} />
+                <MapComponent sendGeometry={handleGeometryData} isDrawingEnabled={isDrawingEnabled} setIsDrawingEnabled = {setIsDrawingEnabled} />
                 <ProjectCreateModal geometryData={geometryData} isOpen={isModalOpen} closeModal={closeModal} />
             </div>
         </div>
