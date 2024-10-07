@@ -21,9 +21,8 @@ function ProjectCreateModal(props) {
         console.log(geometryData);
         const wkt = `POLYGON((${geometryData.map(coord => `${coord[1]} ${coord[0]}`).join(', ')}))`;
         console.log(wkt);
-        axios.post(`http://localhost:8080/MeausrePro/Maps/save`, {
+        axios.post(`http://localhost:8080/MeausrePro/Project/save`, {
             manager: user,
-            siteId: '',
             siteName: siteName,
             siteAddress: address,
             startDate: startDate,
@@ -63,17 +62,26 @@ function ProjectCreateModal(props) {
     };
 
     return (
-        <div className={`modal fade ${isOpen ? 'show d-block' : ''}`} id={'createProject'} tabIndex={'-1'}
-             aria-labelledby={'cpModalLabel'}
-             aria-hidden={!isOpen} style={{display: isOpen ? 'block' : 'none'}}>
+        <div
+            className={`modal fade ${isOpen ? 'show d-block' : ''}`}
+            id={'createProject'}
+            tabIndex={'-1'}
+            aria-labelledby={'cpModalLabel'}
+            aria-hidden={!isOpen}
+            style={{display: isOpen ? 'block' : 'none'}}
+        >
             <div className={'modal-dialog modal-dialog-centered modal-dialog-scrollable'}>
                 <div className={'modal-content'}>
                     <div className={'modal-header'}>
                         <span className={'fs-4 modal-title'} id={'cpModalLabel'}>
                             공사개요
                         </span>
-                        <button type={'button'} className={'btn-close'} data-bs-dismiss={'modal'}
-                                aria-label={'Close'} onClick={handleCloseModal}/>
+                        <button type={'button'}
+                                className={'btn-close'}
+                                data-bs-dismiss={'modal'}
+                                aria-label={'Close'}
+                                onClick={handleCloseModal}
+                        />
                     </div>
                     <div className={'modal-body'}>
                         <div className={'d-flex flex-column'}>
@@ -183,11 +191,16 @@ function ProjectCreateModal(props) {
                             </div>
                         </div>
                         <div className={'modal-footer'}>
-                            <button type={'button'} className={'btn btn-outline-dark opacity-50'}
-                                    data-bs-dismiss={'modal'} onClick={handleCloseModal}>
+                            <button type={'button'}
+                                    className={'btn btn-outline-dark opacity-50'}
+                                    data-bs-dismiss={'modal'}
+                                    onClick={handleCloseModal}
+                            >
                                 Close
                             </button>
-                            <button type={'button'} className={'btn btn-success opacity-50'} onClick={handleCreateProject}>
+                            <button type={'button'}
+                                    className={'btn btn-success opacity-50'} onClick={handleCreateProject}
+                            >
                                 프로젝트 생성
                             </button>
                         </div>
