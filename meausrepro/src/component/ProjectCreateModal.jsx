@@ -4,7 +4,7 @@ import UserContext from "../context/UserContext.jsx";
 
 function ProjectCreateModal(props) {
     const {user} = useContext(UserContext);
-    const {geometryData, isOpen, closeModal} = props;
+    const {geometryData, isOpen, closeModal, onProjectCreated} = props;
 
     // 입력 필드 상태 관리
     const [siteName, setSiteName] = useState('');
@@ -34,8 +34,8 @@ function ProjectCreateModal(props) {
             geometry:wkt
         })
             .then(res => {
-                if (!siteName || !address || !startDate || !endDate || !contractor || !measurer || !status) {
-                    alert("모든 필드를 입력해주세요.")
+                if (!siteName || !address || !startDate || !endDate || !contractor || !measurer) {
+                    alert("모든 필드를 입력해주세요.");
                     return;
                 }
                 else {
@@ -58,6 +58,7 @@ function ProjectCreateModal(props) {
         setMeasurer('');
         setStatus('N');
         setSiteGroup('');
+        onProjectCreated();
         closeModal();
     };
 

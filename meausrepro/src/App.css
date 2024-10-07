@@ -4,7 +4,12 @@
   font-weight: normal;
   font-style: normal;
 }
-
+@font-face {
+  font-family: 'SUITE-Regular';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/SUITE-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
 * {
   font-family: 'MinSans-Regular';
   margin: 0;
@@ -32,10 +37,44 @@
   position: sticky;
   float: left;
   padding: 1rem;
-  width: 200px;
+  width: 320px;
   height: 100%;
   max-height: 100vh;
 }
 .mainSection {
   display: inline-block;
+}
+/* 구간 css */
+/* 드롭다운 열릴 때 */
+li.expanded {
+  transition: all 0.3s ease;
+}
+/* 드롭다운 기본 상태: 최대 높이 0 */
+.dpContent {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease;
+}
+/* 드롭다운이 열릴 때 */
+.dpContent.open {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  border-radius: 0.5em;
+  border: 1px solid black;
+  padding: 0.5em;
+  overflow: hidden;
+}
+.dpContent span {
+  font-family: 'SUITE-Regular';
+}
+.sectionTitle {
+  color: gray;
+}
+
+.dpSection {
+  display: grid;
+  grid-template-columns: 0.5fr 1fr;
+  row-gap: 0.2em;
+  column-gap: 0.5em;
 }
