@@ -66,25 +66,27 @@ function Main() {
             <header>
                 <Header />
             </header>
-            <div className={'container-fluid p-0 mx-0 my-5'}>
+            <div className={'d-flex p-0 mx-0 my-5'}>
                 <NavBar />
-                <MainSideBar
-                    enableDrawing = {enableDrawing}
-                    handleProjectClick = {handleProjectClick}
-                    openSectionModal = {openSectionModal} />
-                <div className={'mainSection'}>
-                    <MapComponent
-                        sendGeometry = {handleGeometryData}
-                        isDrawingEnabled = {isDrawingEnabled}
-                        setIsDrawingEnabled = {setIsDrawingEnabled} />
-                    <ProjectCreateModal
-                        geometryData = {geometryData}
-                        isOpen = {isProjectModalOpen}
-                        closeModal = {closeProjectModal} />
-                    <SectionCreateModal
-                        project = {isSelectedProject}
-                        isOpen = {isSectionModalOpen}
-                        closeModal = {closeSectionModal} />
+                <div style={{marginTop: '8px'}}>
+                    <MainSideBar
+                        enableDrawing = {enableDrawing}
+                        handleProjectClick = {handleProjectClick}
+                        openSectionModal = {openSectionModal} />
+                    <div className={'mainSection'}>
+                        <MapComponent
+                            sendGeometry = {handleGeometryData}
+                            isDrawingEnabled = {isDrawingEnabled}
+                            setIsDrawingEnabled = {setIsDrawingEnabled} />
+                        <ProjectCreateModal
+                            geometryData = {geometryData}
+                            isOpen = {isProjectModalOpen}
+                            closeModal = {closeProjectModal} />
+                        <SectionCreateModal
+                            project = {isSelectedProject}
+                            isOpen = {isSectionModalOpen}
+                            closeModal = {closeSectionModal} />
+                    </div>
                 </div>
             </div>
         </div>

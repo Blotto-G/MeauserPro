@@ -29,7 +29,7 @@
 
 .sideBar {
   background-color: #ffffff;
-  position: sticky;
+  /*position: sticky;*/
   float: left;
   padding: 1rem;
   width: 200px;

@@ -64,34 +64,45 @@ function Login() {
             })
 
     return (
-        <div className={'container d-grid gap-2'}>
-            <form onSubmit={loginEvent} className={'d-grid gap-2'}>
-                <input
-                    type="text"
-                    placeholder="아이디"
-                    value={id}
-                    onChange={(e) => setId(e.target.value)}
-                />
-                <input
-                    type="password"
-                    placeholder="비밀번호"
-                    value={pass}
-                    onChange={(e) => setPass(e.target.value)}
-                />
-                <button type={'submit'}
-                        className={'btn btn-primary opacity-25'}>
-                    로그인
+        <div className={'container d-grid border shadow-lg'} style={{justifyContent: 'center',
+        alignItems: 'center', marginLeft: '500px', paddingTop: '90px', paddingBottom: '90px' ,borderRadius: '20px'}}>
+            <div>
+                <form onSubmit={loginEvent} className={'d-grid gap-2'} style={{width: '300px'}}>
+                    <h2 style={{fontSize: '1.5rem', fontWeight: 'bold', textAlign: 'center'}}>계측관리시스템 로그인</h2>
+                    <hr/>
+                    <input
+                        type="text"
+                        className={"form-control mb-2"}
+                        style={{backgroundColor: '#f4f4f4'}}
+                        placeholder="아이디"
+                        value={id}
+                        onChange={(e) => setId(e.target.value)}
+                    />
+                    <input
+                        type="password"
+                        className={"form-control mb-2"}
+                        style={{backgroundColor: '#f4f4f4'}}
+                        placeholder="비밀번호"
+                        value={pass}
+                        onChange={(e) => setPass(e.target.value)}
+                    />
+                    <button type={'submit'}
+                            className={'btn btn-primary opacity-25 mb-2'}>
+                        로그인
+                    </button>
+                    <button type={'button'}
+                            className={'btn btn-outline-primary opacity-25 mb-2'}
+                            onClick={signUpPage}>
+                        회원가입
+                    </button>
+                </form>
+                <button type={'button'} className={'btn btn-success opacity-50 mt-2'} onClick={testLogin}
+                style={{width: '100%'}}>
+                    test
                 </button>
-                <button type={'button'}
-                        className={'btn btn-outline-primary opacity-25'}
-                        onClick={signUpPage}>
-                    회원가입
-                </button>
-            </form>
-            <button type={'button'} className={'btn btn-success opacity-50'} onClick={testLogin}>
-                test
-            </button>
-            {error && <p style={{color: 'red'}}>{error}</p>}
+                {error && <p style={{color: 'red'}}>{error}</p>}
+
+            </div>
         </div>
     );
 }
