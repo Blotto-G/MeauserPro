@@ -4,6 +4,7 @@ import {useNavigate} from "react-router";
 import MapComponent from "../component/MapComponent.jsx";
 import ProjectCreateModal from "../component/ProjectCreateModal.jsx";
 import Sidebar from "../component/Sidebar.jsx";
+import Navbar from "../component/Navbar.jsx";
 
 function Main() {
     const {user} = useContext(UserContext);
@@ -41,23 +42,38 @@ function Main() {
     }
 
     return (
-        <div className={'d-flex'}>
-            <Sidebar />
-            <div className={'sideBar'} style={{position: 'relative', height:'100vh', width: '250px'}}>
-                <span>{user.name}</span>
-                <hr/>
-                {/*<ul className={'nav nav-pills flex-column'}>*/}
-                {/*    <li>*/}
-                        <button className={'btn btn-outline-dark'} type={'button'} onClick={enableDrawing}
-                        style={{position:'absolute',bottom: '50px', width: '100%', left: '0', right: '0'}}>
-                            프로젝트 생성
-                        </button>
+        <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+            <Navbar />
+            <div className={'d-flex'} style={{ flexGrow: 1, overflow: 'hidden' }}>
+                <Sidebar />
+                <div className={'sideBar'} style={{position: 'relative', height: '100%', width: '250px',
+                display: 'flex', flexDirection: 'column', overflow: 'auto'}}>
+                    <span>계측관리시스템 / 메인 {user.name}</span>
+                    <hr/>
+                    <p className={"mt-4"}>공사현장 검색</p>
+                    <form className={"d-flex"}>
+                        <input className={"form-control me-2"} type="search"/>
+                        <button className={"btn btn-outline-success"} type="submit">Search</button>
+                    </form>
+                    <div>
+                        <p className={"mt-3"}>현장 리스트</p>
+                        <ul className={"list-group mt-2"}>
+                            <li className={"list-group-item"}></li>
+                        </ul>
+                    </div>
+                    <button className={'btn btn-outline-dark'} type={'button'} onClick={enableDrawing}
+                            style={{position: 'sticky', bottom: '0px', width: '100%', left: '0', right: '0',
+                            marginTop: 'auto'}}>
+                        프로젝트 생성
+                    </button>
                     {/*</li>*/}
-                {/*</ul>*/}
-            </div>
-            <div className={'mainSection'}>
-                <MapComponent sendGeometry={handleGeometryData} isDrawingEnabled={isDrawingEnabled} setIsDrawingEnabled = {setIsDrawingEnabled} />
-                <ProjectCreateModal geometryData={geometryData} isOpen={isModalOpen} closeModal={closeModal} />
+                    {/*</ul>*/}
+                </div>
+                <div className={'mainSection'} style={{ flexGrow: 1, overflow: 'auto', height: '100%' }}>
+                    <MapComponent sendGeometry={handleGeometryData} isDrawingEnabled={isDrawingEnabled}
+                                  setIsDrawingEnabled={setIsDrawingEnabled}/>
+                    <ProjectCreateModal geometryData={geometryData} isOpen={isModalOpen} closeModal={closeModal} />
+                </div>
             </div>
         </div>
     )

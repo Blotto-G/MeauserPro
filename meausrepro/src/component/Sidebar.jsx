@@ -6,13 +6,13 @@ function Sidebar() {
     return (
         <div className={"sidebar"}
              style={{ backgroundColor: '#f4f4f4', height: '100vh', width: '250px',
-                 display: 'flex', flexDirection: 'column' }}>
+                 display: 'flex', flexDirection: 'column', }}>
             <div className={"sidebarWrapper"}>
                 <div className={"sidebarMenu"}>
-                    <h3 className={"sidebarTitle text-center"}
-                        style={{ listStyleType: 'none', padding: 20, fontSize: '20px' }}>계측관리시스템</h3>
+                    {/*<h3 className={"sidebarTitle text-center"}*/}
+                    {/*    style={{ listStyleType: 'none', padding: 20, fontSize: '20px' }}>계측관리시스템</h3>*/}
                     <ul className={"sidebarList"}>
-                        <li className={"sidebarListItem mt-2"}
+                        <li className={"sidebarListItem mt-4"}
                             style={{ display: 'flex', alignItems: 'center', marginBottom: '15px'}}>
                             <img src="/src/assets/660026.png" alt=""
                                  style={{width: '30px', marginRight: '10px'}}/>

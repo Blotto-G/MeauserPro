@@ -100,7 +100,7 @@ function MapComponent(props) {
 
     return (
         <>
-            <div id="map" style={{ width: '800px', height: '900px' }}></div>
+            <div id="map" style={{ width: '1400px', height: '650px' }}></div>
             {contextMenuVisible && (
                 <div
                     style={{

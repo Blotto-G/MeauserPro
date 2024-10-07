@@ -3,6 +3,7 @@ import {BrowserRouter, Route, Routes} from "react-router-dom";
 import Main from "./page/Main.jsx";
 import Login from "./page/Login.jsx";
 import {UserProvder} from "./context/UserContext.jsx";
+import Navbar from "./component/Navbar.jsx";
 
 function App() {
     return (
