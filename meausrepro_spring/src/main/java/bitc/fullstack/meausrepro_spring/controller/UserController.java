@@ -5,6 +5,8 @@ import bitc.fullstack.meausrepro_spring.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,20 +35,26 @@ public class UserController {
     }
 
     // 아이디 중복 확인
-    @PostMapping("/checkId/{id}/{companyIdx}")
-    public boolean checkId(@PathVariable String id, @PathVariable int companyIdx) {
-        return userService.checkId(id, companyIdx) == 0;
+    @PostMapping("/checkId/{id}")
+    public boolean checkId(@PathVariable String id) {
+        return userService.checkId(id) == 0;
     }
 
     // 회원가입
     @PostMapping("/SignUp")
     public MeausreProUser signUp(@RequestBody MeausreProUser signUpUser) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+        String formattedDate = sdf.format(new Date());
+
+        signUpUser.setCreateDate(formattedDate);
         return userService.signUp(signUpUser);
     }
 
     // 전체 관리자 겸 웹 관리자 제외 회원정보 보기
     @GetMapping("/notTopManager")
     public List<MeausreProUser> getNotTopManager() {
-        return userService.getNotTopManager();
+        List<MeausreProUser> users = userService.getNotTopManager();
+        System.out.println("\n" + users.size());
+        return users;
     }
 }

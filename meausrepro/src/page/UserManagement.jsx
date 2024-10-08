@@ -40,6 +40,7 @@ function UserManagement() {
     const selectUser = () => {
         axios.get(`http://localhost:8080/MeausrePro/User/notTopManager`)
             .then(res => {
+                console.log(res.data);
                 setUserList(res.data);
             })
             .catch(err => {
@@ -73,56 +74,61 @@ function UserManagement() {
                                 신규등록
                             </button>
                         </div>
-                        <table className={'table table-hover'}>
+                        <table className={'table table-hover text-center'}>
+                            <colgroup>
+                                <col width={'15%'}/>
+                                <col width={'10%'}/>
+                                <col width={'10%'}/>
+                                <col width={'10%'}/>
+                                <col width={'15%'}/>
+                                <col width={'20%'}/>
+                                <col width={'20%'}/>
+                            </colgroup>
                             <thead>
                             <tr>
-                                <th>회원아이디</th>
+                                <th>아이디</th>
                                 <th>이름</th>
-                                <th>권한그룹</th>
-                                <th>작업구분</th>
+                                <th>그룹</th>
+                                <th>작업</th>
                                 <th>가입일자</th>
-                                <th>사용자 정보</th>
+                                <th>정보</th>
                                 <th>삭제</th>
                             </tr>
                             </thead>
                             <tbody>
-                            {userList.map((item) => {
-                                return (
-                                    <tr key={item.idx} className={'d-flex gap-2'}>
+                            {userList.length === 0 ? (
+                                <tr>
+                                    <td colSpan={9}>
+                                        출력할 내용이 없습니다.
+                                    </td>
+                                </tr>
+                            ) : (
+                                userList.map((item, index) => (
+                                    <tr key={index}>
                                         <td>{item.id}</td>
                                         <td>{item.name}</td>
-                                        <td>{item.companyIdx.companyName}</td>
-                                        {item.role === '0' ? (
-                                            <td>
-                                                관리 (웹)
-                                            </td>
-                                        ) : (
-                                            <td>
-                                                현장
-                                            </td>
-                                        )}
+                                        <td>{item.companyIdx ? item.companyIdx.companyName : ''}</td>
+                                        <td>{item.role === '0' ? '관리 (웹)' : '현장'}</td>
+                                        <td>{item.createDate}</td>
                                         <td>
-                                            {item.createDate}
-                                        </td>
-                                        <td>
-                                            <button type={'button'}
-                                                    className={'btn greenBtn'}>
+                                            <button type={'button'} className={'btn greenBtn'}>
                                                 수정
                                             </button>
                                         </td>
                                         <td>
-                                            <button type={'button'}
-                                                    className={'btn btn-danger'}>
+                                            <button type={'button'} className={'btn btn-danger'}>
                                                 삭제
                                             </button>
                                         </td>
                                     </tr>
-                                );
-                            })}
+                                ))
+                            )}
+
                             </tbody>
                         </table>
                         <UserSignUpModal isOpen={isUserSignUpModal}
-                                         closeModal={closeUserSignUpModal} />
+                                         closeModal={closeUserSignUpModal}
+                                         selectUser={selectUser}/>
                     </div>
                     <div className={'d-flex flex-column gap-2 p-3 rounded-3 border'}>
 

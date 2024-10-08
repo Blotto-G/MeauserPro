@@ -31,10 +31,10 @@ public class MeausreProUser {
     private String tel; // 전화번호
 
     @Column(name="role", nullable = false, length = 1)
-    private char role; // 역할 0 = 웹, 1 = 앱
+    private String role; // 역할 0 = 웹, 1 = 앱
 
     @Column(name="top_manager", nullable = true, length = 1)
-    private char topManager; // 최고 관리자
+    private String topManager; // 최고 관리자
 
     @Column(name="create_date", nullable = false, length = 45)
     private String createDate;

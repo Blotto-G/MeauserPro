@@ -22,17 +22,13 @@ public class UserService {
 
     // 회원가입
     public MeausreProUser signUp(MeausreProUser signUpUser) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String formattedDate = sdf.format(new Date());
 
-        signUpUser.setCreateDate(formattedDate);
-
-        return  userRepository.save(signUpUser);
+        return userRepository.save(signUpUser);
     }
 
     // 아이디 중복 확인
-    public int checkId(String id, int companyIdx) {
-        return userRepository.countById(id, companyIdx);
+    public int checkId(String id) {
+        return userRepository.countById(id);
     }
 
     // 전체 관리자 겸 웹 관리자 제외 회원정보 보기
