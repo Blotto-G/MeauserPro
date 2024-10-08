@@ -24,10 +24,14 @@ function Main() {
     const [projectList, setProjectList] = useState([]);
     // 프로젝트 선택 시, 프로젝트 정보 보여주기
     const [isSelectedProject, setIsSelectedProject] = useState(null);
+    // 구간 선택 시, 구간 정보 보여주기
+    const [selectedSection, setSelectedSection] = useState(null);
     // 버튼 텍스트 관리
     const [isBtnText, setIsBtnText] = useState('프로젝트 생성')
     // 구간 생성 모달
     const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
+    // 계측기 생성 모달 상태
+    const [isInstrumentModalOpen, setIsInstrumentModalOpen] = useState(false);
 
     // 로그인 정보 없을 시, 로그인 페이지로 이동
     useEffect(() => {
@@ -89,10 +93,24 @@ function Main() {
         setIsSectionModalOpen(false);
     }
 
+    // 계측기 생성 모달 열기
+    const openInstrumentModal = () => {
+        setIsInstrumentModalOpen(true);
+    };
+    // 계측기 생성 모달 닫기
+    const closeInstrumentModal = () => {
+        setIsInstrumentModalOpen(false);
+    };
+
     // 프로젝트 선택 시 해당 프로젝트 정보 표시
     const handleProjectClick = (project) => {
         setIsSelectedProject(project);
     }
+
+    // 구간 선택 시 해당 구간 정보 표시
+    const handleSectionClick = (section) => {
+        setSelectedSection(section);
+    };
     return (
         <div>
             <header>
@@ -123,7 +141,30 @@ function Main() {
                     <SectionCreateModal
                         project = {isSelectedProject}
                         isOpen = {isSectionModalOpen}
-                        closeModal = {closeSectionModal} />
+                        closeModal = {closeSectionModal}
+                        onSectionCreated={(newSection) => handleSectionClick(newSection)} />
+                    {/* 선택된 프로젝트가 있을 때만 구간 및 계측기 관련 UI를 보여줌 */}
+                    {isSelectedProject && (
+                        <div className={'section-info'}>
+                            <h3>{isSelectedProject.name}</h3>
+                            {isSelectedProject.sections?.map(section => (
+                                <div key={section.id} onClick={() => handleSectionClick(section)}>
+                                    <h4>{section.name}</h4>
+                                </div>
+                            ))}
+                            {/* 구간이 선택되면 계측기 생성 버튼을 표시 */}
+                            {selectedSection && (
+                                <>
+                                    <button onClick={openInstrumentModal}>계측기 생성</button>
+                                    <InstrumentCreateModal
+                                        isOpen={isInstrumentModalOpen}
+                                        closeModal={closeInstrumentModal}
+                                        section={selectedSection} // 선택된 구간 전달
+                                    />
+                                </>
+                            )}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
