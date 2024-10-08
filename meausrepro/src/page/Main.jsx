@@ -62,7 +62,7 @@ function Main() {
         setIsSelectedProject(project);
     }
     return (
-        <div>
+        <div style={{height: '100vh'}}>
             <header>
                 <Header />
             </header>

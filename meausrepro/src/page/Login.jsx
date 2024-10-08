@@ -100,8 +100,8 @@ function Login() {
                 style={{width: '100%'}}>
                     test
                 </button>
+                {/*{error && <p style={{color: 'red'}}>{typeof error === 'string' ? error : '알 수 없는 에러가 발생했습니다.'}</p>}*/}
                 {error && <p style={{color: 'red'}}>{error}</p>}
-
             </div>
         </div>
     );
