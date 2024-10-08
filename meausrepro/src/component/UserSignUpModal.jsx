@@ -1,9 +1,9 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 
 function UserSignUpModal(props) {
-    const {isOpen, closeModal} = props;
+    const {isOpen, closeModal, selectUser} = props;
 
     const [id, setId] = useState('');
     const [pass, setPass] = useState('');
@@ -14,6 +14,15 @@ function UserSignUpModal(props) {
 
     // 회사 리스트
     const [companyList, setCompanyList] = useState([]);
+    useEffect(() => {
+        axios.get(`http://localhost:8080/MeausrePro/Company/allCompany/notDelete`)
+            .then(res => {
+                setCompanyList(res.data);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }, [])
 
     // 모달 닫기
     const handleCloseModal = () => {
@@ -23,6 +32,7 @@ function UserSignUpModal(props) {
         setTel('');
         setRole(0);
 
+        selectUser();
         closeModal();
     }
 
@@ -79,16 +89,19 @@ function UserSignUpModal(props) {
             numTel = numTel.slice(0, 11);
         }
 
+        let formattedTel = '';
         if (numTel.length <= 3) {
-            setTel(numTel);
+            formattedTel = numTel;
         } else if (numTel.length <= 7) {
-            setTel(numTel.slice(0, 3) + '-' + numTel.slice(3));
+            formattedTel = numTel.slice(0, 3) + '-' + numTel.slice(3);
         } else {
-            setTel(numTel.slice(0, 3) + '-' + numTel.slice(3, 7) + '-' + numTel.slice(7));
+            formattedTel = numTel.slice(0, 3) + '-' + numTel.slice(3, 7) + '-' + numTel.slice(7);
         }
 
-        // 전화번호 유효성 검사
-        if (/^010-\d{4}-\d{4}$/.test(numTel)) {
+        setTel(formattedTel); // 포맷팅된 전화번호를 상태에 설정
+
+        // 전화번호 유효성 검사 (하이픈 포함)
+        if (/^010-\d{4}-\d{4}$/.test(formattedTel)) {
             setIsCheckTel(true);
         } else {
             setIsCheckTel(false);
@@ -98,26 +111,33 @@ function UserSignUpModal(props) {
     // 회원가입 처리
     const registerEvent = async (e) => {
         e.preventDefault();
-        axios.post(`http://localhost:8080/MeausrePro/User/SignUp`, {
-            id: id,
-            pass: pass,
-            name: name,
-            tel: tel,
-            role: role,
-        })
-            .then(res => {
-                console.log(res);
-                handleCloseModal();
+
+        if (isCheckId === true && isCheckPw === true && isCheckTel === true) {
+            axios.post(`http://localhost:8080/MeausrePro/User/SignUp`, {
+                id: id,
+                pass: pass,
+                name: name,
+                tel: tel,
+                role: role,
+                company: company
             })
-            .catch(err => {
-                console.log(err);
-                Swal.fire({
-                    icon: "error",
-                    text: `${err.response.data.message}`,
-                    showCancelButton: false,
-                    confirmButtonText: '확인'
+                .then(res => {
+                    console.log(res);
+                    handleCloseModal();
                 })
-            });
+                .catch(err => {
+                    console.log(err);
+                    Swal.fire({
+                        icon: "error",
+                        text: `${err.response.data.message}`,
+                        showCancelButton: false,
+                        confirmButtonText: '확인'
+                    })
+                });
+        }
+        else {
+            alert(`${isCheckId} ${isCheckPw} ${isCheckTel}`)
+        }
     };
 
     return (
@@ -165,9 +185,9 @@ function UserSignUpModal(props) {
                                     {isCheckId === null ? (
                                         <span className={'text-muted'}>아이디를 입력해주세요.</span>
                                     ) : isCheckId ? (
-                                        <span className={'text-success'}>사용 가능한 이메일입니다.</span>
+                                        <span className={'text-success'}>사용 가능한 아이디입니다.</span>
                                     ) : (
-                                        <span className={'text-danger'}>이미 사용 중인 이메일입니다.</span>
+                                        <span className={'text-danger'}>이미 사용 중인 아이디입니다.</span>
                                     )}
                                 </div>
                                 <div className={'input-group'}>
@@ -255,7 +275,27 @@ function UserSignUpModal(props) {
                                     </select>
                                 </div>
                                 <div className={'input-group'}>
-
+                                    <label className={'input-group-text'}
+                                           htmlFor={'companySelected'}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                             fill="currentColor" className="bi bi-building" viewBox="0 0 16 16">
+                                            <path
+                                                d="M4 2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zM4 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM7.5 5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM4.5 8a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z"/>
+                                            <path
+                                                d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1zm11 0H3v14h3v-2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5V15h3z"/>
+                                        </svg>
+                                    </label>
+                                    <select className={'form-select'}
+                                            onChange={(e) => setCompany(e.target.value)}>
+                                        <option selected>선택하세요</option>
+                                        {companyList.map((item) => {
+                                            return (
+                                                <option value={item} key={item.idx}>
+                                                    {item.companyName}
+                                                </option>
+                                            )
+                                        })}
+                                    </select>
                                 </div>
                                 <div className={'input-group'}>
                                     <span className={'input-group-text'}>
@@ -278,8 +318,7 @@ function UserSignUpModal(props) {
                                 </div>
                                 <button
                                     type="submit"
-                                    className={'signUpBtn'}
-                                    disabled={isCheckId === false || isCheckId === null || isCheckPw === false || isCheckTel === false}
+                                    className={'signUpBtn mt-3'}
                                 >
                                     회원가입
                                 </button>
