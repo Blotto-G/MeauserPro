@@ -10,6 +10,10 @@ function UserSignUpModal(props) {
     const [name, setName] = useState('');
     const [tel, setTel] = useState('');
     const [role, setRole] = useState(0);
+    const [company, setCompany] = useState(null);
+
+    // 회사 리스트
+    const [companyList, setCompanyList] = useState([]);
 
     // 모달 닫기
     const handleCloseModal = () => {
