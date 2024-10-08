@@ -7,6 +7,7 @@ import SectionCreateModal from "../component/SectionCreateModal.jsx";
 import MainSideBar from "../component/MainSideBar.jsx";
 import NavBar from "../component/NavBar.jsx";
 import Header from "../layout/Header.jsx";
+import axios from "axios";
 
 function Main() {
     const {user} = useContext(UserContext);
@@ -18,11 +19,12 @@ function Main() {
     const [isDrawingEnabled, setIsDrawingEnabled] = useState(false);
     // 프로젝트 생성 모달
     const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
+    // 프로젝트 목록 상태
+    const [projectList, setProjectList] = useState([]);
     // 프로젝트 선택 시, 프로젝트 정보 보여주기
     const [isSelectedProject, setIsSelectedProject] = useState(null);
     // 버튼 텍스트 관리
     const [isBtnText, setIsBtnText] = useState('프로젝트 생성')
-
     // 구간 생성 모달
     const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
 
@@ -33,6 +35,17 @@ function Main() {
             navigate('/');
         }
     }, [user, navigate]);
+
+    // 프로젝트 목록을 가져오는 함수
+    const fetchProjects = () => {
+        axios.get(`http://localhost:8080/MeausrePro/Project/inProgress/${user.id}`)
+            .then(res => {
+                setProjectList(res.data);
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    };
 
     // 좌표 데이터 받는 함수
     // 프로젝트 생성 모달
@@ -58,6 +71,13 @@ function Main() {
     const closeProjectModal = () => {
         setIsProjectModalOpen(false);
     }
+    // 프로젝트 생성 후 바로 반영 (프로젝트 목록 다시 불러오기)
+    const onProjectCreated = () => {
+        fetchProjects(); // 프로젝트 목록 다시 불러오기
+        setIsDrawingEnabled(false); // 폴리곤 생성 모드 종료
+        setIsBtnText('프로젝트 생성');
+        setIsProjectModalOpen(false); // 모달 닫기
+    };
     // 구간 생성 모달 열기
     const openSectionModal = () => {
         setIsSectionModalOpen(true);
@@ -83,17 +103,21 @@ function Main() {
                     handleProjectClick = {handleProjectClick}
                     openSectionModal = {openSectionModal}
                     projectBtnText = {isBtnText}
+                    projectList={projectList}
                 />
                 <div className={'mainSection'}>
                     <MapComponent
                         sendGeometry = {handleGeometryData}
                         isDrawingEnabled = {isDrawingEnabled}
                         setIsDrawingEnabled = {setIsDrawingEnabled}
+                        projectList={projectList}
                     />
                     <ProjectCreateModal
                         geometryData = {geometryData}
                         isOpen = {isProjectModalOpen}
-                        closeModal = {closeProjectModal} />
+                        closeModal = {closeProjectModal}
+                        onProjectCreated={onProjectCreated} // 생성 완료 후 콜백
+                    />
                     <SectionCreateModal
                         project = {isSelectedProject}
                         isOpen = {isSectionModalOpen}

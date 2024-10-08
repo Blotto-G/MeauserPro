@@ -1,20 +1,27 @@
-import {useContext, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import axios from "axios";
 import UserContext from "../context/UserContext.jsx";
 
 function ProjectCreateModal(props) {
     const {user} = useContext(UserContext);
-    const {geometryData, isOpen, closeModal} = props;
+    const {geometryData, isOpen, closeModal, onProjectCreated} = props;
 
+    const dateNow = new Date();
+    const today = dateNow.toISOString().slice(0, 10);
     // 입력 필드 상태 관리
     const [siteName, setSiteName] = useState('');
     const [address, setAddress] = useState('');
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
+    const [startDate, setStartDate] = useState(today);
+    const [endDate, setEndDate] = useState(startDate);
     const [contractor, setContractor] = useState('');
     const [measurer, setMeasurer] = useState('');
     const [status, setStatus] = useState('N');
     const [siteGroup, setSiteGroup] = useState('');
+
+    // 종료날짜 선택 범위 조정
+    useEffect(() => {
+        setEndDate(startDate);
+    }, [startDate]);
 
     // 프로젝트 생성
     const handleCreateProject = async () => {
@@ -58,6 +65,7 @@ function ProjectCreateModal(props) {
         setMeasurer('');
         setStatus('N');
         setSiteGroup('');
+        onProjectCreated();
         closeModal();
     };
 
@@ -91,16 +99,26 @@ function ProjectCreateModal(props) {
                                     현장명
                                 </label>
                             </div>
-                            <input type={'text'} className={'form-control'} id={'siteName'} value={siteName} onChange={(e) => setSiteName(e.target.value)}
-                                   placeholder={'현장명을 입력하세요'}/>
+                            <input type={'text'}
+                                   className={'form-control'}
+                                   id={'siteName'}
+                                   value={siteName}
+                                   onChange={(e) => setSiteName(e.target.value)}
+                                   placeholder={'현장명을 입력하세요'}
+                            />
                             <div className={'d-flex align-items-center mt-2'}>
                                 <span className={'text-danger'}>*</span>
                                 <label htmlFor={'address'} className={'form-label'}>
                                     주소
                                 </label>
                             </div>
-                            <input type={'text'} className={'form-control'} id={'address'} value={address} onChange={(e) => setAddress(e.target.value)}
-                                   placeholder={'주소를 입력하세요'}/>
+                            <input type={'text'}
+                                   className={'form-control'}
+                                   id={'address'}
+                                   value={address}
+                                   onChange={(e) => setAddress(e.target.value)}
+                                   placeholder={'주소를 입력하세요'}
+                            />
                             <div className={'row mt-2'}>
                                 <div className={'col d-flex flex-column'}>
                                     <div className={'d-flex align-items-center mt-2'}>
@@ -109,8 +127,13 @@ function ProjectCreateModal(props) {
                                             시작일자
                                         </label>
                                     </div>
-                                    <input type={'date'} className={'form-control'} id={'startDate'} value={startDate} onChange={(e) => setStartDate(e.target.value)}
-                                           placeholder={'시작일자를 입력하세요'}/>
+                                    <input
+                                        type={'date'}
+                                        id={'startDate'}
+                                        className={'form-control'}
+                                        value={startDate}
+                                        min={today}
+                                        onChange={(e) => setStartDate(e.target.value)} />
                                 </div>
                                 <div className={'col d-flex flex-column'}>
                                     <div className={'d-flex align-items-center mt-2'}>
@@ -119,7 +142,12 @@ function ProjectCreateModal(props) {
                                             종료일자
                                         </label>
                                     </div>
-                                    <input type={'date'} className={'form-control'} id={'endDate'} value={endDate} onChange={(e) => setEndDate(e.target.value)}
+                                    <input type={'date'}
+                                           className={'form-control'}
+                                           id={'endDate'}
+                                           value={endDate}
+                                           min={startDate}
+                                           onChange={(e) => setEndDate(e.target.value)}
                                            placeholder={'종료일자를 입력하세요'}/>
                                 </div>
                             </div>
