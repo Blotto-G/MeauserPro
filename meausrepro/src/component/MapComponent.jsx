@@ -1,6 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import UserContext from "../context/UserContext.jsx";
 import axios from "axios";
+import {map} from "react-bootstrap/ElementChildren";
+import error from "eslint-plugin-react/lib/util/error.js";
 
 function MapComponent(props) {
     const { user } = useContext(UserContext);
@@ -14,6 +16,7 @@ function MapComponent(props) {
     const [polygons, setPolygons] = useState([]); // 저장된 폴리곤 목록
     const [drawnPolygons, setDrawnPolygons] = useState([]); // 새로 그린 폴리곤 관리
     const [currentPolygonId, setCurrentPolygonId] = useState(null); // 현재 폴리곤 ID 상태 추가
+    const [searchQuery, setSearchQuery] = useState(""); // 주소 검색 기능
 
 
     // 지도 로드
@@ -246,9 +249,43 @@ function MapComponent(props) {
         }
     };
 
+    // 주소 검색 처리 함수
+    const handleSearch = () => {
+        if (searchQuery.trim() === "") return;
+
+        axios
+            .get(`http://localhost:8080/MeausrePro/Maps/geocode?query=${encodeURIComponent(searchQuery)}`)
+            .then((response) => {
+                const data = response.data;
+                if (data && data.addresses && data.addresses.length > 0) {
+                    const { x, y } = data.addresses[0]; // 좌표 가져오기
+                    const newCenter = new naver.maps.LatLng(y, x);
+
+                    if (mapInstance) {
+                        mapInstance.setCenter(newCenter); // 지도 중심 이동
+                    }
+                } else {
+                    console.warn("주소를 찾을 수 없습니다.");
+                }
+            })
+            .catch((error) => {
+                console.error("주소 검색 중 오류 발생:", error);
+            });
+    };
     return (
         <>
             <div id="map" style={{ width: "600px", height: "500px" }}></div>
+            {/* 주소 검색 UI */}
+            <div style={{ marginBottom: "10px" }}>
+                <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="주소를 입력하세요"
+                    style={{ marginRight: "5px" }}
+                />
+                <button onClick={handleSearch}>주소 검색</button>
+            </div>
             {contextMenuVisible && (
                 <div
                     style={{

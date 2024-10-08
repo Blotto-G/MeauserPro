@@ -17,35 +17,6 @@ function MainSideBar(props) {
     // 각 구간의 드롭다운 높이 저장
     const dropdownRefs = useRef({});
 
-
-    // 진행 중인 프로젝트
-    useEffect(() => {
-        if (user && user.id) {
-            axios.get(`http://localhost:8080/MeausrePro/Project/inProgress/${user.id}`)
-                .then(res => {
-                    console.log(res);
-                    const { data } = res;
-                    setProjectList(data);
-                })
-                .catch(err => {
-                    if (err.response) {
-                        // 서버가 응답했으나 상태 코드가 2xx가 아닌 경우
-                        console.log("Error Response:", err.response);
-                        if (err.response.status === 404) {
-                            console.log("진행 중인 프로젝트를 찾을 수 없습니다.");
-                        }
-                    } else if (err.request) {
-                        // 요청이 만들어졌으나 응답을 받지 못한 경우
-                        console.log("No response received:", err.request);
-                    } else {
-                        // 요청 설정 중에 문제가 발생한 경우
-                        console.log("Error Setting up request:", err.message);
-                    }
-                });
-        }
-    }, [user]);
-
-
     // 프로젝트 클릭 시
     const handleSelectProject = (project) => {
         handleProjectClick(project);
