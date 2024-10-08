@@ -15,7 +15,7 @@ function MapComponent(props) {
     const [drawnPolygons, setDrawnPolygons] = useState([]); // 새로 그린 폴리곤 관리
     const [currentPolygonId, setCurrentPolygonId] = useState(null); // 현재 폴리곤 ID 상태 추가
     const [markers, setMarkers] = useState([]); // 동그란 점(마커)을 저장할 배열을 상태로 선언
-
+    const [searchQuery, setSearchQuery] = useState(""); // 주소 검색 기능
 
     // 지도 로드
     useEffect(() => {
@@ -36,19 +36,17 @@ function MapComponent(props) {
 
             const map = new naver.maps.Map("map", mapOptions);
             setMapInstance(map);
+            setIsMapReady(true);
+            console.log("Map instance has been set:", map); // 추가된 로그
         };
 
         if (window.naver && window.naver.maps) {
             initMap();
         } else {
             const script = document.createElement("script");
-            script.src = `https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=YOUR_CLIENT_ID&submodules=geocoder`;
+            script.src = `https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=jxpgjljq8x&submodules=geocoder`;
             script.async = true;
-            script.onload = () => {
-                if (window.naver && window.naver.maps) {
-                    initMap();
-                }
-            };
+            script.onload = initMap;
             document.head.appendChild(script);
         }
     }, []);
@@ -248,8 +246,6 @@ function MapComponent(props) {
         setDrawnPolygons([...drawnPolygons, newPolygon]);
     };
 
-
-
     // 다시 그리기
     const handleReset = () => {
         if (currentPolygon) {
@@ -303,11 +299,45 @@ function MapComponent(props) {
                 });
         }
     };
+    
 
+    // 주소 검색 처리 함수
+    const handleSearch = () => {
+        if (searchQuery.trim() === "") return;
+
+        axios
+            .get(`http://localhost:8080/MeausrePro/Maps/geocode?query=${encodeURIComponent(searchQuery)}`)
+            .then((response) => {
+                const data = response.data;
+                if (data && data.addresses && data.addresses.length > 0) {
+                    const { x, y } = data.addresses[0]; // 좌표 가져오기
+                    const newCenter = new naver.maps.LatLng(y, x);
+
+                    if (mapInstance) {
+                        mapInstance.setCenter(newCenter); // 지도 중심 이동
+                    }
+                } else {
+                    console.warn("주소를 찾을 수 없습니다.");
+                }
+            })
+            .catch((error) => {
+                console.error("주소 검색 중 오류 발생:", error);
+            });
+    };
 
     return (
         <>
-            <div id="map" style={{ width: "600px", height: "500px" }}></div>
+            <div id="map" style={{width: "600px", height: "500px"}}></div>
+            <div style={{marginBottom: "10px"}}>
+                <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="주소를 입력하세요"
+                    style={{marginRight: "5px"}}
+                />
+                <button onClick={handleSearch}>주소 검색</button>
+            </div>
             {contextMenuVisible && (
                 <div
                     style={{
@@ -322,13 +352,17 @@ function MapComponent(props) {
                 >
                     {currentPolygonId ? (
                         <>
-                            <button onClick={handleSaveGeometry}>저장</button> {/* 기존 폴리곤 저장 */}
-                            <button onClick={handleReset}>다시 그리기</button> {/* 기존 폴리곤 다시 그리기 */}
+                            <button onClick={handleSaveGeometry}>저장</button>
+                            {/* 기존 폴리곤 저장 */}
+                            <button onClick={handleReset}>다시 그리기</button>
+                            {/* 기존 폴리곤 다시 그리기 */}
                         </>
                     ) : (
                         <>
-                            <button onClick={handleSave}>저장</button> {/* 신규 폴리곤 저장 */}
-                            <button onClick={handleReset}>다시 그리기</button> {/* 신규 폴리곤 다시 그리기 */}
+                            <button onClick={handleSave}>저장</button>
+                            {/* 신규 폴리곤 저장 */}
+                            <button onClick={handleReset}>다시 그리기</button>
+                            {/* 신규 폴리곤 다시 그리기 */}
                         </>
                     )}
                 </div>
