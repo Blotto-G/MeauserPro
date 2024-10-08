@@ -8,6 +8,7 @@ import MainSideBar from "../component/MainSideBar.jsx";
 import NavBar from "../component/NavBar.jsx";
 import Header from "../layout/Header.jsx";
 import axios from "axios";
+import InstrumentCreateModal from "../component/InstrumentCreateModal.jsx";
 
 function Main() {
     const { user } = useContext(UserContext);
