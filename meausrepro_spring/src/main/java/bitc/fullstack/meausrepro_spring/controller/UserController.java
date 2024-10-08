@@ -5,6 +5,9 @@ import bitc.fullstack.meausrepro_spring.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -40,6 +43,18 @@ public class UserController {
     // 회원가입
     @PostMapping("/SignUp")
     public MeausreProUser signUp(@RequestBody MeausreProUser signUpUser) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+        String formattedDate = sdf.format(new Date());
+
+        signUpUser.setCreateDate(formattedDate);
         return userService.signUp(signUpUser);
+    }
+
+    // 전체 관리자 겸 웹 관리자 제외 회원정보 보기
+    @GetMapping("/notTopManager")
+    public List<MeausreProUser> getNotTopManager() {
+        List<MeausreProUser> users = userService.getNotTopManager();
+        System.out.println("\n" + users.size());
+        return users;
     }
 }

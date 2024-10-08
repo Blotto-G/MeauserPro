@@ -15,8 +15,12 @@ public class MeausreProProject {
     private int idx; // 프로젝트 번호
 
     @ManyToOne
-    @JoinColumn(name="manager_id", nullable = false)
-    private MeausreProUser manager; // 총 책임자
+    @JoinColumn(name="user_idx", nullable = false)
+    private MeausreProUser userIdx; // 사용자 테이블
+
+    @ManyToOne
+    @JoinColumn(name="company_idx", nullable = false)
+    private MeausreProCompany companyIdx;
 
     @Column(name = "site_name", nullable = false, length = 45)
     private String siteName; // 현장명
@@ -38,9 +42,6 @@ public class MeausreProProject {
 
     @Column(name = "site_check", nullable = false, length = 1)
     private char siteCheck = 'N'; // 검사 종료 여부 (N: 진행, Y: 종료)
-
-    @Column(name="site_group", nullable = true, length = 45)
-    private String siteGroup;
 
     @Column(name = "geometry", nullable = false, columnDefinition = "TEXT")
     private String geometry; // 지오매트리 정보 (지도에 표시될 영역)

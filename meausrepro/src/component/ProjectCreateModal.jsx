@@ -23,6 +23,9 @@ function ProjectCreateModal(props) {
         setEndDate(startDate);
     }, [startDate]);
 
+    // 작업그룹 불러오기
+
+
     // 프로젝트 생성
     const handleCreateProject = async () => {
         console.log(geometryData);
@@ -41,8 +44,8 @@ function ProjectCreateModal(props) {
             geometry:wkt
         })
             .then(res => {
-                if (!siteName || !address || !startDate || !endDate || !contractor || !measurer) {
-                    alert("모든 필드를 입력해주세요.");
+                if (!siteName || !address || !startDate || !endDate || !contractor || !measurer || !status) {
+                    alert("모든 필드를 입력해주세요.")
                     return;
                 }
                 else {

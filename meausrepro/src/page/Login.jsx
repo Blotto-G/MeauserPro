@@ -1,4 +1,4 @@
-import {useState, useContext, useEffect} from "react";
+import {useState, useContext} from "react";
 import axios from "axios";
 import UserContext from "../context/UserContext.jsx";
 import {useNavigate} from "react-router";
@@ -7,9 +7,10 @@ import Swal from "sweetalert2";
 function Login() {
     const [id, setId] = useState('');
     const [pass, setPass] = useState('');
+    const [error, setError] = useState('');
 
     // context 넘길 값
-    const {setUser} = useContext(UserContext);
+    const { setUser } = useContext(UserContext);
     const navigate = useNavigate();
 
     // 로그인
@@ -26,11 +27,23 @@ function Login() {
         }
 
         axios.post(`http://localhost:8080/MeausrePro/User/login`, {
-            id: id, pass: pass, name: '', tel: '', role: ''
+            idx: 1,
+            id: id,
+            pass: pass,
+            name: '',
+            tel: '',
+            role: '',
+            topManager: ''
         })
             .then(res => {
                 setUser({
-                    id: res.data.id, name: res.data.name, tel: res.data.tel, pass: res.data.pass
+                    idx: res.data.idx,
+                    id: res.data.id,
+                    pass: res.data.pass,
+                    name: res.data.name,
+                    tel: res.data.tel,
+                    role: res.data.role,
+                    topManager: res.data.topManager
                 })
                 navigate('/MeausrePro');
             })
@@ -44,18 +57,26 @@ function Login() {
                 setPass('');
             })
     }
-    // 회원가입 페이지 이동
-    const signUpPage = () => {
-        navigate('/SignUp')
-    }
 
     // test server login
     const testLogin = () => axios.post(`http://localhost:8080/MeausrePro/User/login`, {
-        id: 'test1@gmail.com', pass: '1234', name: '', tel: '',
+        idx: 1,
+        id: 'test1@gmail.com',
+        pass: '1234',
+        name: '',
+        tel: '',
+        role: '',
+        topManager: ''
     })
         .then(res => {
             setUser({
-                id: res.data.id, name: res.data.name, tel: res.data.tel, pass: res.data.pass
+                idx: res.data.idx,
+                id: res.data.id,
+                pass: res.data.pass,
+                name: res.data.name,
+                tel: res.data.tel,
+                role: res.data.role,
+                topManager: res.data.topManager
             })
             navigate('/MeausrePro');
         })
@@ -114,13 +135,6 @@ function Login() {
                             className={'btn greenBtn'}>
                         로그인
                     </button>
-                    <div className={'d-flex justify-content-end'}>
-                        <button type={'button'}
-                                className={'btn btn-link text-success text-decoration-none'}
-                                onClick={signUpPage}>
-                            Sign Up
-                        </button>
-                    </div>
                 </form>
                 <button type={'button'} className={'btn btn-success opacity-50'} onClick={testLogin}>
                     test
