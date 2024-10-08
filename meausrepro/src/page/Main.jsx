@@ -94,10 +94,10 @@ function Main() {
     }
     return (
         <div>
-            <header>
-                <Header />
-            </header>
-            <div className={'container-fluid p-0 mx-0 my-5'}>
+            {/*<header>*/}
+            {/*    /!*<Header />*!/*/}
+            {/*</header>*/}
+            <div className={'d-flex'}>
                 <NavBar topManager={user.topManager} />
                 <MainSideBar
                     enableDrawing = {enableDrawing}
