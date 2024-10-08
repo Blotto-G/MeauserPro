@@ -1,10 +1,12 @@
 import { useContext, useEffect, useState } from "react";
 import UserContext from "../context/UserContext.jsx";
 import axios from "axios";
+import {map} from "react-bootstrap/ElementChildren";
+import error from "eslint-plugin-react/lib/util/error.js";
 
 function MapComponent(props) {
     const { user } = useContext(UserContext);
-    const { sendGeometry, isDrawingEnabled, setIsDrawingEnabled, isModalOpen, projectList } = props;
+    const { sendGeometry, isDrawingEnabled, setIsDrawingEnabled, isModalOpen } = props;
 
     const [polygonCoords, setPolygonCoords] = useState([]);
     const [currentPolygon, setCurrentPolygon] = useState(null);
@@ -13,6 +15,8 @@ function MapComponent(props) {
     const [mapInstance, setMapInstance] = useState(null);
     const [polygons, setPolygons] = useState([]); // 저장된 폴리곤 목록
     const [drawnPolygons, setDrawnPolygons] = useState([]); // 새로 그린 폴리곤 관리
+    const [currentPolygonId, setCurrentPolygonId] = useState(null); // 현재 폴리곤 ID 상태 추가
+    const [searchQuery, setSearchQuery] = useState(""); // 주소 검색 기능
     const [markers, setMarkers] = useState([]);
 
     // 지도 로드
@@ -67,40 +71,66 @@ function MapComponent(props) {
 
     // 진행 중인 프로젝트 폴리곤 불러오기
     useEffect(() => {
-        axios
-            .get(`http://localhost:8080/MeausrePro/Project/inProgress/${user.id}`)
-            .then((res) => {
-                const { data } = res;
-                const geometry = data.map((pro) => pro.geometry);
-                setPolygons(geometry);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+        if (user && user.id) {
+            axios
+                .get(`http://localhost:8080/MeausrePro/Project/inProgress/${user.id}`)
+                .then((res) => {
+                    const { data } = res;
+                    setPolygons(data); // 전체 프로젝트 데이터를 저장
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
     }, [user]);
 
     // 저장된 폴리곤을 지도에 그리기
     useEffect(() => {
-        if (mapInstance && projectList.length > 0) {
-            const newPolygons = projectList.map((project) => {
+        if (mapInstance && polygons.length > 0) {
+            drawnPolygons.forEach((polygon) => polygon.setMap(null)); // 기존 폴리곤을 먼저 지운다.
+
+            const newPolygons = polygons.map((project) => {
+                if (!project.geometry) {
+                    console.warn("유효하지 않은 지오메트리 데이터:", project);
+                    return null;
+                }
+
                 const geometry = geometryData(project.geometry);
+                if (geometry.length === 0) return null;
 
                 const polygon = new naver.maps.Polygon({
                     map: mapInstance,
                     paths: geometry,
-                    fillColor: "#a8e8a8",
-                    fillOpacity: 0.1,
-                    strokeColor: "#a8e8a8",
-                    strokeOpacity: 0.5,
+                    fillColor: "#39b3ff",
+                    fillOpacity: 0.5,
+                    strokeColor: "#39b3ff",
+                    strokeOpacity: 0.8,
                     strokeWeight: 2,
+                    clickable: true,
+                });
+
+                // 우클릭 이벤트 추가
+                naver.maps.Event.addListener(polygon, "rightclick", function (e) {
+                    setContextMenuVisible(true);
+                    setContextMenuPosition({
+                        x: e.pointerEvent.pageX,
+                        y: e.pointerEvent.pageY,
+                    });
+                    setCurrentPolygon(polygon);
+                    setCurrentPolygonId(project.idx); // 저장된 폴리곤 ID 설정
+
+                    // 현재 폴리곤의 좌표를 상태에 저장 (수정할 수 있도록)
+                    const currentPath = polygon.getPaths().getAt(0).getArray();
+                    const coords = currentPath.map(latlng => [latlng.lat(), latlng.lng()]);
+                    setPolygonCoords(coords);
                 });
 
                 return polygon;
-            });
+            }).filter(polygon => polygon !== null); // 유효한 폴리곤만 남김
 
             setDrawnPolygons(newPolygons);
         }
-    }, [mapInstance, projectList]);
+    }, [mapInstance, polygons]);
 
     // 프로젝트 생성 모드가 활성화되면 현재 그려진 폴리곤 삭제 및 저장된 폴리곤 표시
     useEffect(() => {
@@ -108,24 +138,19 @@ function MapComponent(props) {
             // 모든 저장된 폴리곤을 지도에서 숨김
             drawnPolygons.forEach((polygon) => polygon.setMap(null));
         } else if (!isModalOpen && drawnPolygons.length > 0) {
-            // 폴리곤 생성 취소 시 현재 그린 폴리곤 삭제
-            if (currentPolygon) {
-                currentPolygon.setMap(null);
-                setCurrentPolygon(null); // 현재 그린 폴리곤 초기화
-            }
-            // 모달이 닫히면 저장된 폴리곤 다시 표시
+            // 모달이 닫히면 기존 폴리곤 다시 표시
             drawnPolygons.forEach((polygon) => polygon.setMap(mapInstance));
         }
-    }, [isDrawingEnabled, isModalOpen, currentPolygon, drawnPolygons, mapInstance]);
+    }, [isDrawingEnabled, isModalOpen]);
 
     // 새로운 폴리곤 그리기
     const createPolygon = (map) => {
         const polygon = new naver.maps.Polygon({
             map: map,
             paths: [[]],
-            fillColor: "#75c6ea",
+            fillColor: "#fd4f54",
             fillOpacity: 0.3,
-            strokeColor: "#75c6ea",
+            strokeColor: "#fd4f54",
             strokeOpacity: 0.6,
             strokeWeight: 2,
             clickable: true,
@@ -186,6 +211,10 @@ function MapComponent(props) {
         setCurrentPolygon(null); // 현재 폴리곤 초기화
         setIsDrawingEnabled(true); // 그리기 활성화
         setContextMenuVisible(false); // 컨텍스트 메뉴 숨기기
+
+        if (mapInstance) {
+            createPolygon(mapInstance); // 다시 폴리곤을 그릴 수 있도록 호출
+        }
     };
 
     // 마커 크기 계산 함수
@@ -260,25 +289,100 @@ function MapComponent(props) {
         };
     }, [mapInstance, isDrawingEnabled]);
 
+    const handleSaveGeometry = () => {
+        if (currentPolygon && currentPolygonId) {
+            const wkt = `POLYGON((${polygonCoords.map(coord => `${coord[1]} ${coord[0]}`).join(', ')}))`;
+
+            // 서버에 지오메트리 업데이트 요청
+            const geometryDto = {
+                geometryData: wkt,
+                idx: currentPolygonId,
+            };
+
+            axios.put(`http://localhost:8080/MeausrePro/Project/updateGeometry`, geometryDto)
+                .then(() => {
+                    currentPolygon.setMap(null); // 현재 그려진 폴리곤 제거
+                    setPolygonCoords([]); // 폴리곤 좌표 초기화
+                    setCurrentPolygon(null); // 현재 폴리곤 초기화
+                    setContextMenuVisible(false); // 컨텍스트 메뉴 숨기기
+
+                    // 업데이트된 폴리곤을 반영하기 위해 상태 업데이트
+                    setPolygons(prevPolygons => {
+                        return prevPolygons.map(polygon =>
+                            polygon.idx === currentPolygonId ? { ...polygon, geometry: wkt } : polygon
+                        );
+                    });
+                })
+                .catch((error) => {
+                    console.error("지오메트리 저장 실패:", error);
+                });
+        }
+    };
+
+    // 주소 검색 처리 함수
+    const handleSearch = () => {
+        if (searchQuery.trim() === "") return;
+
+        axios
+            .get(`http://localhost:8080/MeausrePro/Maps/geocode?query=${encodeURIComponent(searchQuery)}`)
+            .then((response) => {
+                const data = response.data;
+                if (data && data.addresses && data.addresses.length > 0) {
+                    const { x, y } = data.addresses[0]; // 좌표 가져오기
+                    const newCenter = new naver.maps.LatLng(y, x);
+
+                    if (mapInstance) {
+                        mapInstance.setCenter(newCenter); // 지도 중심 이동
+                    }
+                } else {
+                    console.warn("주소를 찾을 수 없습니다.");
+                }
+            })
+            .catch((error) => {
+                console.error("주소 검색 중 오류 발생:", error);
+            });
+    };
+
     return (
         <>
             <div id="map" style={{ width: "600px", height: "500px" }}></div>
+            {/* 주소 검색 UI */}
+            <div style={{ marginBottom: "10px" }}>
+                <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="주소를 입력하세요"
+                    style={{ marginRight: "5px" }}
+                />
+                <button onClick={handleSearch}>주소 검색</button>
+            </div>
             {contextMenuVisible && (
                 <div
                     style={{
-                        position: "absolute",
+                        position: 'absolute',
                         top: `${contextMenuPosition.y}px`,
                         left: `${contextMenuPosition.x}px`,
-                        background: "#fff",
-                        padding: "10px",
-                        border: "2px solid #333",
-                        zIndex: "1000",
+                        background: '#fff',
+                        padding: '10px',
+                        border: '2px solid #333',
+                        zIndex: '1000'
                     }}
                 >
-                    <button onClick={handleSave}>저장</button>
-                    <button onClick={handleReset}>다시 그리기</button>
+                    {currentPolygonId ? (
+                        <>
+                            <button onClick={handleSaveGeometry}>저장</button> {/* 기존 폴리곤 저장 */}
+                            <button onClick={handleReset}>다시 그리기</button> {/* 기존 폴리곤 다시 그리기 */}
+                        </>
+                    ) : (
+                        <>
+                            <button onClick={handleSave}>저장</button> {/* 신규 폴리곤 저장 */}
+                            <button onClick={handleReset}>다시 그리기</button> {/* 신규 폴리곤 다시 그리기 */}
+                        </>
+                    )}
                 </div>
             )}
+
         </>
     );
 }

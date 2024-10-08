@@ -4,10 +4,13 @@ const UserContext = React.createContext();
 
 export const UserProvder = ({children}) => {
     const[user, setUser] = useState({
+        idx: -1,
         id: '',
         pass: '',
         name: '',
-        tel: ''
+        tel: '',
+        role: '',
+        topManager: ''
     });
 
     return (

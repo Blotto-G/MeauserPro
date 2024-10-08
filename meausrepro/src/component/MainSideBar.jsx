@@ -1,10 +1,11 @@
-import {useContext, useState, useRef, useEffect} from "react";
+import {useContext, useEffect, useRef, useState} from "react";
 import UserContext from "../context/UserContext.jsx";
 import axios from "axios";
 
 function MainSideBar(props) {
-    const {user} = useContext(UserContext);
-    const {enableDrawing, openSectionModal, handleProjectClick, projectBtnText, projectList} = props;
+    const { user } = useContext(UserContext);
+    const { enableDrawing, openSectionModal,
+        handleProjectClick, projectBtnText, projectList } = props;
 
     // 프로젝트 선택
     const [isSelectProject, setIsSelectProject] = useState(null);
@@ -23,24 +24,24 @@ function MainSideBar(props) {
         handleSectionList(project.idx);
     };
 
+
     // 구간생성에서 뒤로 가기
     const handleBack = () => {
         setIsSelectProject(null);
-    };
+    }
 
     // 특정 프로젝트 구간 보기
     const handleSectionList = (projectId) => {
-        axios
-            .get(`http://localhost:8080/MeausrePro/Section/${projectId}`)
-            .then((res) => {
+        axios.get(`http://localhost:8080/MeausrePro/Section/${projectId}`)
+            .then(res=> {
                 console.log(res);
-                const {data} = res;
+                const { data } = res;
                 setSectionList(data);
             })
-            .catch((err) => {
+            .catch(err => {
                 console.log(err);
-            });
-    };
+            })
+    }
 
     // 구간 클릭 시 드롭다운 토글
     const toggleSectionDropdown = (sectionId) => {
@@ -75,7 +76,7 @@ function MainSideBar(props) {
                     </div>
                     <hr/>
                     <div key={isSelectProject.idx} className={"d-flex flex-column gap-1"}>
-                    <span>{isSelectProject.siteName}</span>
+                        <span>{isSelectProject.siteName}</span>
                         <span>주소: {isSelectProject.siteAddress}</span>
                         <span>시작일자: {isSelectProject.startDate}</span>
                         <span>종료일자: {isSelectProject.endDate}</span>
