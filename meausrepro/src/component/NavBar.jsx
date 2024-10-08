@@ -1,7 +1,9 @@
 import {Link, useLocation} from "react-router-dom";
 
-function NavBar() {
+function NavBar(props) {
     const location = useLocation();
+
+    const { topManager } = props;
 
     return (
         <div className={"sidebar"}
@@ -24,19 +26,25 @@ function NavBar() {
                             <Link to={'/report'} style={{textDecoration: 'none',
                                 color: location.pathname === '/report' ? 'blue' : 'black'}}>리포트</Link>
                         </li>
+                        {topManager === '1' && (
+                            <li className={"sidebarListItem mt-2"}
+                                style={{display: 'flex', alignItems: 'center', marginBottom: '15px'}}>
+                                <img src="/src/assets/images/sm_5afc48f016664.jpg" alt=""
+                                     style={{width: '35px', marginRight: '10px'}}/>
+                                <Link to={'/UserManagement'} style={{
+                                    textDecoration: 'none',
+                                    color: location.pathname === '/user' ? 'blue' : 'black'
+                                }}>회원 관리</Link>
+                            </li>
+                        )}
                         <li className={"sidebarListItem mt-2"}
-                            style={{ display: 'flex', alignItems: 'center', marginBottom: '15px' }}>
-                            <img src="/src/assets/images/sm_5afc48f016664.jpg" alt=""
-                                 style={{width: '35px', marginRight: '10px'}}/>
-                            <Link to={'/user'} style={{textDecoration: 'none',
-                                color: location.pathname === '/user' ? 'blue' : 'black'}}>회원 관리</Link>
-                        </li>
-                        <li className={"sidebarListItem mt-2"}
-                            style={{ display: 'flex', alignItems: 'center', marginBottom: '15px' }}>
+                            style={{display: 'flex', alignItems: 'center', marginBottom: '15px'}}>
                             <img src="/src/assets/images/1827737.png" alt=""
                                  style={{width: '30px', marginRight: '10px'}}/>
-                            <Link to={'/system'} style={{textDecoration: 'none',
-                                color: location.pathname === '/system' ? 'blue' : 'black'}}>시스템 관리</Link>
+                            <Link to={'/system'} style={{
+                                textDecoration: 'none',
+                                color: location.pathname === '/system' ? 'blue' : 'black'
+                            }}>시스템 관리</Link>
                         </li>
                     </ul>
                 </div>

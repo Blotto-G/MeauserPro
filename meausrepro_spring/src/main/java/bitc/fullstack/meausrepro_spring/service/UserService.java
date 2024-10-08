@@ -5,6 +5,9 @@ import bitc.fullstack.meausrepro_spring.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -13,17 +16,27 @@ public class UserService {
     private UserRepository userRepository;
 
     // 로그인
-    public Optional<MeausreProUser> findById(String id) {
-        return userRepository.findById(id);
+    public Optional<MeausreProUser> findById(String userId) {
+        return userRepository.findByUserId(userId);
     }
 
     // 회원가입
     public MeausreProUser signUp(MeausreProUser signUpUser) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String formattedDate = sdf.format(new Date());
+
+        signUpUser.setCreateDate(formattedDate);
+
         return  userRepository.save(signUpUser);
     }
 
     // 아이디 중복 확인
-    public int checkId(String id) {
-        return userRepository.countById(id);
+    public int checkId(String id, int companyIdx) {
+        return userRepository.countById(id, companyIdx);
+    }
+
+    // 전체 관리자 겸 웹 관리자 제외 회원정보 보기
+    public List<MeausreProUser> getNotTopManager() {
+        return userRepository.findByAllNotTopManager();
     }
 }

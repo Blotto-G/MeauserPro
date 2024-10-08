@@ -31,9 +31,9 @@ public class ProjectController {
     }
 
     // 진행 중인 프로젝트 모두 보기
-    @GetMapping("/inProgress/{id}")
-    public List<MeausreProProject> inProgress(@PathVariable String id) {
-        return projectService.inProgress(id);
+    @GetMapping("/inProgress/{id}/{topManager}")
+    public List<MeausreProProject> inProgress(@PathVariable String id, @PathVariable String topManager) {
+        return projectService.inProgress(id, topManager);
     }
 
     // 현장명 검색

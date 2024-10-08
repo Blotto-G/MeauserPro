@@ -31,8 +31,8 @@ public class ProjectService {
     }
 
     // 진행 중인 프로젝트 모두 보기
-    public List<MeausreProProject> inProgress(String id) {
-        return projectRepository.findAllByIdInProgress(id);
+    public List<MeausreProProject> inProgress(String id, String topManager) {
+        return projectRepository.findAllByIdInProgress(id, topManager);
     }
 
     // 공사 현장 검색

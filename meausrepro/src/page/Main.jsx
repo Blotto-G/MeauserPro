@@ -39,7 +39,7 @@ function Main() {
 
     // 프로젝트 목록을 가져오는 함수
     const fetchProjects = () => {
-        axios.get(`http://localhost:8080/MeausrePro/Project/inProgress/${user.id}`)
+        axios.get(`http://localhost:8080/MeausrePro/Project/inProgress/${user.id}/${user.topManager}`)
             .then(res => {
                 setProjectList(res.data);
             })
@@ -98,7 +98,7 @@ function Main() {
                 <Header />
             </header>
             <div className={'container-fluid p-0 mx-0 my-5'}>
-                <NavBar />
+                <NavBar topManager={user.topManager} />
                 <MainSideBar
                     enableDrawing = {enableDrawing}
                     handleProjectClick = {handleProjectClick}

@@ -23,6 +23,9 @@ function ProjectCreateModal(props) {
         setEndDate(startDate);
     }, [startDate]);
 
+    // 작업그룹 불러오기
+
+
     // 프로젝트 생성
     const handleCreateProject = async () => {
         console.log(geometryData);
