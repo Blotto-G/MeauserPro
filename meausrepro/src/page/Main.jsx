@@ -34,6 +34,7 @@ function Main() {
             // 로그인 정보 없을 시, 로그인 페이지로 리다이렉트
             navigate('/');
         }
+        fetchProjects();
     }, [user, navigate]);
 
     // 프로젝트 목록을 가져오는 함수
