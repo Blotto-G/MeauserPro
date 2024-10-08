@@ -1,14 +1,15 @@
 package bitc.fullstack.meausrepro_spring.service;
 
+import bitc.fullstack.meausrepro_spring.dto.GeometryDto;
 import bitc.fullstack.meausrepro_spring.model.MeausreProProject;
 import bitc.fullstack.meausrepro_spring.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProjectService {
@@ -39,4 +40,22 @@ public class ProjectService {
         return projectRepository.searchSite(id, siteName);
     }
 
+    // 지오메트리 업데이트
+    public boolean updateGeometry(int projectId, String newGeometry) {
+        Optional<MeausreProProject> projectOptional = projectRepository.findById(String.valueOf(projectId));
+        if (projectOptional.isPresent()) {
+            MeausreProProject project = projectOptional.get();
+            project.setGeometry(newGeometry);
+            projectRepository.save(project);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    // 특정 프로젝트 찾기
+    public Optional<MeausreProProject> findById(int idx) {
+        return projectRepository.findByIdx(idx);
+    }
 }
+

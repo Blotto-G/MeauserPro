@@ -7,8 +7,7 @@ export const UserProvder = ({children}) => {
         id: '',
         pass: '',
         name: '',
-        tel: '',
-        role: ''
+        tel: ''
     });
 
     return (

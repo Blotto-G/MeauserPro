@@ -20,10 +20,13 @@ function Main() {
     const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
     // 프로젝트 선택 시, 프로젝트 정보 보여주기
     const [isSelectedProject, setIsSelectedProject] = useState(null);
+    // 버튼 텍스트 관리
+    const [isBtnText, setIsBtnText] = useState('프로젝트 생성')
 
     // 구간 생성 모달
     const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
 
+    // 로그인 정보 없을 시, 로그인 페이지로 이동
     useEffect(() => {
         if (!user.id) {
             // 로그인 정보 없을 시, 로그인 페이지로 리다이렉트
@@ -39,9 +42,16 @@ function Main() {
         console.log(coordinates);
     }
 
-    // 프로젝트 생성 버튼 클릭 시 폴리곤 생성 모드 활성화
+    // 프로젝트 생성, 취소 버튼 클릭 시 폴리곤 생성 모드 활성화 및 취소
     const enableDrawing = () => {
-        setIsDrawingEnabled(true);
+        if (isDrawingEnabled) {
+            setIsDrawingEnabled(false);
+            setIsBtnText('프로젝트 생성');
+            window.location.reload();
+        } else {
+            setIsDrawingEnabled(true);
+            setIsBtnText('프로젝트 생성 취소')
+        }
     }
 
     // 프로젝트 생성 모달 닫기
@@ -71,12 +81,15 @@ function Main() {
                 <MainSideBar
                     enableDrawing = {enableDrawing}
                     handleProjectClick = {handleProjectClick}
-                    openSectionModal = {openSectionModal} />
+                    openSectionModal = {openSectionModal}
+                    projectBtnText = {isBtnText}
+                />
                 <div className={'mainSection'}>
                     <MapComponent
                         sendGeometry = {handleGeometryData}
                         isDrawingEnabled = {isDrawingEnabled}
-                        setIsDrawingEnabled = {setIsDrawingEnabled} />
+                        setIsDrawingEnabled = {setIsDrawingEnabled}
+                    />
                     <ProjectCreateModal
                         geometryData = {geometryData}
                         isOpen = {isProjectModalOpen}
