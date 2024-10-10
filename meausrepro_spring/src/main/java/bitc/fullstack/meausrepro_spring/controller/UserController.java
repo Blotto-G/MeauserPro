@@ -19,7 +19,7 @@ public class UserController {
     // 로그인
     @PostMapping("/login")
     public MeausreProUser login(@RequestBody MeausreProUser loginUser) {
-        System.out.println(loginUser.getId());
+        System.out.println("\n" + loginUser.getId() + "\n");
         Optional<MeausreProUser> user = userService.findById(loginUser.getId());
 
         if (user.isPresent()) {

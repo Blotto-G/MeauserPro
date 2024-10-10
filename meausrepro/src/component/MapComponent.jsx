@@ -4,7 +4,7 @@ import axios from "axios";
 
 function MapComponent(props) {
     const { user } = useContext(UserContext);
-    const { sendGeometry, isDrawingEnabled, setIsDrawingEnabled, isModalOpen } = props;
+    const { sendGeometry, isDrawingEnabled, setIsDrawingEnabled, isModalOpen, setIsMapReady } = props;
 
     const [polygonCoords, setPolygonCoords] = useState([]);
     const [currentPolygon, setCurrentPolygon] = useState(null);
@@ -74,7 +74,7 @@ function MapComponent(props) {
     useEffect(() => {
         if (user && user.id) {
             axios
-                .get(`http://localhost:8080/MeausrePro/Project/inProgress/${user.id}`)
+                .get(`http://localhost:8080/MeausrePro/Project/inProgress/${encodeURIComponent(user.id)}/${user.topManager}`)
                 .then((res) => {
                     const { data } = res;
                     setPolygons(data); // 전체 프로젝트 데이터를 저장
