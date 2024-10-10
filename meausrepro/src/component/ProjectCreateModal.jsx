@@ -4,7 +4,7 @@ import UserContext from "../context/UserContext.jsx";
 
 function ProjectCreateModal(props) {
     const {user} = useContext(UserContext);
-    const {geometryData, isOpen, closeModal, onProjectCreated} = props;
+    const {geometryData, isOpen, closeModal, onProjectCreated, clearAllMapElements} = props;
 
     const dateNow = new Date();
     const today = dateNow.toISOString().slice(0, 10);
@@ -70,6 +70,9 @@ function ProjectCreateModal(props) {
 
     // 모달 닫기
     const handleCloseModal = () => {
+        if (clearAllMapElements) {
+            clearAllMapElements();
+        }
         setSiteName('');
         setAddress('');
         setStartDate('');

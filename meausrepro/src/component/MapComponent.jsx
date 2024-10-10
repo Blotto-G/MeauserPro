@@ -1,10 +1,10 @@
-import { useContext, useEffect, useState } from "react";
+import {useCallback, useContext, useEffect, useState} from "react";
 import UserContext from "../context/UserContext.jsx";
 import axios from "axios";
 
 function MapComponent(props) {
     const { user } = useContext(UserContext);
-    const { sendGeometry, isDrawingEnabled, setIsDrawingEnabled, isModalOpen, setIsMapReady } = props;
+    const { sendGeometry, isDrawingEnabled, setIsDrawingEnabled, isModalOpen, setMoveToPolygon } = props;
 
     const [polygonCoords, setPolygonCoords] = useState([]);
     const [currentPolygon, setCurrentPolygon] = useState(null);
@@ -17,8 +17,13 @@ function MapComponent(props) {
     const [markers, setMarkers] = useState([]); // 동그란 점(마커)을 저장할 배열을 상태로 선언
     const [searchQuery, setSearchQuery] = useState(""); // 주소 검색 기능
 
+    const [isMapReady, setIsMapReady] = useState(false);
+
+
     // 지도 로드
     useEffect(() => {
+        if (mapInstance) return; // 지도 인스턴스가 이미 있으면 초기화 중단
+
         const initMap = () => {
             if (!window.naver || !naver.maps) {
                 console.log("Map 로드 중");
@@ -37,7 +42,12 @@ function MapComponent(props) {
             const map = new naver.maps.Map("map", mapOptions);
             setMapInstance(map);
             setIsMapReady(true);
-            console.log("Map instance has been set:", map); // 추가된 로그
+
+            // 지도가 로드된 후 상태 업데이트
+            naver.maps.Event.addListener(map, 'idle', () => {
+                console.log("Map is now fully loaded and ready.");
+                setIsMapReady(true);
+            });
         };
 
         if (window.naver && window.naver.maps) {
@@ -70,11 +80,58 @@ function MapComponent(props) {
         return geometry;
     };
 
+    // 지도와 폴리곤 데이터가 준비되면 폴리곤으로 이동
+    useEffect(() => {
+        if (isMapReady && polygons.length > 0 && mapInstance) {
+            const geometryStr = polygons[0]?.geometry;
+            if (geometryStr) {
+                console.log("자동 이동: 첫 번째 폴리곤으로 이동합니다.", geometryStr);
+                moveToPolygon(geometryStr);
+            }
+        }
+    }, [isMapReady, mapInstance, polygons]);
+
+    // 폴리곤 이동 함수 정의
+    const moveToPolygon = useCallback((geometryStr) => {
+        if (!mapInstance) {
+            console.warn("지도 인스턴스가 준비되지 않았습니다.");
+            return;
+        }
+
+        const geometry = geometryStr
+            .replace("POLYGON((", "")
+            .replace("))", "")
+            .split(",")
+            .map((coord) => {
+                const [lng, lat] = coord.trim().split(" ");
+                return new naver.maps.LatLng(parseFloat(lat), parseFloat(lng));
+            });
+
+        if (geometry.length === 0) {
+            console.warn("유효하지 않은 지오메트리 데이터입니다.");
+            return;
+        }
+
+        const bounds = new naver.maps.LatLngBounds();
+        geometry.forEach((coord) => bounds.extend(coord));
+        mapInstance.fitBounds(bounds);
+
+        console.log("폴리곤 위치로 지도 이동 완료:", bounds);
+    }, [mapInstance]);
+
+    // 부모 컴포넌트에 moveToPolygon 함수 설정
+    useEffect(() => {
+        if (setMoveToPolygon && isMapReady) {
+            setMoveToPolygon(() => moveToPolygon);
+            console.log("moveToPolygon 함수가 부모 컴포넌트에 설정되었습니다.");
+        }
+    }, [setMoveToPolygon, isMapReady, moveToPolygon]);
+
     // 진행 중인 프로젝트 폴리곤 불러오기
     useEffect(() => {
         if (user && user.id) {
             axios
-                .get(`http://localhost:8080/MeausrePro/Project/inProgress/${encodeURIComponent(user.id)}/${user.topManager}`)
+                .get(`http://localhost:8080/MeausrePro/Project/inProgress/${encodeURIComponent(user.id)}/${encodeURIComponent(user.topManager)}`)
                 .then((res) => {
                     const { data } = res;
                     setPolygons(data); // 전체 프로젝트 데이터를 저장
@@ -194,7 +251,6 @@ function MapComponent(props) {
         setCurrentPolygon(polygon);
     };
 
-
     // 폴리곤 생성 모드
     useEffect(() => {
         if (isDrawingEnabled && mapInstance) {
@@ -285,7 +341,7 @@ function MapComponent(props) {
                     setContextMenuVisible(false);
 
                     // 서버에서 업데이트된 데이터 다시 불러오기
-                    axios.get(`http://localhost:8080/MeausrePro/Project/inProgress/${user.id}`)
+                    axios.get(`http://localhost:8080/MeausrePro/Project/inProgress/${encodeURIComponent(user.id)}/${encodeURIComponent(user.topManager)}`)
                         .then(res => {
                             const { data } = res;
                             setPolygons(data); // 서버에서 새로운 폴리곤 데이터 받아와서 업데이트
@@ -299,7 +355,7 @@ function MapComponent(props) {
                 });
         }
     };
-    
+
 
     // 주소 검색 처리 함수
     const handleSearch = () => {
@@ -325,6 +381,7 @@ function MapComponent(props) {
             });
     };
 
+
     return (
         <div className={'w-100 h-100 d-flex flex-column justify-content-center align-items-center pt-3'}>
             <div className={'input-group mb-4'} style={{width: '300px'}}>
@@ -348,6 +405,7 @@ function MapComponent(props) {
                     </button>
                 </div>
             </div>
+
             <div id="map" style={{width: "100%", height: "100%"}}></div>
             {contextMenuVisible && (
                 <div

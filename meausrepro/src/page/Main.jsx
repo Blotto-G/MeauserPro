@@ -7,14 +7,19 @@ import SectionCreateModal from "../component/SectionCreateModal.jsx";
 import MainSideBar from "../component/sidebar/MainSideBar.jsx";
 import CustomSidebar from "../component/sidebar/CustomSidebar.jsx";
 import axios from "axios";
+import ProjectEditModal from "../component/ProjectEditModal.jsx";
 
 function Main() {
     const { user } = useContext(UserContext);
     const navigate = useNavigate();
 
+    // 폴리곤 이동
+    const [moveToPolygon, setMoveToPolygon] = useState(null);
+
     // 지도 로드 상태 및 키 상태
     const [isMapReady, setIsMapReady] = useState(false);
     const [mapKey, setMapKey] = useState(0); // 맵을 다시 불러오기 위한 키 상태
+    const [sideBarKey, setSideBarKey] = useState(0);
     const [geometryData, setGeometryData] = useState('');
     const [isDrawingEnabled, setIsDrawingEnabled] = useState(false);
     const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
@@ -22,6 +27,7 @@ function Main() {
     const [isSelectedProject, setIsSelectedProject] = useState(null);
     const [isBtnText, setIsBtnText] = useState('프로젝트 생성');
     const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false); // 수정 모달 상태 추가
 
     // 로그인 정보 없을 시, 로그인 페이지로 이동
     useEffect(() => {
@@ -70,10 +76,12 @@ function Main() {
         setMapKey(prevKey => prevKey + 1); // 프로젝트 생성 후에도 맵을 다시 로드
     };
 
+    // 구간 저장 모달 열기
     const openSectionModal = () => {
         setIsSectionModalOpen(true);
     };
 
+    // 구간 정보 모달 닫기
     const closeSectionModal = () => {
         setIsSectionModalOpen(false);
     };
@@ -82,16 +90,65 @@ function Main() {
         setIsSelectedProject(project);
     };
 
+    // 수정 모달 열기 함수
+    const openEditModal = (project) => {
+        setIsSelectedProject(project);
+        setIsEditModalOpen(true);
+    };
+
+    // 수정 모달 닫기 함수
+    const closeEditModal = () => {
+        setIsEditModalOpen(false);
+        setIsSelectedProject(null);
+    };
+
+    // 수정 완료 시 프로젝트 목록 업데이트
+    const onProjectUpdated = () => {
+        fetchProjects();
+        setIsEditModalOpen(false);
+        setSideBarKey(prevKey => prevKey + 1); // 사이드바 리로드
+        setMapKey(prevKey => prevKey + 1); // 맵을 다시 로드하여 최신 상태 반영
+    };
+
+    // 프로젝트 목록 업데이트 후 선택한 프로젝트 정보 업데이트
+    useEffect(() => {
+        if (isSelectedProject) {
+            const updatedProject = projectList.find(p => p.idx === isSelectedProject.idx);
+            if (updatedProject) {
+                setIsSelectedProject(updatedProject);
+            }
+        }
+    }, [projectList]);
+
+    // 프로젝트 삭제
+    const deleteProject = (projectId) => {
+        axios.delete(`http://localhost:8080/MeausrePro/Project/delete/${projectId}`)
+            .then(() => {
+                alert("프로젝트가 삭제되었습니다.");
+                setProjectList(prevList => prevList.filter(project => project.idx !== projectId));
+                setMapKey(prevKey => prevKey + 1); // 맵을 다시 로드하여 변경 반영
+                setSideBarKey(prevKey => prevKey + 1); // 사이드바 리로드
+            })
+            .catch(err => {
+                console.error("프로젝트 삭제 중 오류 발생:", err);
+            });
+    };
+
     return (
         <div className={'d-flex vh-100'}>
             <CustomSidebar topManager={user.topManager} />
             <div className={'flex-grow-1 d-flex'}>
                 <MainSideBar
+                    key={`${sideBarKey} = ${mapKey}`}
                     enableDrawing={enableDrawing}
                     handleProjectClick={handleProjectClick}
                     openSectionModal={openSectionModal}
                     projectBtnText={isBtnText}
                     projectList={projectList}
+                    moveToPolygon={moveToPolygon}
+                    setProjectList={setProjectList}
+                    openEditModal={openEditModal}
+                    deleteProject={deleteProject}
                 />
                 <div className={'flex-grow-1'}>
                     <MapComponent
@@ -101,6 +158,7 @@ function Main() {
                         setIsDrawingEnabled={setIsDrawingEnabled}
                         isModalOpen={isProjectModalOpen}
                         setIsMapReady={setIsMapReady}
+                        setMoveToPolygon={setMoveToPolygon}
                     />
                     <ProjectCreateModal
                         geometryData={geometryData}
@@ -108,6 +166,11 @@ function Main() {
                         closeModal={closeProjectModal}
                         onProjectCreated={onProjectCreated}
                     />
+                    <ProjectEditModal
+                        projectData={isSelectedProject}
+                        isOpen={isEditModalOpen}
+                        closeModal={closeEditModal}
+                        onProjectUpdated={onProjectUpdated}/>
                     <SectionCreateModal
                         project={isSelectedProject}
                         isOpen={isSectionModalOpen}
