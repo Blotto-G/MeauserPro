@@ -1,5 +1,5 @@
 
-import CustomSidebar from "../component/CustomSidebar.jsx";
+import CustomSidebar from "../component/sidebar/CustomSidebar.jsx";
 import {useContext, useEffect, useState} from "react";
 import UserContext from "../context/UserContext.jsx";
 import {useNavigate} from "react-router-dom";

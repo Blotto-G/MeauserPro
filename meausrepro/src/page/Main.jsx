@@ -4,41 +4,33 @@ import { useNavigate } from "react-router";
 import MapComponent from "../component/MapComponent.jsx";
 import ProjectCreateModal from "../component/ProjectCreateModal.jsx";
 import SectionCreateModal from "../component/SectionCreateModal.jsx";
-import MainSideBar from "../component/MainSideBar.jsx";
-import CustomSidebar from "../component/CustomSidebar.jsx";
+import MainSideBar from "../component/sidebar/MainSideBar.jsx";
+import CustomSidebar from "../component/sidebar/CustomSidebar.jsx";
 import axios from "axios";
 
 function Main() {
     const { user } = useContext(UserContext);
     const navigate = useNavigate();
 
-    // 지도 로드
+    // 지도 로드 상태 및 키 상태
     const [isMapReady, setIsMapReady] = useState(false);
-    // 좌표 저장
+    const [mapKey, setMapKey] = useState(0); // 맵을 다시 불러오기 위한 키 상태
     const [geometryData, setGeometryData] = useState('');
-    // 폴리곤 생성
     const [isDrawingEnabled, setIsDrawingEnabled] = useState(false);
-    // 프로젝트 생성 모달
     const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
-    // 프로젝트 목록 상태
     const [projectList, setProjectList] = useState([]);
-    // 프로젝트 선택 시, 프로젝트 정보 보여주기
     const [isSelectedProject, setIsSelectedProject] = useState(null);
-    // 버튼 텍스트 관리
     const [isBtnText, setIsBtnText] = useState('프로젝트 생성');
-    // 구간 생성 모달
     const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
 
     // 로그인 정보 없을 시, 로그인 페이지로 이동
     useEffect(() => {
         if (!user || !user.id) {
-            // 로그인 정보 없을 시, 로그인 페이지로 리다이렉트
             navigate('/');
         }
         fetchProjects();
     }, [user, navigate]);
 
-    // 프로젝트 목록을 가져오는 함수
     const fetchProjects = () => {
         axios.get(`http://localhost:8080/MeausrePro/Project/inProgress/${encodeURIComponent(user.id)}/${user.topManager}`)
             .then(res => {
@@ -49,49 +41,43 @@ function Main() {
             });
     };
 
-    // 좌표 데이터 받는 함수
     const handleGeometryData = (coordinates) => {
         setGeometryData(coordinates);
         setIsProjectModalOpen(true);
-        console.log(coordinates);
     };
 
-    // 프로젝트 생성, 취소 버튼 클릭 시 폴리곤 생성 모드 활성화 및 취소
     const enableDrawing = () => {
         if (isDrawingEnabled) {
             setIsDrawingEnabled(false);
             setIsBtnText('프로젝트 생성');
-            window.location.reload();
+            // 맵 컴포넌트를 다시 불러오기 위해 key 값을 업데이트
+            setMapKey(prevKey => prevKey + 1);
         } else {
             setIsDrawingEnabled(true);
             setIsBtnText('프로젝트 생성 취소');
         }
     };
 
-    // 프로젝트 생성 모달 닫기
     const closeProjectModal = () => {
         setIsProjectModalOpen(false);
     };
 
-    // 프로젝트 생성 후 바로 반영 (프로젝트 목록 다시 불러오기)
     const onProjectCreated = () => {
         fetchProjects();
         setIsDrawingEnabled(false);
         setIsBtnText('프로젝트 생성');
         setIsProjectModalOpen(false);
+        setMapKey(prevKey => prevKey + 1); // 프로젝트 생성 후에도 맵을 다시 로드
     };
 
-    // 구간 생성 모달 열기
     const openSectionModal = () => {
         setIsSectionModalOpen(true);
     };
 
-    // 구간 생성 모달 닫기
     const closeSectionModal = () => {
         setIsSectionModalOpen(false);
     };
 
-    // 프로젝트 선택 시 해당 프로젝트 정보 표시
     const handleProjectClick = (project) => {
         setIsSelectedProject(project);
     };
@@ -109,6 +95,7 @@ function Main() {
                 />
                 <div className={'flex-grow-1'}>
                     <MapComponent
+                        key={mapKey} // key를 이용해 맵 컴포넌트를 다시 로드
                         sendGeometry={handleGeometryData}
                         isDrawingEnabled={isDrawingEnabled}
                         setIsDrawingEnabled={setIsDrawingEnabled}

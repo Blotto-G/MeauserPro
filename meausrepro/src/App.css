@@ -126,6 +126,7 @@ body {
   flex-direction: column;
   justify-content: space-between;
   border-right: 1px solid #c4c4c4;
+  z-index: 2;
 }
 .customSideBarList {
   display: flex;
@@ -161,46 +162,113 @@ body {
   color: white;
 }
 /* mainSideBar */
-.sideBar {
+.sideBarWrapper {
+  display: flex;
+  position: relative;
+}
+.sideBar,
+.sectionDetailSideBar {
   width: 280px;
-  height: 100vh;
-  padding: 1em 0.5em;
+  padding: 1.5em 0em;
+  background-color: white;
   border-right: 1px solid #c4c4c4;
-}
-.mainSection {
-  display: inline-block;
-}
-/* 구간 css */
-/* 드롭다운 열릴 때 */
-li.expanded {
-  transition: all 0.3s ease;
-}
-/* 드롭다운 기본 상태: 최대 높이 0 */
-.dpContent {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.5s ease;
-}
-/* 드롭다운이 열릴 때 */
-.dpContent.open {
+  transition: all 0.4s ease;
   display: flex;
   flex-direction: column;
   gap: 0.5em;
-  border-radius: 0.5em;
-  border: 1px solid black;
-  padding: 0.5em;
-  overflow: hidden;
 }
-.dpContent span {
-  font-family: 'SUITE-Regular';
+.sideBar {
+  height: 100vh;
+  position: relative;
+  z-index: 3;
 }
-.sectionTitle {
-  color: gray;
+.sectionDetailSideBar {
+  position: absolute;
+  padding: 2em 0em;
+  left: 100%;
+  top: 0;
+  bottom: 0;
+  transform: translateX(-100%);
+  opacity: 0;
+  z-index: 2;
 }
-
-.dpSection {
-  display: grid;
-  grid-template-columns: 0.5fr 1fr;
-  row-gap: 0.2em;
-  column-gap: 0.5em;
+.sectionDetailSideBar.open {
+  opacity: 1;
+  transform: translateX(0);
+}
+.sideBarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5em 1em;
+}
+.sideBarContent {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.sideBarProjectList {
+  list-style-type: none;
+  padding: 0em;
+}
+.projectItem {
+  padding: 1em 1.5em;
+  border: none;
+  width: 100%;
+  text-align: left;
+  background-color: transparent;
+  color: #252525;
+  transition: all 0.4s ease;
+}
+.projectItem.selected,
+.projectItem:hover,
+.projectBtn{
+  background-color: #a1e5c4;
+  color: white;
+}
+.projectItem button,
+.sideBarBtn {
+  border: none;
+  color: inherit;
+  background-color: transparent;
+}
+.sideBarBtn {
+  transition: all 0.3s ease;
+}
+.sideBarBtn:hover {
+  color: #428866;
+}
+.projectBtn{
+  border: 1px solid #a1e5c4;
+  transition: all 0.3s ease;
+}
+.projectBtn:hover {
+  border: 1px solid #87ccad;
+  background-color: #87ccad;
+}
+.projectDetail {
+  display: flex;
+  flex-direction: column;
+  padding: 0em 1em;
+  gap: 0.5em;
+}
+.projectUpdate {
+  color: #a5d595;
+}
+.projectUpdate:hover {
+  color: #83bb6f;
+}
+.projectDelete {
+  color: #f6a6a6;
+}
+.projectDelete:hover {
+  color: #ff6f6f;
+}
+.sectionSideBarTitle {
+  font-size: 1.15rem;
+}
+/* main */
+.mainSection {
+  display: inline-block;
 }

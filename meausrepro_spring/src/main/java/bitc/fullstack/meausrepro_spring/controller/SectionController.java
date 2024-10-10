@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/MeausrePro/Section")
@@ -27,5 +28,17 @@ public class SectionController {
     @GetMapping("/{projectId}")
     public List<MeausreProSection> projectSections(@PathVariable("projectId") int projectId) {
         return sectionService.projectSections(projectId);
+    }
+
+    // 구간 수정
+    @PutMapping("/update")
+    public ResponseEntity<String> updateSection(@RequestBody MeausreProSection section) {
+        boolean isUpdate = sectionService.updateSection(section);
+
+        if (isUpdate) {
+            return ResponseEntity.ok("Update");
+        } else {
+            return ResponseEntity.badRequest().body("수정에 실패했습니다.");
+        }
     }
 }
