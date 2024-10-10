@@ -1,8 +1,14 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 function CustomSidebar({ topManager }) {
     const location = useLocation();
+
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+    const toggleDropdown = () => {
+        setIsDropdownOpen(prevState => !prevState);
+    }
 
     return (
         <div className={'customSideBar'}>
@@ -38,10 +44,11 @@ function CustomSidebar({ topManager }) {
                     </div>
                 </Link>
                 {topManager === '1' && (<Link
-                        to="/UserManagement"
+                        // to="/UserManagement"
                         className={`text-decoration-none`}
                     >
-                        <div className={`customSideBarLink ${location.pathname === '/UserManagement' ? 'active' : ''}`}>
+                        <div className={`dropdown-toggle customSideBarLink ${location.pathname === '/UserManagement' ? 'active' : ''}`}
+                        onClick={toggleDropdown}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                  className="bi bi-people" viewBox="0 0 16 16">
                                 <path
@@ -49,13 +56,25 @@ function CustomSidebar({ topManager }) {
                             </svg>
                             <span>회원관리</span>
                         </div>
+                        {isDropdownOpen && (
+                            <div className={`dpContent ${isDropdownOpen ? 'open' : ''}`}>
+                                <div>
+                                    <Link to="/UserManagement" className={"customSideBarLink text-decoration-none"}>
+                                        회원정보관리</Link>
+                                </div>
+                                <div>
+                                    <Link to="/GroupManagement" className={"customSideBarLink text-decoration-none"}>
+                                        작업그룹 관리</Link>
+                                </div>
+                            </div>
+                        )}
                     </Link>
                 )}
                 <Link
                     to="/system"
                     className={`text-decoration-none`}
                 >
-                    <div className={`customSideBarLink ${location.pathname === '/system' ? 'active' : ''}`}>
+                <div className={`customSideBarLink ${location.pathname === '/system' ? 'active' : ''}`}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                              className="bi bi-gear" viewBox="0 0 16 16">
                             <path

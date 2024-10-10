@@ -120,7 +120,7 @@ body {
 /* customSideBar */
 .customSideBar {
   background-color: white;
-  width: 230px;
+  width: 200px;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -167,8 +167,16 @@ body {
   padding: 1em 0.5em;
   border-right: 1px solid #c4c4c4;
 }
-.mainSection {
+.mainSection-box {
+  background-color: #ffffff;
   display: inline-block;
+  border: 1px solid #dee2e6;
+  padding: 20px;
+  margin: 20px;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
+  max-height: 90vh;
+  min-height: 913px;
+  overflow: auto;
 }
 /* 구간 css */
 /* 드롭다운 열릴 때 */
@@ -179,21 +187,28 @@ li.expanded {
 .dpContent {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.5s ease;
 }
 /* 드롭다운이 열릴 때 */
 .dpContent.open {
+  max-height: 300px;
   display: flex;
   flex-direction: column;
   gap: 0.5em;
   border-radius: 0.5em;
-  border: 1px solid black;
   padding: 0.5em;
   overflow: hidden;
 }
 .dpContent span {
   font-family: 'SUITE-Regular';
+  padding: 0.5em;
+  color: #333;
 }
+
+.dpContent span:hover {
+  background-color: #ade3c9;
+  color: white;
+}
+
 .sectionTitle {
   color: gray;
 }
@@ -203,4 +218,18 @@ li.expanded {
   grid-template-columns: 0.5fr 1fr;
   row-gap: 0.2em;
   column-gap: 0.5em;
+}
+
+.table-hover tbody tr:hover td {
+  background-color: #ade3c9;
+}
+
+.table th,
+.table td {
+  border: 1px solid #dee2e6;
+}
+
+.btn-danger {
+  background-color: #f89898;
+  border: 1px solid #f89898;
 }
