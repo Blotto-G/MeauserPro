@@ -66,7 +66,7 @@ function MainSideBar(props) {
     }, [openSection]);
 
     return (
-        <div className={"sideBar"}>
+        <div className={"sideBar mt-2"}>
             {isSelectProject ? (
                 <div className={"d-flex flex-column"}>
                     <div className={'d-flex justify-content-between'}>

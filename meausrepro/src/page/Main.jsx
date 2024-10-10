@@ -97,10 +97,10 @@ function Main() {
     }
     return (
         <div>
-            {/*<header>*/}
-            {/*    /!*<Header />*!/*/}
-            {/*</header>*/}
-            <div className={'d-flex'}>
+            <header>
+                <Header />
+            </header>
+            <div className={'d-flex mt-5'}>
                 <NavBar topManager={user.topManager} />
                 <MainSideBar
                     enableDrawing = {enableDrawing}

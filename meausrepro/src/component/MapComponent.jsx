@@ -327,16 +327,18 @@ function MapComponent(props) {
 
     return (
         <>
-            <div id="map" style={{width: "600px", height: "500px"}}></div>
-            <div style={{marginBottom: "10px"}}>
+            <div className={"mt-2"} id="map" style={{width: "1000px", height: "700px"}}></div>
+            <div style={{marginBottom: '10px', display: 'flex', width: '300px'}}>
                 <input
                     type="text"
+                    className={"form-control"}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="주소를 입력하세요"
                     style={{marginRight: "5px"}}
                 />
-                <button onClick={handleSearch}>주소 검색</button>
+                <button className={"btn btn-outline-dark"} onClick={handleSearch}
+                style={{whiteSpace: 'nowrap'}}>주소 검색</button>
             </div>
             {contextMenuVisible && (
                 <div
