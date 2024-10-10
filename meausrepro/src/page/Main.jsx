@@ -34,6 +34,32 @@ function Main() {
     // 계측기 생성 모달
     const [isInstrumentModalOpen, setIsInstrumentModalOpen] = useState(false);
 
+
+
+    // 계측기 좌표 저장
+    const [insGeometryData, setInsGeometryData] = useState('');
+    // 마커 생성
+    const [isDrawingMarker, setIsDrawingMarker] = useState(false);
+
+    // 계측기 좌표 데이터 받는 함수
+    const handelInsGeometryData = (insCoordinates) => {
+        setInsGeometryData(insCoordinates);
+        setIsInstrumentModalOpen(true);
+        console.log(insCoordinates);
+    };
+
+    // 계측기 추가 버튼 클릭 시 마커 생성 모드 활성화 및 취소
+    const drawingMarkers = () => {
+        if (isDrawingMarker) {
+            setIsDrawingMarker(false);
+            window.location.reload();
+        } else {
+            setIsDrawingMarker(true);
+        }
+    };
+
+
+
     // 로그인 정보 없을 시, 로그인 페이지로 이동
     useEffect(() => {
         if (!user || !user.id) {
@@ -122,6 +148,7 @@ function Main() {
             <div className={'flex-grow-1 d-flex'}>
                 <MainSideBar
                     enableDrawing={enableDrawing}
+                    drawingMarkers={drawingMarkers} // 계측기 마커
                     handleProjectClick={handleProjectClick}
                     handleSectionClick={handleSectionClick}
                     openSectionModal={openSectionModal}
@@ -132,8 +159,11 @@ function Main() {
                 <div className={'flex-grow-1'}>
                     <MapComponent
                         sendGeometry={handleGeometryData}
+                        sendInsGeometry={handelInsGeometryData} // 계측기 지오매트리 정보
                         isDrawingEnabled={isDrawingEnabled}
+                        insGeometryData={insGeometryData} // 계측기 좌표
                         setIsDrawingEnabled={setIsDrawingEnabled}
+                        setIsDrawingMarker={setIsDrawingMarker} // 마커 생성
                         isModalOpen={isProjectModalOpen}
                         setIsMapReady={setIsMapReady}
                     />
@@ -149,6 +179,7 @@ function Main() {
                         closeModal={closeSectionModal}
                     />
                     <InstrumentCreateModal
+                        insGeometryData={insGeometryData} // 계측기 좌표
                         projectData={isSelectedProject}
                         section={isSelectedSection}
                         isOpen={isInstrumentModalOpen}
