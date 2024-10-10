@@ -136,7 +136,12 @@ function UserSignUpModal(props) {
                 });
         }
         else {
-            alert(`${isCheckId} ${isCheckPw} ${isCheckTel}`)
+            Swal.fire({
+                icon: "info",
+                text: `필드값을 모두 입력하세요.`,
+                showCancelButton: false,
+                confirmButtonText: '확인'
+            })
         }
     };
 
