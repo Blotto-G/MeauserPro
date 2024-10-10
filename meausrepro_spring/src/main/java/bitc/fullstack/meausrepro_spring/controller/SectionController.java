@@ -1,7 +1,6 @@
 package bitc.fullstack.meausrepro_spring.controller;
 
 import bitc.fullstack.meausrepro_spring.model.MeausreProSection;
-import bitc.fullstack.meausrepro_spring.repository.SectionRepository;
 import bitc.fullstack.meausrepro_spring.service.SectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

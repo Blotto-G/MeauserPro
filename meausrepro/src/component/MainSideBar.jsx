@@ -5,7 +5,7 @@ import axios from "axios";
 function MainSideBar(props) {
     const { user } = useContext(UserContext);
     const { enableDrawing, openSectionModal,
-        handleProjectClick, projectBtnText, projectList } = props;
+        handleProjectClick, handleSectionClick, projectBtnText, projectList, openInstrumentModal } = props;
 
     // 프로젝트 선택
     const [isSelectProject, setIsSelectProject] = useState(null);
@@ -99,9 +99,16 @@ function MainSideBar(props) {
                                         ref={(el) => (dropdownRefs.current[item.idx] = el)}
                                         className={`dpContent ${openSection === item.idx ? 'open' : ''}`}
                                     >
-                                        <span className={'fs-5'}>
-                                            구간 기본정보
-                                        </span>
+                                        {/* 구간 생성 버튼 */}
+                                        <div className="mt-3 d-flex justify-content-between">
+                                            <span className={'fs-5'}>
+                                                구간 기본정보
+                                            </span>
+                                            <button className={"nav-link link-dark"} type={"button"}
+                                                    onClick={openInstrumentModal}>
+                                                계측기 추가
+                                            </button>
+                                        </div>
                                         <span>
                                             속성
                                         </span>

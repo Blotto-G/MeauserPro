@@ -7,6 +7,7 @@ import SectionCreateModal from "../component/SectionCreateModal.jsx";
 import MainSideBar from "../component/MainSideBar.jsx";
 import CustomSidebar from "../component/CustomSidebar.jsx";
 import axios from "axios";
+import InstrumentCreateModal from "../component/InstrumentCreateModal.jsx";
 
 function Main() {
     const { user } = useContext(UserContext);
@@ -24,10 +25,14 @@ function Main() {
     const [projectList, setProjectList] = useState([]);
     // 프로젝트 선택 시, 프로젝트 정보 보여주기
     const [isSelectedProject, setIsSelectedProject] = useState(null);
+    // 구간 선택 시, 구간 정보 보여주기
+    const [isSelectedSection, setIsSelectedSection] = useState(null);
     // 버튼 텍스트 관리
     const [isBtnText, setIsBtnText] = useState('프로젝트 생성');
     // 구간 생성 모달
     const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
+    // 계측기 생성 모달
+    const [isInstrumentModalOpen, setIsInstrumentModalOpen] = useState(false);
 
     // 로그인 정보 없을 시, 로그인 페이지로 이동
     useEffect(() => {
@@ -91,10 +96,25 @@ function Main() {
         setIsSectionModalOpen(false);
     };
 
+    // 계측기 생성 모달 열기
+    const openInstrumentModal = () => {
+        setIsInstrumentModalOpen(true);
+    };
+
+    // 계측기 생성 모달 닫기
+    const closeInstrumentModal = () => {
+        setIsInstrumentModalOpen(false);
+    };
+
     // 프로젝트 선택 시 해당 프로젝트 정보 표시
     const handleProjectClick = (project) => {
         setIsSelectedProject(project);
     };
+
+    // 구간 선택 시 해당 구간 정보 표시
+    const handleSectionClick = (section) => {
+        setIsSelectedSection(section);
+    }
 
     return (
         <div className={'d-flex vh-100'}>
@@ -103,7 +123,9 @@ function Main() {
                 <MainSideBar
                     enableDrawing={enableDrawing}
                     handleProjectClick={handleProjectClick}
+                    handleSectionClick={handleSectionClick}
                     openSectionModal={openSectionModal}
+                    openInstrumentModal={openInstrumentModal}
                     projectBtnText={isBtnText}
                     projectList={projectList}
                 />
@@ -125,6 +147,12 @@ function Main() {
                         project={isSelectedProject}
                         isOpen={isSectionModalOpen}
                         closeModal={closeSectionModal}
+                    />
+                    <InstrumentCreateModal
+                        projectData={isSelectedProject}
+                        section={isSelectedSection}
+                        isOpen={isInstrumentModalOpen}
+                        closeModal={closeInstrumentModal}
                     />
                 </div>
             </div>
