@@ -4,7 +4,6 @@ import UserContext from "../context/UserContext.jsx";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import UserSignUpModal from "../component/UserSignUpModal.jsx";
-import CompanyModal from "../component/CompanyModal.jsx";
 
 function UserManagement() {
     const {user} = useContext(UserContext);
