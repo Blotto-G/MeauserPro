@@ -5,6 +5,7 @@ import UserContext from "../context/UserContext.jsx";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import UserSignUpModal from "../component/UserSignUpModal.jsx";
+import CompanyModal from "../component/CompanyModal.jsx";
 
 function UserManagement() {
     const { user } = useContext(UserContext);
@@ -26,6 +27,16 @@ function UserManagement() {
         setIsUserSignUpModal(false);
     }
 
+    // 작업그룹 생성 모달창
+    const [isCompanyModal, setIsCompanyModal] = useState(false);
+    // 작업그룹 생성 모달창 열기
+    const openCompanyModal = () => {
+        setIsCompanyModal(true);
+    }
+    // 작업그룹 생성 모달창 닫기
+    const closeCompanyModal = () => {
+        setIsCompanyModal(false);
+    }
     // 로그인 정보 없을 시, 로그인 페이지로 이동
     useEffect(() => {
         if (!user.id) {
@@ -75,15 +86,6 @@ function UserManagement() {
                             </button>
                         </div>
                         <table className={'table table-hover text-center'}>
-                            <colgroup>
-                                <col width={'15%'}/>
-                                <col width={'10%'}/>
-                                <col width={'10%'}/>
-                                <col width={'10%'}/>
-                                <col width={'15%'}/>
-                                <col width={'20%'}/>
-                                <col width={'20%'}/>
-                            </colgroup>
                             <thead>
                             <tr>
                                 <th>아이디</th>
@@ -131,7 +133,56 @@ function UserManagement() {
                                          selectUser={selectUser}/>
                     </div>
                     <div className={'d-flex flex-column gap-2 p-3 rounded-3 border'}>
+                        <span>작업그룹 관리</span>
+                        <div className={'d-flex justify-content-start'}>
+                            <button type={'button'}
+                                    className={'btn greenBtn'} onClick={openCompanyModal}>
+                                신규등록
+                            </button>
+                        </div>
+                        <table className={'table table-hover text-center'}>
+                            <thead>
+                            <tr>
+                                <th>회사명</th>
+                                <th>출력 회사명</th>
+                                <th>사용여부</th>
+                                <th>정보</th>
+                                <th>삭제</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {companyList.length === 0 ? (
+                                <tr>
+                                    <td colSpan={5}>
+                                        출력할 내용이 없습니다.
+                                    </td>
+                                </tr>
+                            ) : (
+                                companyList.map((item, index) => (
+                                    <tr key={index}>
+                                        <td>{item.company}</td>
+                                        <td>{item.companyName}</td>
+                                        <td>{item.companyIng}</td>
+                                        <td>
+                                            <button type={'button'} className={'btn greenBtn'}>
+                                                수정
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button type={'button'} className={'btn btn-danger'}>
+                                                삭제
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
 
+                            </tbody>
+                        </table>
+                        <CompanyModal
+                            isOpen={isCompanyModal}
+                            closeModal={closeCompanyModal}
+                            selectCompany = {selectCompany}/>
                     </div>
                 </div>
             </div>

@@ -16,7 +16,7 @@ function ProjectCreateModal(props) {
     const [contractor, setContractor] = useState('');
     const [measurer, setMeasurer] = useState('');
     const [status, setStatus] = useState('N');
-    const [siteGroup, setSiteGroup] = useState('');
+    const [companyIdx, setCompanyIdx] = useState(null);
 
     // 종료날짜 선택 범위 조정
     useEffect(() => {
@@ -24,6 +24,16 @@ function ProjectCreateModal(props) {
     }, [startDate]);
 
     // 작업그룹 불러오기
+    const [companyList, setCompanyList] = useState([]);
+    useEffect(() => {
+        axios.get(`http://localhost:8080/MeausrePro/Company/allCompany/notDelete`)
+            .then(res => {
+                setCompanyList(res.data);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }, [])
 
 
     // 프로젝트 생성
@@ -32,7 +42,8 @@ function ProjectCreateModal(props) {
         const wkt = `POLYGON((${geometryData.map(coord => `${coord[1]} ${coord[0]}`).join(', ')}))`;
         console.log(wkt);
         axios.post(`http://localhost:8080/MeausrePro/Project/save`, {
-            manager: user,
+            userIdx: user,
+            companyIdx: companyIdx,
             siteName: siteName,
             siteAddress: address,
             startDate: startDate,
@@ -40,7 +51,6 @@ function ProjectCreateModal(props) {
             contractor: contractor,
             measurer: measurer,
             siteCheck: status,
-            siteGroup: siteGroup,
             geometry:wkt
         })
             .then(res => {
@@ -67,7 +77,7 @@ function ProjectCreateModal(props) {
         setContractor('');
         setMeasurer('');
         setStatus('N');
-        setSiteGroup('');
+        setCompanyIdx(null);
         onProjectCreated();
         closeModal();
     };
@@ -213,10 +223,17 @@ function ProjectCreateModal(props) {
                                     <label htmlFor={'workGroup'} className={'form-label'}>
                                         작업그룹
                                     </label>
-                                    <select className={'form-select'} id={'workGroup'}>
-                                        <option value={''} selected>선택하세요</option>
-                                        <option value={'group1'}>그룹 1</option>
-                                        <option value={'group2'}>그룹 2</option>
+                                    <select className={'form-select'}
+                                            onChange={(e) => setCompanyIdx(e.target.value)}
+                                            id={'workGroup'}>
+                                        <option selected>선택하세요</option>
+                                        {companyList.map((item) => {
+                                            return (
+                                                <option value={item} key={item.idx}>
+                                                    {item.companyName}
+                                                </option>
+                                            )
+                                        })}
                                     </select>
                                 </div>
                             </div>
