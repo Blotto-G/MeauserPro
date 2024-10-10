@@ -14,6 +14,8 @@ function Main() {
     const { user } = useContext(UserContext);
     const navigate = useNavigate();
 
+    // 지도 로드
+    const [isMapReady, setIsMapReady] = useState(false);
     // 좌표 저장
     const [geometryData, setGeometryData] = useState('');
     // 폴리곤 생성
@@ -35,7 +37,8 @@ function Main() {
 
     // 로그인 정보 없을 시, 로그인 페이지로 이동
     useEffect(() => {
-        if (!user.id) {
+        console.log(user);
+        if (!user || !user.id) {
             // 로그인 정보 없을 시, 로그인 페이지로 리다이렉트
             navigate('/');
         }
@@ -130,7 +133,8 @@ function Main() {
                         sendGeometry = {handleGeometryData}
                         isDrawingEnabled = {isDrawingEnabled}
                         setIsDrawingEnabled = {setIsDrawingEnabled}
-                        projectList={projectList}
+                        isModalOpen={isProjectModalOpen}
+                        setIsMapReady = {setIsMapReady}
                     />
                     <ProjectCreateModal
                         geometryData = {geometryData}
@@ -141,7 +145,7 @@ function Main() {
                     <SectionCreateModal
                         project = {isSelectedProject}
                         isOpen = {isSectionModalOpen}
-                        closeModal = {closeSectionModal}
+                        closeModal = {closeSectionModal} />
                         onSectionCreated={(newSection) => handleSectionClick(newSection)} />
                     {/* 선택된 프로젝트가 있을 때만 구간 및 계측기 관련 UI를 보여줌 */}
                     {isSelectedProject && (

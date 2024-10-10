@@ -14,7 +14,7 @@ function InstrumentCreateModal(props) {
     const [sectionList, setSectionList] = useState([]);
 
     // 입력 필드 상태 관리
-    const [insType, setInsType] = useState('A');    // 'A' : 지하수위계
+    const [insType, setInsType] = useState(instruments[0].type);    // 'A' : 지하수위계
     const [insNum, setInsNum] = useState('');
     const [insName, setInsName] = useState('');
     const [insNo, setInsNo] = useState('');
@@ -89,7 +89,7 @@ function InstrumentCreateModal(props) {
 
     // 모달 닫기
     const handleCloseModal = () => {
-        setInsType('A');
+        setInsType('');
         setInsNum('');
         setInsName('');
         setInsNo('');
@@ -102,6 +102,24 @@ function InstrumentCreateModal(props) {
         setVerticalMinus('');
         closeModal();
     };
+
+
+    // 계측기 선택
+    const instruments = [
+        { id: 1, name: '구간내계측기종류선택', type: 'Z', fields: ['계측기 관리번호', '제품명', '시리얼NO', '지오매트리정보', '설치일자']},
+        { id: 2, name: '지중경사계', type: 'A', fields: ['계측기 관리번호', '제품명', '시리얼NO', '지오매트리정보', '설치일자', '상하단구분', '굴착고', '관리기준치1차', '1차관리기준상수', '관리기준치2차', '2차관리기준상수', '관리기준치3차', '3차관리기준상수', '수평변위(+X)', '수평변위(-X)', '수직변위(+Y)', '수직변위(-Y)', '설계변위량', '표기심도', '설치위치']},
+        { id: 3, name: '지하수위계', type: 'B', fields: ['계측기 관리번호', '제품명', '시리얼NO', '지오매트리정보', '설치일자', '관리기준치1차', '관리기준치2차', '수직변위(+Y)', '수직변위(-Y)', '설치심도', '설치위치']},
+        { id: 4, name: '간극수압계', type: 'C', fields: ['계측기 관리번호', '제품명', '시리얼NO', 'logger명', '지오매트리정보', '설치일자', '관리기준치1차', '관리기준치2차', '수직변위(+Y)', '수직변위(-Y)', '설치위치', 'ZERO READ', 'GAGE FACTOR', 'THERMAL FACTOR', 'TIP 설치위치']},
+        { id: 5, name: '지표침하계', type: 'D', fields: ['계측기 관리번호', '제품명', '시리얼NO', '지오매트리정보', '설치일자', '설계변위량', '관리기준치1차', '굴착고', '관리기준치2차', '설치거리', '관리기준치3차', '설치위치', '수직변위(+Y)', '수직변위(-Y)']},
+        { id: 6, name: '하중계_버팀대', type: 'E', fields: ['계측기 관리번호', '제품명', '시리얼NO', 'logger명', '지오매트리정보', '설치일자', '상하단구분', '설계변위량', '관리기준치1차', '굴착고', '관리기준치2차', '설치위치', '관리기준치3차', 'ZERO READ', '수직변위(+Y)', '수직변위(-Y)', '계기상수', '1KN_TON']},
+    ]
+
+    const [selectedInstrument, setSelectedInstrument] = useState(instruments[0].name);
+
+    const handleInstrumentChange = (event) => {
+        const selectedInstrument = instruments.find(instrument => instrument.name === event.target.value);
+        setInsType(selectedInstrument.type);
+    }
 
     return (
         <div
@@ -165,18 +183,10 @@ function InstrumentCreateModal(props) {
                                         <label htmlFor={'insType'} className={'form-label'}>
                                             계측기 종류:
                                         </label>
-                                        <select className={'form-select'} id={'insType'}>
-                                            <option value={''} selected>구간내계측기종류선택</option>
-                                            <option value={insType === 'A'}>지중경사계</option>
-                                            <option value={insType === 'B'}>지하수위계</option>
-                                            <option value={insType === 'C'}>간극수압계</option>
-                                            <option value={insType === 'D'}>지표침하계</option>
-                                            <option value={insType === 'E'}>하중계_버팀대</option>
-                                            <option value={insType === 'F'}>하중계_PSBEAM</option>
-                                            <option value={insType === 'G'}>하중계_앵커</option>
-                                            <option value={insType === 'H'}>변형률계(버팀대)</option>
-                                            <option value={insType === 'I'}>구조물기울기계</option>
-                                            <option value={insType === 'J'}>균열측정계</option>
+                                        <select className={'form-select'} id={'insType'} onChange={handleInstrumentChange}>
+                                            {instruments.map((instrument) => (
+                                                <option key={instrument.id} value={instrument.name}>{instrument.name}</option>
+                                            ))}
                                         </select>
                                     </div>
                                 </div>

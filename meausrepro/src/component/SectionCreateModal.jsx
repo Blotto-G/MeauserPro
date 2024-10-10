@@ -3,7 +3,7 @@ import axios from "axios";
 
 function SectionCreateModal(props) {
     const { project, isOpen, closeModal } = props;
-    
+
     // 입력 필드 상태 관리
     const [sectionName, setSectionName] = useState('');
     const [sectionSta, setSectionSta] = useState('');
@@ -11,7 +11,7 @@ function SectionCreateModal(props) {
     const [groundStr, setGroundStr] = useState('');
     const [rearTarget, setRearTarget] = useState('');
     const [underStr, setUnderStr] = useState('');
-    
+
     // 구간 생성
     const handleCreateSection = async () => {
         axios.post(`http://localhost:8080/MeausrePro/Section/save`, {
@@ -37,7 +37,7 @@ function SectionCreateModal(props) {
                 console.log(err);
             })
     }
-    
+
     // 모달 닫기 전 입력창 비우기
     const handleCloseModal = () => {
         setSectionName('');
@@ -48,7 +48,7 @@ function SectionCreateModal(props) {
         setUnderStr('');
         closeModal();
     }
-    
+
     return (
         <div
             className={`modal fade ${isOpen ? 'show d-block' : ''}`}

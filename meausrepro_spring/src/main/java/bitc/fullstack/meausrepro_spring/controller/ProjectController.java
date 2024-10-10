@@ -33,6 +33,7 @@ public class ProjectController {
     // 진행 중인 프로젝트 모두 보기
     @GetMapping("/inProgress/{id}/{topManager}")
     public List<MeausreProProject> inProgress(@PathVariable String id, @PathVariable String topManager) {
+        System.out.println("\n" + id + ": " + topManager + "\n");
         return projectService.inProgress(id, topManager);
     }
 

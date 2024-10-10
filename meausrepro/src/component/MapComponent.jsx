@@ -1,12 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import UserContext from "../context/UserContext.jsx";
 import axios from "axios";
-import {map} from "react-bootstrap/ElementChildren";
-import error from "eslint-plugin-react/lib/util/error.js";
 
 function MapComponent(props) {
     const { user } = useContext(UserContext);
-    const { sendGeometry, isDrawingEnabled, setIsDrawingEnabled, isModalOpen } = props;
+    const { sendGeometry, isDrawingEnabled, setIsDrawingEnabled, isModalOpen, setIsMapReady } = props;
 
     const [polygonCoords, setPolygonCoords] = useState([]);
     const [currentPolygon, setCurrentPolygon] = useState(null);
@@ -18,7 +16,6 @@ function MapComponent(props) {
     const [currentPolygonId, setCurrentPolygonId] = useState(null); // 현재 폴리곤 ID 상태 추가
     const [markers, setMarkers] = useState([]); // 동그란 점(마커)을 저장할 배열을 상태로 선언
     const [searchQuery, setSearchQuery] = useState(""); // 주소 검색 기능
-
 
     // 지도 로드
     useEffect(() => {
@@ -77,7 +74,7 @@ function MapComponent(props) {
     useEffect(() => {
         if (user && user.id) {
             axios
-                .get(`http://localhost:8080/MeausrePro/Project/inProgress/${user.id}`)
+                .get(`http://localhost:8080/MeausrePro/Project/inProgress/${encodeURIComponent(user.id)}/${user.topManager}`)
                 .then((res) => {
                     const { data } = res;
                     setPolygons(data); // 전체 프로젝트 데이터를 저장
@@ -87,6 +84,7 @@ function MapComponent(props) {
                 });
         }
     }, [user]);
+
 
     // 저장된 폴리곤을 지도에 그리기
     useEffect(() => {
