@@ -19,7 +19,7 @@ public class MeausreProProject {
     private MeausreProUser userIdx; // 사용자 테이블
 
     @ManyToOne
-    @JoinColumn(name="company_idx", nullable = false)
+    @JoinColumn(name="company_idx", nullable = true)
     private MeausreProCompany companyIdx;
 
     @Column(name = "site_name", nullable = false, length = 45)

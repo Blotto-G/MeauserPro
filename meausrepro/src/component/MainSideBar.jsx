@@ -24,7 +24,6 @@ function MainSideBar(props) {
         handleSectionList(project.idx);
     };
 
-
     // 구간생성에서 뒤로 가기
     const handleBack = () => {
         setIsSelectProject(null);
