@@ -326,18 +326,29 @@ function MapComponent(props) {
     };
 
     return (
-        <>
-            <div id="map" style={{width: "600px", height: "500px"}}></div>
-            <div style={{marginBottom: "10px"}}>
+        <div className={'w-100 h-100 d-flex flex-column justify-content-center align-items-center pt-3'}>
+            <div className={'input-group mb-4'} style={{width: '300px'}}>
                 <input
                     type="text"
                     value={searchQuery}
+                    className={'form-control'}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="주소를 입력하세요"
                     style={{marginRight: "5px"}}
                 />
-                <button onClick={handleSearch}>주소 검색</button>
+                <div className={'input-group-text'}>
+                    <button type={'button'}
+                            onClick={handleSearch}
+                            className={'checkPwBtn'}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                             className="bi bi-search" viewBox="0 0 16 16">
+                            <path
+                                d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"></path>
+                        </svg>
+                    </button>
+                </div>
             </div>
+            <div id="map" style={{width: "100%", height: "100%"}}></div>
             {contextMenuVisible && (
                 <div
                     style={{
@@ -368,7 +379,7 @@ function MapComponent(props) {
                 </div>
             )}
 
-        </>
+        </div>
     );
 }
 

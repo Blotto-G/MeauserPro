@@ -1,5 +1,5 @@
-import Header from "../layout/Header.jsx";
-import NavBar from "../component/NavBar.jsx";
+
+import CustomSidebar from "../component/CustomSidebar.jsx";
 import {useContext, useEffect, useState} from "react";
 import UserContext from "../context/UserContext.jsx";
 import {useNavigate} from "react-router-dom";
@@ -70,12 +70,9 @@ function UserManagement() {
     }
 
     return (
-        <div>
-            <header>
-                <Header />
-            </header>
-            <div className={'container-fluid d-flex p-0 mx-0 my-5'}>
-                <NavBar topManager={user.topManager} />
+        <div className={'d-flex vh-100'}>
+            <CustomSidebar topManager={user.topManager} />
+            <div className={'flex-grow-1'}>
                 <div className={'mainSection p-5 d-flex flex-column gap-2 w-100'}>
                     <div className={'d-flex flex-column gap-2 p-3 rounded-3 border'}>
                         <span>회원정보관리</span>

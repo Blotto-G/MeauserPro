@@ -117,14 +117,55 @@ body {
   padding: 0.7em;
   transition: all 0.3s ease;
 }
+/* customSideBar */
+.customSideBar {
+  background-color: white;
+  width: 230px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid #c4c4c4;
+}
+.customSideBarList {
+  display: flex;
+  flex-direction: column;
+  padding-top: 1em;
+}
+.customSideBarLink {
+  font-family: 'SUITE-Regular';
+  display: flex;
+  gap: 1em;
+  padding: 1em;
+  align-items: center;
+  text-decoration: none;
+  color: #aae0af;
+  transition: all 0.4s ease;
+}
+.customSideBarLink.active {
+  background-color: #92d2b3;
+  color: white;
+}
+.customSideBarLink:hover {
+  background-color: #ade3c9;
+  color: white;
+}
+.customSideBarBtn {
+  border: 1px solid #aae0af;
+  background-color: transparent;
+  color: #aae0af;
+  transition: all 0.3s ease;
+}
+.customSideBarBtn:hover {
+  background-color: #aae0af;
+  color: white;
+}
+/* mainSideBar */
 .sideBar {
-  background-color: #ffffff;
-  position: sticky;
-  float: left;
-  padding: 1rem;
-  width: 320px;
-  height: 100%;
-  max-height: 100vh;
+  width: 280px;
+  height: 100vh;
+  padding: 1em 0.5em;
+  border-right: 1px solid #c4c4c4;
 }
 .mainSection {
   display: inline-block;
