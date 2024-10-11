@@ -37,6 +37,22 @@ dependencies {
 
     // JTS 라이브러리 추가
     implementation 'org.locationtech.jts:jts-core:1.18.1' // JTS 라이브러리 추가
+
+    // JPA 의존성 추가
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // QR 코드 생성 및 리딩
+    implementation 'com.google.zxing:core:3.5.0'
+    implementation 'com.google.zxing:javase:3.5.0'
+
+    // Microsoft Excel 및 Word 문서 읽기/쓰기
+    implementation 'org.apache.poi:poi:5.2.3' // Excel
+    implementation 'org.apache.poi:poi-ooxml:5.2.3' // Excel (XLSX)
+    implementation 'org.apache.poi:poi-ooxml-schemas:4.1.2' // XLSX schema
+    implementation 'org.apache.xmlbeans:xmlbeans:5.0.2' // XML 지원
+
+    // PDF 파일 생성 및 조작
+    implementation 'org.apache.pdfbox:pdfbox:2.0.26'
 }
 
 tasks.named('test') {
