@@ -1,7 +1,26 @@
 import { Link, useLocation } from 'react-router-dom';
+import {useEffect, useState} from "react";
 
-function CustomSidebar({ topManager }) {
+function CustomSidebar(props) {
+    const { topManager } = props;
     const location = useLocation();
+
+    // 회원 관리 dropDown
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const toggleDropdown = () => {
+        setIsDropdownOpen(!isDropdownOpen);
+    }
+
+    // 회원정보관리, 작업그룹관리 페이지에서는 드롭다운 open 유지
+    useEffect(() => {
+        const dropdownPaths = ['/UserManagement', '/GroupManagement'];
+
+        if (dropdownPaths.includes(location.pathname)) {
+            setIsDropdownOpen(true);
+        } else {
+            setIsDropdownOpen(false);
+        }
+    }, [location.pathname]);
 
     return (
         <div className={'customSideBar'}>
@@ -36,19 +55,52 @@ function CustomSidebar({ topManager }) {
                         <span>리포트</span>
                     </div>
                 </Link>
-                {topManager === '1' && (<Link
-                        to="/UserManagement"
-                        className={`text-decoration-none`}
-                    >
-                        <div className={`customSideBarLink ${location.pathname === '/UserManagement' ? 'active' : ''}`}>
+                {topManager === '1' && (<div>
+                        <div
+                            className={`customSideBarLink  ${
+                                location.pathname.startsWith('/UserManagement') ||
+                                location.pathname.startsWith('/GroupManagement') ? 'active' : ''}`}
+                            onClick={toggleDropdown}
+                        >
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                  className="bi bi-people" viewBox="0 0 16 16">
                                 <path
                                     d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1zm-7.978-1L7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002-.014.002zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4m3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0M6.936 9.28a6 6 0 0 0-1.23-.247A7 7 0 0 0 5 9c-4 0-5 3-5 4q0 1 1 1h4.216A2.24 2.24 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816M4.92 10A5.5 5.5 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0m3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4"/>
                             </svg>
                             <span>회원관리</span>
+                            {isDropdownOpen ? (
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor"
+                                     className="bi bi-caret-up-fill" viewBox="0 0 16 16">
+                                    <path
+                                        d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z"/>
+                                </svg>
+                            ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor"
+                                     className="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                                    <path
+                                        d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+                                </svg>
+                            )}
                         </div>
-                    </Link>
+                        <div className={`dpContent ${isDropdownOpen ? 'open' : ''}`}>
+                            <div>
+                                <Link
+                                    to="/UserManagement"
+                                    className={`customSideBarLink text-decoration-none ${
+                                        location.pathname === '/UserManagement' ? 'active' : ''
+                                    }`}>
+                                    회원정보관리</Link>
+                            </div>
+                            <div>
+                                <Link
+                                    to="/GroupManagement"
+                                    className={`customSideBarLink text-decoration-none ${
+                                        location.pathname === '/GroupManagement' ? 'active' : ''
+                                    }`}>
+                                    작업그룹 관리</Link>
+                            </div>
+                        </div>
+                    </div>
                 )}
                 <Link
                     to="/system"
