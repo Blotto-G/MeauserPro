@@ -5,6 +5,7 @@ import UserContext from "../context/UserContext.jsx";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import UserSignUpModal from "../component/UserSignUpModal.jsx";
+import Pagination from "../component/Pagination.jsx";
 
 function UserManagement() {
     const { user } = useContext(UserContext);
@@ -23,6 +24,26 @@ function UserManagement() {
     const closeUserSignUpModal = () => {
         setIsUserSignUpModal(false);
     }
+
+    // 현재 페이지 번호
+    const [page, setPage] = useState(1);
+    // 페이지 당 게시글 수
+    const itemsPerPage = 10;
+
+    // 페이지 이동
+    const changePageHandler = (page) => {
+        setPage(page);
+    };
+
+    // 페이지네이션을 통해 보여줄 slice된 리스트
+    const [currentList, setCurrentList] = useState(userList);
+
+    const indexOfLastItem = page * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+    useEffect(() => {
+        setCurrentList(userList.slice(indexOfFirstItem, indexOfLastItem));
+    }, [page, userList]);
 
     // 로그인 정보 없을 시, 로그인 페이지로 이동
     useEffect(() => {
@@ -48,8 +69,8 @@ function UserManagement() {
     return (
         <div className={'d-flex vh-100'}>
             <CustomSidebar topManager={user.topManager} />
-            <div className={'flex-grow-1'}>
-                <div className={'mainSection d-flex flex-column'}>
+            <div className={'flex-grow-1'} style={{backgroundColor: '#f5f5f5'}}>
+                <div className={'mainSection-box d-flex flex-column'}>
                     <div className={'managementSection'}>
                         <span className={'text-center fs-4 fw-bold'}>회원정보관리</span>
                         <div className={'d-flex justify-content-end'}>
@@ -72,14 +93,14 @@ function UserManagement() {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {userList.length === 0 ? (
+                                {currentList.length === 0 ? (
                                     <tr>
                                         <td colSpan={9}>
                                             출력할 내용이 없습니다.
                                         </td>
                                     </tr>
                                 ) : (
-                                    userList.map((item, index) => (
+                                    currentList.map((item, index) => (
                                         <tr key={index}>
                                             <td>{item.id}</td>
                                             <td>{item.name}</td>
@@ -114,6 +135,14 @@ function UserManagement() {
 
                                 </tbody>
                             </table>
+                            {userList.length > 0 && (
+                                <Pagination
+                                    activePage={page}
+                                    itemsCountPerPage={itemsPerPage}
+                                    totalItemsCount={userList.length}
+                                    onChange={changePageHandler}
+                                />
+                            )}
                         </div>
                         <UserSignUpModal isOpen={isUserSignUpModal}
                                          closeModal={closeUserSignUpModal}

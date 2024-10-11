@@ -288,6 +288,47 @@ body {
 .mainSection {
   display: inline-block;
 }
+/* 회원관리 페이지 박스형태 내부 스크롤*/
+.mainSection-box {
+  background-color: #ffffff;
+  display: inline-block;
+  border: 1px solid #dee2e6;
+  padding: 20px;
+  margin: 20px;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
+  max-height: 90vh;
+  min-height: 913px;
+}
+/* 페이지네이션 */
+.pagination {
+  display: flex;
+  position: fixed;
+  top: 80%;
+  left: 51%;
+}
+
+.pagination button {
+  background-color: transparent;
+  color: black;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  padding: 10px 15px;
+  margin: 0 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.pagination button.active {
+  background-color: #8ec5aa;
+  color: white;
+}
+
+.pagination button:hover {
+  background-color: #aae0af;
+}
+
 /* 회원정보 및 작업그룹 관리 */
 .managementSection {
   height: 100vh;

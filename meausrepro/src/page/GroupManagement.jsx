@@ -4,6 +4,7 @@ import {useNavigate} from "react-router";
 import axios from "axios";
 import CustomSidebar from "../component/sidebar/CustomSidebar.jsx";
 import CompanyModal from "../component/CompanyModal.jsx";
+import Pagination from "../component/Pagination.jsx";
 
 function GroupManagement() {
     const { user } = useContext(UserContext);
@@ -22,6 +23,28 @@ function GroupManagement() {
     const closeCompanyModal = () => {
         setIsCompanyModal(false);
     }
+
+    // 현재 페이지 번호
+    const [page, setPage] = useState(1);
+    // 페이지 당 게시글 수
+    const itemsPerPage = 10;
+
+    // 페이지 이동
+    const changePageHandler = (page) => {
+        setPage(page);
+    };
+
+    // 페이지네이션을 통해 보여줄 slice된 리스트
+    const [currentList, setCurrentList] = useState(companyList);
+
+    const indexOfLastItem = page * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+    useEffect(() => {
+        setCurrentList(companyList.slice(indexOfFirstItem, indexOfLastItem));
+    }, [page, companyList]);
+
+
     // 로그인 정보 없을 시, 로그인 페이지로 이동
     useEffect(() => {
         if (!user.id) {
@@ -45,8 +68,8 @@ function GroupManagement() {
     return (
         <div className={'d-flex vh-100'}>
             <CustomSidebar topManager={user.topManager}/>
-            <div className={'flex-grow-1'}>
-                <div className={'mainSection d-flex flex-column'}>
+            <div className={'flex-grow-1'} style={{backgroundColor: '#f5f5f5'}}>
+                <div className={'mainSection-box d-flex flex-column'}>
                     <div className={'managementSection'}>
                         <span className={'text-center fs-4 fw-bold'}>작업그룹 관리</span>
                         <div className={'d-flex justify-content-end'}>
@@ -67,14 +90,14 @@ function GroupManagement() {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {companyList.length === 0 ? (
+                                {currentList.length === 0 ? (
                                     <tr>
                                         <td colSpan={5}>
                                             출력할 내용이 없습니다.
                                         </td>
                                     </tr>
                                 ) : (
-                                    companyList.map((item, index) => (
+                                    currentList.map((item, index) => (
                                         <tr key={index}>
                                             <td>{item.company}</td>
                                             <td>{item.companyName}</td>
@@ -107,6 +130,14 @@ function GroupManagement() {
 
                                 </tbody>
                             </table>
+                            {companyList.length > 0 && (
+                                <Pagination
+                                activePage={page}
+                                itemsCountPerPage={itemsPerPage}
+                                totalItemsCount={companyList.length}
+                                onChange={changePageHandler}
+                                />
+                            )}
                         </div>
                         <CompanyModal
                             isOpen={isCompanyModal}
