@@ -37,8 +37,8 @@ public class InstrumentService {
     }
 
     // 계측기 지오메트리 업데이트
-    public boolean updateInsGeometry(int sectionId, String newInsGeometry) {
-        Optional<MeausreProInstrument> instrumentOptional = instrumentRepository.findById(String.valueOf(sectionId));
+    public boolean updateInsGeometry(int instrumentId, String newInsGeometry) {
+        Optional<MeausreProInstrument> instrumentOptional = instrumentRepository.findById(String.valueOf(instrumentId));
         if (instrumentOptional.isPresent()) {
             MeausreProInstrument instrument = instrumentOptional.get();
             instrument.setInsGeometry(newInsGeometry);

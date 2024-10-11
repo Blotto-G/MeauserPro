@@ -5,7 +5,7 @@ import axios from "axios";
 function MainSideBar(props) {
     const { user } = useContext(UserContext);
     const { enableDrawing, openSectionModal,
-        handleProjectClick, handleSectionClick, projectBtnText, projectList, enableDrawingMarkers, instrumentBtnText } = props;
+        handleProjectClick, handleSectionClick, projectBtnText, projectList, enableDrawingMarkers, instrumentBtnText, openInstrumentModal } = props;
 
     // 프로젝트 선택
     const [isSelectProject, setIsSelectProject] = useState(null);

@@ -35,7 +35,6 @@ function Main() {
     const [isInstrumentModalOpen, setIsInstrumentModalOpen] = useState(false);
 
 
-
     // 계측기 좌표 저장
     const [insGeometryData, setInsGeometryData] = useState('');
     // 마커 생성

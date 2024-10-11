@@ -6,7 +6,7 @@ function MapComponent(props) {
     const { user } = useContext(UserContext);
     const { sendGeometry, sendInsGeometry, isDrawingEnabled, isDrawingEnabledMarker, setIsDrawingEnabled, setIsDrawingEnabledMarker, isModalOpen, isInsModalOpen, setIsMapReady } = props;
 
-    const [polygonCoords, setPolygonCoords] = useState([]);
+    const [polygonCoords, setPolygonCoords] = useState([]); //////////////////////
     const [currentPolygon, setCurrentPolygon] = useState(null);
     const [contextMenuVisible, setContextMenuVisible] = useState(false);
     const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
@@ -14,14 +14,14 @@ function MapComponent(props) {
     const [polygons, setPolygons] = useState([]); // 저장된 폴리곤 목록
     const [drawnPolygons, setDrawnPolygons] = useState([]); // 새로 그린 폴리곤 관리
     const [currentPolygonId, setCurrentPolygonId] = useState(null); // 현재 폴리곤 ID 상태 추가
-    const [markers, setMarkers] = useState([]); // 동그란 점(마커)을 저장할 배열을 상태로 선언
+    const [markers, setMarkers] = useState([]); // 동그란 점(마커)을 저장할 배열을 상태로 선언 ///////////////
     const [searchQuery, setSearchQuery] = useState(""); // 주소 검색 기능
 
 
     const [insMarkerCoords, setInsMarkerCoords] = useState([]);
     const [currentInsMarker, setCurrentInsMarker] = useState(null);
     const [contextInsMenuVisible, setContextInsMenuVisible] = useState(false);
-    const [insMarkers, setInsMarkers] = useState([]) // 계측기 마커
+    const [insMarkers, setInsMarkers] = useState([]) // 계측기 마커  //////////////////////////
     const [drawnInsMarker, setDrawnInsMarker] = useState([]); // 새로 그린 계측기 마커 관리
     const [currentInsMarkerId, setCurrentInsMarkerId] = useState(null); // 현재 계측기마커 ID 상태 추가
 
@@ -73,12 +73,11 @@ function MapComponent(props) {
                 if (insGeometry.length === 0) return null;
 
                 const insMarker = new naver.maps.Marker({
-                    position: insGeometry,
                     map: mapInstance,
+                    position: insGeometry,
                     icon: {
-                        url: markerIcon,
-                        scaledSize: new naver.maps.Size(20, 20), // 아이콘 크기 조정
-                    },
+                        url: 'src/assets/images/circle-fill-red.svg', // 아이콘 URL
+                    }
                 });
 
                 // 우클릭 이벤트 추가
@@ -116,17 +115,15 @@ function MapComponent(props) {
         }
     }, [isDrawingEnabledMarker, isInsModalOpen]);
 
+
     // 새로운 계측기 마커 그리기
     const createInsMarker = (map) => {
         const marker = new naver.maps.Marker({
             position: new naver.maps.LatLng(37.3595704, 127.105399),
             map: map,
             icon: {
-                url: 'src/assets/images/marker.png', // 아이콘 URL
-                size: new naver.maps.Size(100, 200), // 크기
-                origin: new naver.maps.Point(0, 0), // 원점
-                anchor: new naver.maps.Point(50, 50) // 고정점 (중앙)
-            }
+                url: 'src/assets/images/circle-fill-blue.svg', // 아이콘 URL
+            },
         });
 
         naver.maps.Event.addListener(map, "click", function (e) {
@@ -139,7 +136,7 @@ function MapComponent(props) {
                 const insGeometryStr = `POINT(${point.lng()} ${point.lat()})`;
                 const latLng = insGeometryData(insGeometryStr);
 
-                setInsMarkers([latLng.lat(), latLng.lng()]);
+                setInsMarkerCoords([latLng.lat(), latLng.lng()]);
             }
         });
 
@@ -154,39 +151,6 @@ function MapComponent(props) {
         });
         setCurrentInsMarker(marker);
     };
-
-    // // 새로운 계측기 마커 그리기
-    // const createInsMarker = (map) => {
-    //     const marker = new naver.maps.Marker({
-    //         position: new naver.maps.LatLng(37.3595704, 127.105399),
-    //         map: map,
-    //     });
-    //
-    //     naver.maps.Event.addListener(map, "click", function (e) {
-    //         if (isDrawingEnabledMarker && marker.getMap() !== null) {
-    //             const point = e.latlng;
-    //
-    //             marker.setPosition(point);
-    //
-    //             // 위도와 경도를 문자열 형식으로 저장
-    //             const insGeometryStr = `POINT(${point.lng()} ${point.lat()})`;
-    //             const latLng = insGeometryData(insGeometryStr);
-    //
-    //             setInsMarkers([latLng.lat(), latLng.lng()]);
-    //         }
-    //     });
-    //
-    //     // 우클릭으로 계측기 마커를 확정하거나 다시 그리기
-    //     naver.maps.Event.addListener(marker, "rightclick", function (e) {
-    //         setContextInsMenuVisible(true);
-    //         setContextMenuPosition({
-    //             x: e.pointerEvent.pageX,
-    //             y: e.pointerEvent.pageY,
-    //         });
-    //         setCurrentInsMarker(marker);
-    //     });
-    //     setCurrentInsMarker(marker);
-    // };
 
 
     // 계측기 마커 생성 모드
