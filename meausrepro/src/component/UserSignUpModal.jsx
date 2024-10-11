@@ -31,6 +31,7 @@ function UserSignUpModal(props) {
         setName('');
         setTel('');
         setRole(0);
+        setCompany(null);
 
         selectUser();
         closeModal();
@@ -119,7 +120,11 @@ function UserSignUpModal(props) {
                 name: name,
                 tel: tel,
                 role: role,
-                company: company
+                companyIdx: {
+                    idx: company.idx,
+                    company: company.company,
+                    companyName: company.companyName
+                }
             })
                 .then(res => {
                     console.log(res);
@@ -290,12 +295,18 @@ function UserSignUpModal(props) {
                                                 d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1zm11 0H3v14h3v-2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5V15h3z"/>
                                         </svg>
                                     </label>
-                                    <select className={'form-select'}
-                                            onChange={(e) => setCompany(e.target.value)}>
-                                        <option selected>선택하세요</option>
+                                    <select
+                                        className={'form-select'}
+                                        id={'companySelected'}
+                                        value={company ? company.idx: ''}
+                                        onChange={(e) => {
+                                            const selectedCompany = companyList.find(item => item.idx === parseInt(e.target.value));
+                                            setCompany(selectedCompany || null);
+                                        }}>
+                                        <option value={''} selected>선택하세요</option>
                                         {companyList.map((item) => {
                                             return (
-                                                <option value={item} key={item.idx}>
+                                                <option value={item.idx} key={item.idx}>
                                                     {item.companyName}
                                                 </option>
                                             )

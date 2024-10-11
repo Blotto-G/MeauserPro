@@ -1,44 +1,41 @@
-
-import CustomSidebar from "../component/sidebar/CustomSidebar.jsx";
 import {useContext, useEffect, useState} from "react";
 import UserContext from "../context/UserContext.jsx";
-import {useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router";
 import axios from "axios";
-import UserSignUpModal from "../component/UserSignUpModal.jsx";
+import CustomSidebar from "../component/sidebar/CustomSidebar.jsx";
+import CompanyModal from "../component/CompanyModal.jsx";
 
-function UserManagement() {
+function GroupManagement() {
     const { user } = useContext(UserContext);
     const navigate = useNavigate();
 
-    // 회원정보 목록
-    const [userList, setUserList] = useState([]);
+    // 작업그룹 목록
+    const [companyList, setCompanyList] = useState([]);
 
-    // 회원정보 생성 모달창
-    const [isUserSignUpModal, setIsUserSignUpModal] = useState(false);
-    // 회원정보 생성 모달창 열기
-    const openUserSignUpModal = () => {
-        setIsUserSignUpModal(true);
+    // 작업그룹 생성 모달창
+    const [isCompanyModal, setIsCompanyModal] = useState(false);
+    // 작업그룹 생성 모달창 열기
+    const openCompanyModal = () => {
+        setIsCompanyModal(true);
     }
-    // 회원정보 생성 모달창 닫기
-    const closeUserSignUpModal = () => {
-        setIsUserSignUpModal(false);
+    // 작업그룹 생성 모달창 닫기
+    const closeCompanyModal = () => {
+        setIsCompanyModal(false);
     }
-
     // 로그인 정보 없을 시, 로그인 페이지로 이동
     useEffect(() => {
         if (!user.id) {
             // 로그인 정보 없을 시, 로그인 페이지로 리다이렉트
             navigate('/');
         }
-        selectUser();
+        selectCompany();
     }, [user, navigate]);
 
-    // 회원정보 조회
-    const selectUser = () => {
-        axios.get(`http://localhost:8080/MeausrePro/User/notTopManager`)
+    // 작업그룹 전체 조회
+    const selectCompany = () => {
+        axios.get(`http://localhost:8080/MeausrePro/Company/all`)
             .then(res => {
-                console.log(res.data);
-                setUserList(res.data);
+                setCompanyList(res.data);
             })
             .catch(err => {
                 console.log(err);
@@ -47,45 +44,41 @@ function UserManagement() {
 
     return (
         <div className={'d-flex vh-100'}>
-            <CustomSidebar topManager={user.topManager} />
+            <CustomSidebar topManager={user.topManager}/>
             <div className={'flex-grow-1'}>
                 <div className={'mainSection d-flex flex-column'}>
                     <div className={'managementSection'}>
-                        <span className={'text-center fs-4 fw-bold'}>회원정보관리</span>
+                        <span className={'text-center fs-4 fw-bold'}>작업그룹 관리</span>
                         <div className={'d-flex justify-content-end'}>
                             <button type={'button'}
-                                    className={'px-3 py-2 rounded-pill managementBtn'} onClick={openUserSignUpModal}>
-                                신규등록
+                                    className={'px-3 py-2 rounded-pill managementBtn'} onClick={openCompanyModal}>
+                                + 신규등록
                             </button>
                         </div>
                         <div className={'p-3 rounded-3 border align-items-start'}>
-                            <table className={'table table-hover text-center'} style={{verticalAlign: 'middle'}}>
+                            <table className={'table text-center'} style={{verticalAlign: 'middle'}}>
                                 <thead>
                                 <tr>
-                                    <th>아이디</th>
-                                    <th>이름</th>
-                                    <th>그룹</th>
-                                    <th>작업</th>
-                                    <th>가입일자</th>
+                                    <th>회사명</th>
+                                    <th>출력 회사명</th>
+                                    <th>사용여부</th>
                                     <th>수정</th>
                                     <th>삭제</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {userList.length === 0 ? (
+                                {companyList.length === 0 ? (
                                     <tr>
-                                        <td colSpan={9}>
+                                        <td colSpan={5}>
                                             출력할 내용이 없습니다.
                                         </td>
                                     </tr>
                                 ) : (
-                                    userList.map((item, index) => (
+                                    companyList.map((item, index) => (
                                         <tr key={index}>
-                                            <td>{item.id}</td>
-                                            <td>{item.name}</td>
-                                            <td>{item.companyIdx ? item.companyIdx.companyName : ''}</td>
-                                            <td>{item.role === '0' ? '관리 (웹)' : '현장'}</td>
-                                            <td>{item.createDate}</td>
+                                            <td>{item.company}</td>
+                                            <td>{item.companyName}</td>
+                                            <td>{item.companyIng}</td>
                                             <td>
                                                 <button type={'button'} className={'projectUpdate sideBarBtn'}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
@@ -115,9 +108,10 @@ function UserManagement() {
                                 </tbody>
                             </table>
                         </div>
-                        <UserSignUpModal isOpen={isUserSignUpModal}
-                                         closeModal={closeUserSignUpModal}
-                                         selectUser={selectUser}/>
+                        <CompanyModal
+                            isOpen={isCompanyModal}
+                            closeModal={closeCompanyModal}
+                            selectCompany={selectCompany}/>
                     </div>
                 </div>
             </div>
@@ -125,4 +119,4 @@ function UserManagement() {
     );
 }
 
-export default UserManagement;
+export default GroupManagement;
