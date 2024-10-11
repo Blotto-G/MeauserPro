@@ -1,12 +1,17 @@
 package bitc.fullstack.meausrepro_spring.controller;
 
+import bitc.fullstack.meausrepro_spring.dto.GeometryDto;
+import bitc.fullstack.meausrepro_spring.dto.InsGeometryDto;
 import bitc.fullstack.meausrepro_spring.model.MeausreProInstrument;
+import bitc.fullstack.meausrepro_spring.model.MeausreProProject;
 import bitc.fullstack.meausrepro_spring.service.InstrumentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/MeausrePro/Instrument")
@@ -31,5 +36,19 @@ public class InstrumentController {
     @GetMapping("/{sectionId}")
     public List<MeausreProInstrument> sectionInstruments(@PathVariable("sectionId") int sectionId) {
         return instrumentService.sectionInstruments(sectionId);
+    }
+
+    // 계측기 지오메트리 업데이트
+    @PutMapping("/updateInsGeometry")
+    public ResponseEntity<String> updateInsGeometry(@RequestBody InsGeometryDto insGeometryDto) {
+        Optional<MeausreProInstrument> instrumentOptional = instrumentService.findById(insGeometryDto.getIdx());
+        if (instrumentOptional.isPresent()) {
+            MeausreProInstrument instrument = instrumentOptional.get();
+            instrument.setInsGeometry(insGeometryDto.getInsGeometryData());
+            instrumentService.save(instrument);
+            return ResponseEntity.ok("계측기 지오메트리 업데이트 성공");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("계측기를 찾을 수 없습니다.");
+        }
     }
 }

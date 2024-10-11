@@ -39,7 +39,9 @@ function Main() {
     // 계측기 좌표 저장
     const [insGeometryData, setInsGeometryData] = useState('');
     // 마커 생성
-    const [isDrawingMarker, setIsDrawingMarker] = useState(false);
+    const [isDrawingEnabledMarker, setIsDrawingEnabledMarker] = useState(false);
+    // 계측기 추가 버튼 텍스트 관리
+    const [isInsBtnText, setIsInsBtnText] = useState('계측기 추가');
 
     // 계측기 좌표 데이터 받는 함수
     const handelInsGeometryData = (insCoordinates) => {
@@ -50,11 +52,13 @@ function Main() {
 
     // 계측기 추가 버튼 클릭 시 마커 생성 모드 활성화 및 취소
     const drawingMarkers = () => {
-        if (isDrawingMarker) {
-            setIsDrawingMarker(false);
-            window.location.reload();
+        if (isDrawingEnabledMarker) {
+            setIsDrawingEnabledMarker(false);
+            setIsInsBtnText('계측기 추가')
+            // window.location.reload();
         } else {
-            setIsDrawingMarker(true);
+            setIsDrawingEnabledMarker(true);
+            setIsInsBtnText('계측기 추가')
         }
     };
 
@@ -155,16 +159,18 @@ function Main() {
                     openInstrumentModal={openInstrumentModal}
                     projectBtnText={isBtnText}
                     projectList={projectList}
+                    instrumentBtnText={isInsBtnText} // 계측기 추가 버튼
                 />
                 <div className={'flex-grow-1'}>
                     <MapComponent
                         sendGeometry={handleGeometryData}
                         sendInsGeometry={handelInsGeometryData} // 계측기 지오매트리 정보
                         isDrawingEnabled={isDrawingEnabled}
-                        insGeometryData={insGeometryData} // 계측기 좌표
+                        isDrawingEnabledMarker={isDrawingEnabledMarker} // 마커 생성 활성화
                         setIsDrawingEnabled={setIsDrawingEnabled}
-                        setIsDrawingMarker={setIsDrawingMarker} // 마커 생성
+                        setIsDrawingEnabledMarker={setIsDrawingEnabledMarker} // 마커 생성
                         isModalOpen={isProjectModalOpen}
+                        isInsModalOpen={isInstrumentModalOpen} // 계측기 모달창 열기
                         setIsMapReady={setIsMapReady}
                     />
                     <ProjectCreateModal

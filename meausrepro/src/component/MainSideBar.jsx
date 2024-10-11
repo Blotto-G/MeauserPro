@@ -5,7 +5,7 @@ import axios from "axios";
 function MainSideBar(props) {
     const { user } = useContext(UserContext);
     const { enableDrawing, openSectionModal,
-        handleProjectClick, handleSectionClick, projectBtnText, projectList, openInstrumentModal } = props;
+        handleProjectClick, handleSectionClick, projectBtnText, projectList, openInstrumentModal, drawingMarkers, instrumentBtnText } = props;
 
     // 프로젝트 선택
     const [isSelectProject, setIsSelectProject] = useState(null);
@@ -105,8 +105,8 @@ function MainSideBar(props) {
                                                 구간 기본정보
                                             </span>
                                             <button className={"nav-link link-dark"} type={"button"}
-                                                    onClick={openInstrumentModal}>
-                                                계측기 추가
+                                                    onClick={drawingMarkers}>
+                                                {instrumentBtnText}
                                             </button>
                                         </div>
                                         <span>
