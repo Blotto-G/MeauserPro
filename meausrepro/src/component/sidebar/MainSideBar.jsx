@@ -30,7 +30,6 @@ function MainSideBar(props) {
         }
         handleProjectClick(project);
         setIsSelectProject(project);
-        // 선택된 프로젝트의 구간 목록을 다시 가져오기 위해 Main에서 전달된 함수 사용
         handleSectionList(project.idx);
     };
 

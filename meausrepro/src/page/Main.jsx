@@ -68,6 +68,7 @@ function Main() {
 
     const closeProjectModal = () => {
         setIsProjectModalOpen(false);
+        setMapKey(prevKey => prevKey + 1);
     };
 
     const onProjectCreated = () => {
@@ -112,7 +113,6 @@ function Main() {
     const closeSectionModal = () => {
         setIsSectionModalOpen(false);
     };
-
 
     const handleProjectClick = (project) => {
         setIsSelectedProject(project);
@@ -161,8 +161,6 @@ function Main() {
                 console.error("프로젝트 삭제 중 오류 발생:", err);
             });
     };
-
-
 
     return (
         <div className={'d-flex vh-100'}>
