@@ -5,7 +5,7 @@ import axios from "axios";
 function MainSideBar(props) {
     const { user } = useContext(UserContext);
     const { enableDrawing, openSectionModal,
-        handleProjectClick, handleSectionClick, projectBtnText, projectList, openInstrumentModal, drawingMarkers, instrumentBtnText } = props;
+        handleProjectClick, handleSectionClick, projectBtnText, projectList, enableDrawingMarkers, instrumentBtnText } = props;
 
     // 프로젝트 선택
     const [isSelectProject, setIsSelectProject] = useState(null);
@@ -16,6 +16,9 @@ function MainSideBar(props) {
 
     // 각 구간의 드롭다운 높이 저장
     const dropdownRefs = useRef({});
+
+    // 특정 구간 계측기
+    const [instrumentList, setInstrumentList] = useState([]);
 
     // 프로젝트 클릭 시
     const handleSelectProject = (project) => {
@@ -65,6 +68,26 @@ function MainSideBar(props) {
         }
     }, [openSection]);
 
+    // 구간 클릭 시
+    const handleSelectSection = (section) => {
+        handleSectionClick(section);
+        setIsSelectSection(section);
+        handleInstrumentList(section.idx);
+    };
+
+    // 특정 구간 계측기 보기
+    const handleInstrumentList = (sectionId) => {
+        axios.get(`http://localhost:8080/MeausrePro/Instrument/${sectionId}`)
+            .then(res=> {
+                console.log(res);
+                const { data } = res;
+                setInstrumentList(data);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
+
     return (
         <div className={"sideBar"}>
             {isSelectProject ? (
@@ -105,7 +128,7 @@ function MainSideBar(props) {
                                                 구간 기본정보
                                             </span>
                                             <button className={"nav-link link-dark"} type={"button"}
-                                                    onClick={drawingMarkers}>
+                                                    onClick={enableDrawingMarkers}>
                                                 {instrumentBtnText}
                                             </button>
                                         </div>
@@ -150,6 +173,13 @@ function MainSideBar(props) {
                                                 {item.underStr}
                                             </span>
                                         </div>
+                                        <ul className={"nav nav-pills flex-column mb-auto border border-3 rounded-3"}>
+                                            {instrumentList.map((item) => {
+                                                return (
+                                                    <li key={item.idx} className={`mb-2`}>{item.intType}</li>
+                                                );
+                                            })};
+                                        </ul>
                                     </div>
                                 </li>
                             );

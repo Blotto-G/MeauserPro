@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 
 function InstrumentCreateModal(props) {
-    const { projectData, section, isOpen, closeModal } = props;
+    const { insGeometryData, projectData, section, isOpen, closeModal } = props;
 
     const [siteName, setSiteName] = useState('');
     // const [sectionName, setSectionName] = useState('');
@@ -18,25 +18,6 @@ function InstrumentCreateModal(props) {
     //     setSectionName(section.sectionName || '');
     // }, [section, isOpen]);
 
-
-
-    // const [selectedInstrument, setSelectedInstrument] = useState(instruments[0].name);
-    //
-    // // const handleInstrumentChange = (event) => {
-    // //     const selectedInstrument = instruments.find(instrument => instrument.name === event.target.value);
-    // //     setInsType(selectedInstrument.type);
-    // // }
-    //
-    // // 계측기 선택
-    // const instruments = [
-    //     { id: 1, name: '구간내계측기종류선택', type: 'Z', fields: ['계측기 관리번호', '제품명', '시리얼NO', '지오매트리정보', '설치일자']},
-    //     { id: 2, name: '지중경사계', type: 'A', fields: ['계측기 관리번호', '제품명', '시리얼NO', '지오매트리정보', '설치일자', '상하단구분', '굴착고', '관리기준치1차', '1차관리기준상수', '관리기준치2차', '2차관리기준상수', '관리기준치3차', '3차관리기준상수', '수평변위(+X)', '수평변위(-X)', '수직변위(+Y)', '수직변위(-Y)', '설계변위량', '표기심도', '설치위치']},
-    //     { id: 3, name: '지하수위계', type: 'B', fields: ['계측기 관리번호', '제품명', '시리얼NO', '지오매트리정보', '설치일자', '관리기준치1차', '관리기준치2차', '수직변위(+Y)', '수직변위(-Y)', '설치심도', '설치위치']},
-    //     { id: 4, name: '간극수압계', type: 'C', fields: ['계측기 관리번호', '제품명', '시리얼NO', 'logger명', '지오매트리정보', '설치일자', '관리기준치1차', '관리기준치2차', '수직변위(+Y)', '수직변위(-Y)', '설치위치', 'ZERO READ', 'GAGE FACTOR', 'THERMAL FACTOR', 'TIP 설치위치']},
-    //     { id: 5, name: '지표침하계', type: 'D', fields: ['계측기 관리번호', '제품명', '시리얼NO', '지오매트리정보', '설치일자', '설계변위량', '관리기준치1차', '굴착고', '관리기준치2차', '설치거리', '관리기준치3차', '설치위치', '수직변위(+Y)', '수직변위(-Y)']},
-    //     { id: 6, name: '균열측정계', type: 'E', fields: ['계측기 관리번호', '제품명', '시리얼NO', 'logger명', '지오매트리정보', '설치일자', '상하단구분', '설계변위량', '관리기준치1차', '굴착고', '관리기준치2차', '설치위치', '관리기준치3차', 'ZERO READ', '수직변위(+Y)', '수직변위(-Y)', '계기상수', '1KN_TON']},
-    // ]
-    //
     const dateNow = new Date();
     const today = dateNow.toISOString().slice(0, 10);
 
@@ -65,13 +46,16 @@ function InstrumentCreateModal(props) {
 
     // 구간 생성
     const handleCreateInstrument = async () => {
+        console.log(insGeometryData);
+        const wkt = `POINT(${insGeometryData[1]} ${insGeometryData[0]})`;
+        console.log(wkt);
         axios.post(`http://localhost:8080/MeausrePro/Instrument/save`, {
             sectionId: section,
             insType: insType,
             insNum: insNum,
             insName: insName,
             insNo: insNo,
-            // insGeometry: wkt,
+            insGeometry: wkt,
             createDate: createDate,
             insLocation: insLocation,
             measurement1: measurement1,
@@ -106,7 +90,7 @@ function InstrumentCreateModal(props) {
 
     // 모달 닫기 전 입력창 비우기
     const handleCloseModal = () => {
-        // setInsType('');
+        setInsType('Z');
         setInsNum('');
         setInsName('');
         setInsNo('');
@@ -300,13 +284,9 @@ function InstrumentCreateModal(props) {
                                            className={'form-label mt-2'}>
                                         지오매트리정보:
                                     </label>
-                                    <input type={'text'}
-                                           className={'form-control'}
-                                           id={'insGeometry'}
-                                        // value={insGeometry}
+                                    <input type={'text'} className={'form-control'} id={'insGeometry'} value={insGeometryData}
                                            onChange={(e) => setInsNo(e.target.value)}
-                                           placeholder={'지오매트리정보를 입력하세요'}
-                                           disabled={'false'}
+                                           placeholder={'지오매트리정보를 입력하세요'} readOnly
                                     />
                                 </div>
                                 <div className={'col d-flex flex-column'}>

@@ -10,7 +10,7 @@ public class InsGeometryDto {
     private int idx; // 계측기 번호
 
     // 생성자 추가
-    public InsGeometryDto(String geometryData, int idx) {
+    public InsGeometryDto(String insGeometryData, int idx) {
         this.insGeometryData = insGeometryData;
         this.idx = idx;
     }

@@ -51,7 +51,7 @@ function Main() {
     };
 
     // 계측기 추가 버튼 클릭 시 마커 생성 모드 활성화 및 취소
-    const drawingMarkers = () => {
+    const enableDrawingMarkers = () => {
         if (isDrawingEnabledMarker) {
             setIsDrawingEnabledMarker(false);
             setIsInsBtnText('계측기 추가')
@@ -126,11 +126,6 @@ function Main() {
         setIsSectionModalOpen(false);
     };
 
-    // 계측기 생성 모달 열기
-    const openInstrumentModal = () => {
-        setIsInstrumentModalOpen(true);
-    };
-
     // 계측기 생성 모달 닫기
     const closeInstrumentModal = () => {
         setIsInstrumentModalOpen(false);
@@ -152,11 +147,10 @@ function Main() {
             <div className={'flex-grow-1 d-flex'}>
                 <MainSideBar
                     enableDrawing={enableDrawing}
-                    drawingMarkers={drawingMarkers} // 계측기 마커
+                    enableDrawingMarkers={enableDrawingMarkers} // 계측기 마커
                     handleProjectClick={handleProjectClick}
                     handleSectionClick={handleSectionClick}
                     openSectionModal={openSectionModal}
-                    openInstrumentModal={openInstrumentModal}
                     projectBtnText={isBtnText}
                     projectList={projectList}
                     instrumentBtnText={isInsBtnText} // 계측기 추가 버튼
