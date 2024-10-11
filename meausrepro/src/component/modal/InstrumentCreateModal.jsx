@@ -2,10 +2,10 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 
 function InstrumentCreateModal(props) {
-    const { insGeometryData, projectData, sectionData, isOpen, closeModal } = props;
+    const { insGeometryData, projectData, section, isOpen, closeModal, onInstrumentCreated } = props;
 
     const [siteName, setSiteName] = useState('');
-    // const [sectionName, setSectionName] = useState('');
+    const [sectionName, setSectionName] = useState('');
 
     useEffect(() => {
         if (projectData && isOpen) {
@@ -14,9 +14,13 @@ function InstrumentCreateModal(props) {
         }
     }, [projectData, isOpen]);
 
-    // useEffect(() => {
-    //     setSectionName(section.sectionName || '');
-    // }, [section, isOpen]);
+    useEffect(() => {
+        if (section && isOpen) {
+            // 초기값 설정
+            setSectionName(section.sectionName || '');
+        }
+    }, [section, isOpen]);
+
 
     const dateNow = new Date();
     const today = dateNow.toISOString().slice(0, 10);
@@ -33,15 +37,15 @@ function InstrumentCreateModal(props) {
     const [measurement3, setMeasurement3] = useState(null);
     const [verticalPlus, setVerticalPlus] = useState(null);
     const [verticalMinus, setVerticalMinus] = useState(null);
-    const [division, setDivision] = useState('상')
-    const [depExcavation, setDepExcavation] = useState(null);
-    const [constantOne, setConstantOne] = useState(null);
-    const [constantTwo, setConstantTwo] = useState(null);
-    const [constantThree, setConstantThree] = useState(null);
-    const [horizontalPlus, setHorizontalPlus] = useState(null);
-    const [horizontalMinus, setHorizontalMinus] = useState(null);
-    const [displacement, setDisplacement] = useState(null);
-    const [depIndicated, setDepIndicated] = useState(null);
+    // const [division, setDivision] = useState('상')
+    // const [depExcavation, setDepExcavation] = useState(null);
+    // const [constantOne, setConstantOne] = useState(null);
+    // const [constantTwo, setConstantTwo] = useState(null);
+    // const [constantThree, setConstantThree] = useState(null);
+    // const [horizontalPlus, setHorizontalPlus] = useState(null);
+    // const [horizontalMinus, setHorizontalMinus] = useState(null);
+    // const [displacement, setDisplacement] = useState(null);
+    // const [depIndicated, setDepIndicated] = useState(null);
 
 
     // 구간 생성
@@ -62,29 +66,32 @@ function InstrumentCreateModal(props) {
             measurement2: measurement2,
             measurement3: measurement3,
             verticalPlus: verticalPlus,
-            verticalMinus: verticalMinus,
-            division: division,
-            depExcavation: depExcavation,
-            constantOne: constantOne,
-            constantTwo: constantTwo,
-            constantThree: constantThree,
-            horizontalPlus: horizontalPlus,
-            horizontalMinus: horizontalMinus,
-            displacement: displacement,
-            depIndicated: depIndicated
+            verticalMinus: verticalMinus
+            // division: division,
+            // depExcavation: depExcavation,
+            // constantOne: constantOne,
+            // constantTwo: constantTwo,
+            // constantThree: constantThree,
+            // horizontalPlus: horizontalPlus,
+            // horizontalMinus: horizontalMinus,
+            // displacement: displacement,
+            // depIndicated: depIndicated
         })
             .then(res => {
-                if (!insNum || !insName || !insNo || !createDate || !insLocation || !measurement1 || !measurement2 || !measurement3 || !verticalPlus || !verticalMinus) {
+                if (!insType || !insNum || !createDate || !insLocation || !verticalPlus || !verticalMinus) {
                     alert("모든 필드를 입력해주세요.");
                     return;
                 }
                 else {
-                    console.log(res);
+                    console.log('계측기 생성 성공:', res.data);
+                    if (onInstrumentCreated) {
+                        onInstrumentCreated(); // 계측기 생성 후 계측기 목록을 다시 불러오도록 호출
+                    }
                     handleCloseModal();
                 }
             })
             .catch(err => {
-                console.log(err);
+                console.log('구간 생성 중 오류 발생:', err);
             })
     }
 
@@ -101,15 +108,16 @@ function InstrumentCreateModal(props) {
         setMeasurement3('');
         setVerticalPlus('');
         setVerticalMinus('');
-        setDivision('');
-        setDepExcavation('');
-        setConstantOne('');
-        setConstantTwo('');
-        setConstantThree('');
-        setHorizontalPlus('');
-        setHorizontalMinus('');
-        setDisplacement('');
-        setDepIndicated('');
+        // setDivision('');
+        // setDepExcavation('');
+        // setConstantOne('');
+        // setConstantTwo('');
+        // setConstantThree('');
+        // setHorizontalPlus('');
+        // setHorizontalMinus('');
+        // setDisplacement('');
+        // setDepIndicated('');
+        onInstrumentCreated();
         closeModal();
     };
 
@@ -120,73 +128,73 @@ function InstrumentCreateModal(props) {
     };
 
 
-    const handleIncreaseDep = () => {
-        setDepExcavation(prev => prev + 1); // 오른쪽 버튼 클릭 시 값 증가
-    };
-    const handleIncreaseConOne = () => {
-        setConstantOne(prev => prev + 1);
-    };
-    const handleIncreaseConTwo = () => {
-        setConstantTwo(prev => prev + 1);
-    };
-    const handleIncreaseConThree = () => {
-        setConstantThree(prev => prev + 1);
-    };
-    const handleIncreaseHoriP = () => {
-        setHorizontalPlus(prev => prev + 1);
-    };
-    const handleIncreaseHoriM = () => {
-        setHorizontalMinus(prev => prev + 1);
-    };
+    // const handleIncreaseDep = () => {
+    //     setDepExcavation(prev => prev + 1); // 오른쪽 버튼 클릭 시 값 증가
+    // };
+    // const handleIncreaseConOne = () => {
+    //     setConstantOne(prev => prev + 1);
+    // };
+    // const handleIncreaseConTwo = () => {
+    //     setConstantTwo(prev => prev + 1);
+    // };
+    // const handleIncreaseConThree = () => {
+    //     setConstantThree(prev => prev + 1);
+    // };
+    // const handleIncreaseHoriP = () => {
+    //     setHorizontalPlus(prev => prev + 1);
+    // };
+    // const handleIncreaseHoriM = () => {
+    //     setHorizontalMinus(prev => prev + 1);
+    // };
     const handleIncreaseVeriP = () => {
         setVerticalPlus(prev => prev + 1);
     };
     const handleIncreaseVeriM = () => {
         setVerticalMinus(prev => prev + 1);
     };
-    const handleIncreaseDisplacement = () => {
-        setDisplacement(prev => prev + 1);
-    };
-    const handleIncreaseDepIndi = () => {
-        setDepIndicated(prev => prev + 1);
-    };
-
-
-    const handleDecreaseDep = () => {
-        setDepExcavation(prev => prev - 1); // 왼쪽 버튼 클릭 시 값 감소
-    };
-    const handleDecreaseConOne = () => {
-        setConstantOne(prev => prev - 1);
-    };
-    const handleDecreaseConTwo = () => {
-        setConstantTwo(prev => prev - 1);
-    };
-    const handleDecreaseConThree = () => {
-        setConstantThree(prev => prev - 1);
-    };
-    const handleDecreaseHoriP = () => {
-        setHorizontalPlus(prev => prev - 1);
-    };
-    const handleDecreaseHoriM = () => {
-        setHorizontalMinus(prev => prev - 1);
-    };
+    // const handleIncreaseDisplacement = () => {
+    //     setDisplacement(prev => prev + 1);
+    // };
+    // const handleIncreaseDepIndi = () => {
+    //     setDepIndicated(prev => prev + 1);
+    // };
+    //
+    //
+    // const handleDecreaseDep = () => {
+    //     setDepExcavation(prev => prev - 1); // 왼쪽 버튼 클릭 시 값 감소
+    // };
+    // const handleDecreaseConOne = () => {
+    //     setConstantOne(prev => prev - 1);
+    // };
+    // const handleDecreaseConTwo = () => {
+    //     setConstantTwo(prev => prev - 1);
+    // };
+    // const handleDecreaseConThree = () => {
+    //     setConstantThree(prev => prev - 1);
+    // };
+    // const handleDecreaseHoriP = () => {
+    //     setHorizontalPlus(prev => prev - 1);
+    // };
+    // const handleDecreaseHoriM = () => {
+    //     setHorizontalMinus(prev => prev - 1);
+    // };
     const handleDecreaseVeriP = () => {
         setVerticalPlus(prev => prev - 1);
     };
     const handleDecreaseVeriM = () => {
         setVerticalMinus(prev => prev - 1);
     };
-    const handleDecreaseDisplacement = () => {
-        setDisplacement(prev => prev - 1);
-    };
-    const handleDecreaseDepIndi = () => {
-        setDepIndicated(prev => prev - 1);
-    };
+    // const handleDecreaseDisplacement = () => {
+    //     setDisplacement(prev => prev - 1);
+    // };
+    // const handleDecreaseDepIndi = () => {
+    //     setDepIndicated(prev => prev - 1);
+    // };
 
     return (
         <div
             className={`modal fade ${isOpen ? 'show d-block' : ''}`}
-            id={'createSection'}
+            id={'createInstrument'}
             tabIndex={'-1'}
             aria-labelledby={'csModalLabel'}
             aria-hidden={!isOpen}
@@ -219,8 +227,7 @@ function InstrumentCreateModal(props) {
                                    className={'form-label mt-2'}>
                                 구간명
                             </label>
-                            {/*<span onChange={(e) => setSectionName(e.target.value)}>{sectionName}</span>*/}
-                            <span>구간명 입력해야해!!!!!</span>
+                            <span onChange={(e) => setSectionName(e.target.value)}>{sectionName}</span>
                             <div className={'row mt-2'}>
                                 <div className={'col d-flex flex-column'}>
                                     <label htmlFor={'insType'}
@@ -229,9 +236,9 @@ function InstrumentCreateModal(props) {
                                     </label>
                                     <select className={'form-select'} id={'insType'} onChange={handleInsTypeChange}>
                                         <option selected value="Z">구간내계측기종류선택</option>
-                                        <option value="A">지중경사계</option>
-                                        <option value="B">지하수위계</option>
-                                        <option value="C">간극수압계</option>
+                                        <option value="A">하중계_버팀대</option>
+                                        <option value="B">하중계_PSBEAM</option>
+                                        <option value="C">하중계_앵커</option>
                                         <option value="D">지표침하계</option>
                                         <option value="E">균열측정계</option>
                                     </select>
@@ -305,36 +312,7 @@ function InstrumentCreateModal(props) {
                             </div>
                             {selectdInsType === 'A' && (
                                 <div>
-                                    <div className={'row mt-2'}>
-                                        <div className={'col d-flex flex-column'}>
-                                            <label htmlFor={'division'}
-                                                   className={'form-label mt-2'}>
-                                                상하단구분:
-                                            </label>
-                                            <select className={'form-select'} id={'division'} value={division}>
-                                                <option selected value="상">상부단</option>
-                                                <option value="하">하부단</option>
-                                            </select>
-                                        </div>
-                                        <div className={'col d-flex flex-column'}>
-                                            <label htmlFor={'depExcavation'}
-                                                   className={'form-label mt-2'}>
-                                                굴착고:
-                                            </label>
-                                            <div className={'input-group'}>
-                                                <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={handleDecreaseDep}>-
-                                                </button>
-                                                <input type="number" id={'depExcavation'} value={depExcavation}
-                                                       className={'form-control text-center'}
-                                                       placeholder={'굴착고를 입력하세요'}
-                                                       onChange={(e) => setDepExcavation(e.target.value)}/>
-                                                <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={handleIncreaseDep}>+
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
+
                                     <div className={'row mt-2'}>
                                         <div className={'col d-flex flex-column'}>
                                             <label htmlFor={'measurement1'}
@@ -348,26 +326,6 @@ function InstrumentCreateModal(props) {
                                             />
                                         </div>
                                         <div className={'col d-flex flex-column'}>
-                                            <label htmlFor={'constantOne'}
-                                                   className={'form-label mt-2'}>
-                                                1차관리기준상수:
-                                            </label>
-                                            <div className={'input-group'}>
-                                                <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={handleDecreaseConOne}>-
-                                                </button>
-                                                <input type="number" id={'constantOne'} value={constantOne}
-                                                       className={'form-control text-center'}
-                                                       placeholder={'관리기준상수를 입력하세요'}
-                                                       onChange={(e) => setConstantOne(e.target.value)}/>
-                                                <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={handleIncreaseConOne}>+
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className={'row mt-2'}>
-                                        <div className={'col d-flex flex-column'}>
                                             <label htmlFor={'measurement2'}
                                                    className={'form-label mt-2'}>
                                                 관리기준치2차:
@@ -378,25 +336,8 @@ function InstrumentCreateModal(props) {
                                                    disabled={'false'}
                                             />
                                         </div>
-                                        <div className={'col d-flex flex-column'}>
-                                            <label htmlFor={'constantTwo'}
-                                                   className={'form-label mt-2'}>
-                                                2차관리기준상수:
-                                            </label>
-                                            <div className={'input-group'}>
-                                                <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={handleDecreaseConTwo}>-
-                                                </button>
-                                                <input type="number" id={'constantTwo'} value={constantTwo}
-                                                       className={'form-control text-center'}
-                                                       placeholder={'관리기준상수를 입력하세요'}
-                                                       onChange={(e) => setConstantTwo(e.target.value)}/>
-                                                <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={handleIncreaseConTwo}>+
-                                                </button>
-                                            </div>
-                                        </div>
                                     </div>
+
                                     <div className={'row mt-2'}>
                                         <div className={'col d-flex flex-column'}>
                                             <label htmlFor={'measurement3'}
@@ -409,64 +350,6 @@ function InstrumentCreateModal(props) {
                                                    disabled={'false'}
                                             />
                                         </div>
-                                        <div className={'col d-flex flex-column'}>
-                                            <label htmlFor={'constantThree'}
-                                                   className={'form-label mt-2'}>
-                                                3차관리기준상수:
-                                            </label>
-                                            <div className={'input-group'}>
-                                                <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={handleDecreaseConThree}>-
-                                                </button>
-                                                <input type="number" id={'constantThree'} value={constantThree}
-                                                       className={'form-control text-center'}
-                                                       placeholder={'관리기준상수를 입력하세요'}
-                                                       onChange={(e) => setConstantThree(e.target.value)}/>
-                                                <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={handleIncreaseConThree}>+
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className={'row mt-2'}>
-                                        <div className={'col d-flex flex-column'}>
-                                            <label htmlFor={'horizontalPlus'}
-                                                   className={'form-label mt-2'}>
-                                                수평변위(+X):
-                                            </label>
-                                            <div className={'input-group'}>
-                                                <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={handleDecreaseHoriP}>-
-                                                </button>
-                                                <input type="number" id={'horizontalPlus'} value={horizontalPlus}
-                                                       className={'form-control text-center'}
-                                                       placeholder={'-25'}
-                                                       onChange={(e) => setHorizontalPlus(e.target.value)}/>
-                                                <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={handleIncreaseHoriP}>+
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div className={'col d-flex flex-column'}>
-                                            <label htmlFor={'horizontalMinus'}
-                                                   className={'form-label mt-2'}>
-                                                수평변위(-X):
-                                            </label>
-                                            <div className={'input-group'}>
-                                                <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={handleDecreaseHoriM}>-
-                                                </button>
-                                                <input type="number" id={'horizontalMinus'} value={horizontalMinus}
-                                                       className={'form-control text-center'}
-                                                       placeholder={'40'}
-                                                       onChange={(e) => setHorizontalMinus(e.target.value)}/>
-                                                <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={handleIncreaseHoriM}>+
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className={'row mt-2'}>
                                         <div className={'col d-flex flex-column'}>
                                             <label htmlFor={'verticalPlus'}
                                                    className={'form-label mt-2'}>
@@ -485,6 +368,9 @@ function InstrumentCreateModal(props) {
                                                 </button>
                                             </div>
                                         </div>
+                                    </div>
+
+                                    <div className={'row mt-2'}>
                                         <div className={'col d-flex flex-column'}>
                                             <label htmlFor={'verticalMinus'}
                                                    className={'form-label mt-2'}>
@@ -503,46 +389,6 @@ function InstrumentCreateModal(props) {
                                                 </button>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className={'row mt-2'}>
-                                        <div className={'col d-flex flex-column'}>
-                                            <label htmlFor={'displacement'}
-                                                   className={'form-label mt-2'}>
-                                                설계변위량:
-                                            </label>
-                                            <div className={'input-group'}>
-                                                <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={handleDecreaseDisplacement}>-
-                                                </button>
-                                                <input type="number" id={'displacement'} value={displacement}
-                                                       className={'form-control text-center'}
-                                                       placeholder={'설계변위량을 입력하세요'}
-                                                       onChange={(e) => setDisplacement(e.target.value)}/>
-                                                <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={handleIncreaseDisplacement}>+
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div className={'col d-flex flex-column'}>
-                                            <label htmlFor={'depIndicated'}
-                                                   className={'form-label mt-2'}>
-                                                표기심도:
-                                            </label>
-                                            <div className={'input-group'}>
-                                                <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={handleDecreaseDepIndi}>-
-                                                </button>
-                                                <input type="number" id={'depIndicated'} value={depIndicated}
-                                                       className={'form-control text-center'}
-                                                       placeholder={'표기심도를 입력하세요'}
-                                                       onChange={(e) => setDepIndicated(e.target.value)}/>
-                                                <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={handleIncreaseDepIndi}>+
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className={'row mt-2'}>
                                         <div className={'col d-flex flex-column'}>
                                             <label htmlFor={'insLocation'}
                                                    className={'form-label mt-2'}>

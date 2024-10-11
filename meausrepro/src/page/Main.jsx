@@ -36,6 +36,7 @@ function Main() {
     const [isDrawingEnabledMarker, setIsDrawingEnabledMarker] = useState(false); // 마커 생성
     const [isInsBtnText, setIsInsBtnText] = useState('계측기 추가'); // 계측기 추가 버튼 텍스트 관리
     const [isSelectedSection, setIsSelectedSection] = useState(null);
+    const [instrumentList, setInstrumentList] = useState([]);
 
 
     // 로그인 정보 없을 시, 로그인 페이지로 이동
@@ -169,6 +170,16 @@ function Main() {
             });
     };
 
+    // 구간 목록 업데이트 후 선택한 구간 정보 업데이트
+    useEffect(() => {
+        if (isSelectedSection) {
+            const updatedSection = sectionList.find(s => s.idx === isSelectedSection.idx);
+            if (updatedSection) {
+                setIsSelectedSection(updatedSection);
+            }
+        }
+    }, [sectionList]);
+
     // 계측기 좌표 데이터 받는 함수
     const handelInsGeometryData = (insCoordinates) => {
         setInsGeometryData(insCoordinates);
@@ -196,6 +207,32 @@ function Main() {
         setIsSelectedSection(section);
     };
 
+    // 계측기 생성 완료 시 호출될 함수
+    const onInstrumentCreated = () => {
+        if (isSelectedSection) {
+            // 선택된 구간의 계측기 목록을 다시 가져오기
+            axios.get(`http://localhost:8080/MeausrePro/Instrument/${isSelectedSection.idx}`)
+                .then((res) => {
+                    setInstrumentList(res.data); // 계측기 목록 업데이트
+                })
+                .catch(err => {
+                    console.error('계측기 목록 업데이트 중 오류 발생:', err);
+                });
+        }
+        setIsInstrumentModalOpen(false); // 모달 닫기
+    };
+
+    // 구간 전체 계측기 들고오기
+    const handleInstrumentList = (sectionId) => {
+        axios.get(`http://localhost:8080/MeausrePro/Instrument/${sectionId}`)
+            .then((res) => {
+                setInstrumentList(res.data);
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    };
+
     return (
         <div className={'d-flex vh-100'}>
             <CustomSidebar topManager={user.topManager} />
@@ -208,12 +245,16 @@ function Main() {
                     projectBtnText={isBtnText}
                     projectList={projectList}
                     sectionList={sectionList} // sectionList 전달
+                    instrumentList={instrumentList} // instrumentList 전달
                     moveToPolygon={moveToPolygon}
                     setProjectList={setProjectList}
                     setSectionList={setSectionList} // setSectionList 전달
+                    setInstrumentList={setInstrumentList} // setInstrumentList 전달
                     handleSectionList={handleSectionList}
+                    handleInstrumentList={handleInstrumentList}
                     openEditModal={openEditModal}
                     deleteProject={deleteProject}
+                    handleSectionClick={handleSectionClick}
                     enableDrawingMarkers={enableDrawingMarkers} // 계측기 마커
                     instrumentBtnText={isInsBtnText} // 계측기 추가 버튼
                 />
@@ -251,9 +292,10 @@ function Main() {
                     <InstrumentCreateModal
                         insGeometryData={insGeometryData} // 계측기 좌표
                         projectData={isSelectedProject}
-                        sectionData={isSelectedSection}
+                        section={isSelectedSection}
                         isOpen={isInstrumentModalOpen}
                         closeModal={closeInstrumentModal}
+                        onInstrumentCreated={onInstrumentCreated} // 계측기 생성 후 호출될 함수 전달
                     />
                 </div>
             </div>

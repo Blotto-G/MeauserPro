@@ -19,7 +19,8 @@ function MainSideBar(props) {
         setSectionList, // Main에서 전달받은 setSectionList 사용
         handleSectionList,
         enableDrawingMarkers,
-        instrumentBtnText
+        instrumentBtnText,
+        handleSectionClick
     } = props;
 
     const [isSelectProject, setIsSelectProject] = useState(null);
@@ -40,6 +41,7 @@ function MainSideBar(props) {
 
     // 선택된 구간 정보 저장 및 세부 정보 가져오기
     const handleSelectSection = (section) => {
+        handleSectionClick(section);
         setSelectedSection(section); // 선택된 구간 정보 저장
         handleInstrumentList(section.idx);
     };
