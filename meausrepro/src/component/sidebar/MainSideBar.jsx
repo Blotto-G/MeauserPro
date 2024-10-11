@@ -1,7 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import UserContext from "../../context/UserContext.jsx";
-import SectionDetailSideBar from "./SectionDetailSideBar.jsx";
 import axios from "axios";
+import SectionDetailSideBar from "./SectionDetailSideBar.jsx";
+import Swal from "sweetalert2";
 
 function MainSideBar(props) {
     const { user } = useContext(UserContext);
@@ -54,10 +55,19 @@ function MainSideBar(props) {
 
     // 프로젝트 삭제
     const handleDelete = () => {
-        if (window.confirm("프로젝트를 삭제하시겠습니까?")) {
-            deleteProject(isSelectProject.idx); // Main에서 전달된 deleteProject 사용
-            setIsSelectProject(null);
-        }
+        Swal.fire({
+            title: '프로젝트 삭제',
+            text: "프로젝트를 삭제하시겠습니까?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: '삭제',
+            cancelButtonText: '취소'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteProject(isSelectProject.idx); // Main에서 전달된 deleteProject 사용
+                setIsSelectProject(null);
+            }
+        });
     };
 
     // 프로젝트 상세정보 닫기

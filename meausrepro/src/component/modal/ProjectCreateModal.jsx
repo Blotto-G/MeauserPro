@@ -1,6 +1,6 @@
 import {useContext, useEffect, useState} from "react";
 import axios from "axios";
-import UserContext from "../context/UserContext.jsx";
+import UserContext from "../../context/UserContext.jsx";
 
 function ProjectCreateModal(props) {
     const {user} = useContext(UserContext);

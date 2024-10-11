@@ -1,10 +1,10 @@
-
 import CustomSidebar from "../component/sidebar/CustomSidebar.jsx";
-import {useContext, useEffect, useState} from "react";
+import { useContext, useEffect, useState } from "react";
 import UserContext from "../context/UserContext.jsx";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import UserSignUpModal from "../component/UserSignUpModal.jsx";
+import UserSignUpModal from "../component/modal/UserSignUpModal.jsx";
+import UserUpdateModal from "../component/modal/UserUpdateModal.jsx";
 
 function UserManagement() {
     const { user } = useContext(UserContext);
@@ -15,19 +15,28 @@ function UserManagement() {
 
     // 회원정보 생성 모달창
     const [isUserSignUpModal, setIsUserSignUpModal] = useState(false);
-    // 회원정보 생성 모달창 열기
-    const openUserSignUpModal = () => {
-        setIsUserSignUpModal(true);
-    }
-    // 회원정보 생성 모달창 닫기
-    const closeUserSignUpModal = () => {
-        setIsUserSignUpModal(false);
-    }
+    const openUserSignUpModal = () => setIsUserSignUpModal(true);
+    const closeUserSignUpModal = () => setIsUserSignUpModal(false);
+
+    // 회원정보 수정 모달창
+    const [isUserUpdateModal, setIsUserUpdateModal] = useState(false);
+    const [userToEdit, setUserToEdit] = useState(null); // 수정할 사용자 정보를 저장하는 상태
+
+    // 회원정보 수정 모달창 열기
+    const openUserUpdateModal = (user) => {
+        setUserToEdit(user);
+        setIsUserUpdateModal(true);
+    };
+
+    // 회원정보 수정 모달창 닫기
+    const closeUserUpdateModal = () => {
+        setIsUserUpdateModal(false);
+        setUserToEdit(null); // 닫을 때 선택된 사용자 정보 초기화
+    };
 
     // 로그인 정보 없을 시, 로그인 페이지로 이동
     useEffect(() => {
         if (!user.id) {
-            // 로그인 정보 없을 시, 로그인 페이지로 리다이렉트
             navigate('/');
         }
         selectUser();
@@ -37,13 +46,12 @@ function UserManagement() {
     const selectUser = () => {
         axios.get(`http://localhost:8080/MeausrePro/User/notTopManager`)
             .then(res => {
-                console.log(res.data);
                 setUserList(res.data);
             })
             .catch(err => {
                 console.log(err);
-            })
-    }
+            });
+    };
 
     return (
         <div className={'d-flex vh-100'}>
@@ -54,12 +62,13 @@ function UserManagement() {
                         <span className={'text-center fs-4 fw-bold'}>회원정보관리</span>
                         <div className={'d-flex justify-content-end'}>
                             <button type={'button'}
-                                    className={'px-3 py-2 rounded-pill managementBtn'} onClick={openUserSignUpModal}>
+                                    className={'px-3 py-2 rounded-pill managementBtn'}
+                                    onClick={openUserSignUpModal}>
                                 신규등록
                             </button>
                         </div>
                         <div className={'p-3 rounded-3 border align-items-start'}>
-                            <table className={'table table-hover text-center'} style={{verticalAlign: 'middle'}}>
+                            <table className={'table table-hover text-center'} style={{ verticalAlign: 'middle' }}>
                                 <thead>
                                 <tr>
                                     <th>아이디</th>
@@ -74,9 +83,7 @@ function UserManagement() {
                                 <tbody>
                                 {userList.length === 0 ? (
                                     <tr>
-                                        <td colSpan={9}>
-                                            출력할 내용이 없습니다.
-                                        </td>
+                                        <td colSpan={9}>출력할 내용이 없습니다.</td>
                                     </tr>
                                 ) : (
                                     userList.map((item, index) => (
@@ -87,7 +94,11 @@ function UserManagement() {
                                             <td>{item.role === '0' ? '관리 (웹)' : '현장'}</td>
                                             <td>{item.createDate}</td>
                                             <td>
-                                                <button type={'button'} className={'projectUpdate sideBarBtn'}>
+                                                <button
+                                                    type={'button'}
+                                                    className={'projectUpdate sideBarBtn'}
+                                                    onClick={() => openUserUpdateModal(item)}
+                                                >
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                                          fill="currentColor" className="bi bi-pencil-square"
                                                          viewBox="0 0 16 16">
@@ -111,13 +122,20 @@ function UserManagement() {
                                         </tr>
                                     ))
                                 )}
-
                                 </tbody>
                             </table>
                         </div>
-                        <UserSignUpModal isOpen={isUserSignUpModal}
-                                         closeModal={closeUserSignUpModal}
-                                         selectUser={selectUser}/>
+                        <UserSignUpModal
+                            isOpen={isUserSignUpModal}
+                            closeModal={closeUserSignUpModal}
+                            selectUser={selectUser}
+                        />
+                        <UserUpdateModal
+                            isOpen={isUserUpdateModal}
+                            closeModal={closeUserUpdateModal}
+                            selectUser={selectUser}
+                            userInfo={userToEdit}
+                        />
                     </div>
                 </div>
             </div>

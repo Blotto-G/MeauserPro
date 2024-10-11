@@ -54,40 +54,4 @@ public class MeausreProInsType {
 
     @Column(name = "ten_design")
     private Double tenDesign; // 설계긴장력
-
-    @Column(name = "install_distance")
-    private Double installDistance; // 설치거리
-
-    @Column(name = "fac_gage")
-    private Double facGage; // GAGE FACTOR
-
-    @Column(name = "fac_thermal")
-    private Double facThermal; // THERMAL FACTOR
-
-    @Column(name = "pos_tip")
-    private Double posTip; // TIP 설치위치
-
-    @Column(name = "dep_install")
-    private Double depInstall; // 설치심도
-
-    @Column(name = "division", length = 1)
-    private char division; // 상하단구분
-
-    @Column(name = "constant_one")
-    private Double constantOne; // 1차관리기준상수
-
-    @Column(name = "constant_two")
-    private Double constantTwo; // 2차관리기준상수
-
-    @Column(name = "constant_three")
-    private Double constantThree; // 3차관리기준상수
-
-    @Column(name = "horizontal_plus")
-    private Double horizontalPlus; // 수평변위 X+
-
-    @Column(name = "horizontal_minus")
-    private Double horizontalMinus; // 수평변위 X-
-
-    @Column(name = "dep_indicated")
-    private Double depIndicated; // 표기심도
 }

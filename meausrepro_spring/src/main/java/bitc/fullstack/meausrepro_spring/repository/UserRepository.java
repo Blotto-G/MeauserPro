@@ -19,4 +19,8 @@ public interface UserRepository extends JpaRepository<MeausreProUser, String> {
     // 전체 관리자 겸 웹 관리자 제외 회원정보 보기
     @Query("SELECT u FROM MeausreProUser u WHERE u.topManager is null")
     List<MeausreProUser> findByAllNotTopManager();
+
+    // 회원 정보 수정 시 필요
+    @Query("SELECT u FROM MeausreProUser u WHERE u.idx = :idx")
+    Optional<MeausreProUser> findByIdx(int idx);
 }

@@ -58,7 +58,7 @@ function Login() {
     }
 
     // test server login
-    const testLogin = () => axios.post(`http://localhost:8080/MeausrePro/User/login`, {
+    const testLogin = () => axios.post(`http://localhost:8080/MeausrePro/User/webLogin`, {
         idx: 1,
         id: 'test1@gmail.com',
         pass: '1234',

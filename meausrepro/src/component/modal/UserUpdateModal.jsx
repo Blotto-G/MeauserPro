@@ -2,8 +2,8 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 
-function UserSignUpModal(props) {
-    const {isOpen, closeModal, selectUser} = props;
+function UserUpdateModal(props) {
+    const {isOpen, closeModal, selectUser, userInfo} = props;
 
     const [id, setId] = useState('');
     const [pass, setPass] = useState('');
@@ -22,50 +22,29 @@ function UserSignUpModal(props) {
             .catch(err => {
                 console.log(err);
             })
-    }, [])
-
+        if (userInfo) {  // userInfo가 존재할 때만 상태 업데이트
+            setId(userInfo.id);
+            setPass(userInfo.pass);
+            setName(userInfo.name);
+            setTel(userInfo.tel);
+            setRole(userInfo.role);
+            setCompany(userInfo.companyIdx);
+        }
+    }, [userInfo])
+    
     // 모달 닫기
     const handleCloseModal = () => {
-        setId('');
-        setPass('');
-        setName('');
-        setTel('');
-        setRole(0);
-        setCompany(null);
-
         selectUser();
         closeModal();
     }
-
-    // 아이디 중복 확인
-    const [isCheckId, setIsCheckId] = useState(null);
-    const handleCheckId = (inputId) => {
-        setId(inputId);
-
-        if (inputId.trim() === '') {
-            setId(null); // 아이디가 입력되지 않으면 상태 초기화
-            setIsCheckId(null);
-            return;
-        }
-        axios.post(`http://localhost:8080/MeausrePro/User/checkId/${inputId}`)
-            .then(res => {
-                setIsCheckId(res.data); // 서버 응답에 따라 사용 가능 여부 설정 (true/false)
-            })
-            .catch(err => {
-                console.log(err);
-                setIsCheckId(false);
-            });
-    };
-
 
     // 비밀번호 toggle
     const [showPassword, setShowPassword] = useState(false);
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
-
     // 비밀번호 형식 유효성 검사
-    const [isCheckPw, setIsCheckPw] = useState(false);
+    const [isCheckPw, setIsCheckPw] = useState(true);
     const handleCheckPw = (inputPw) => {
         setPass(inputPw);
 
@@ -80,9 +59,8 @@ function UserSignUpModal(props) {
             setIsCheckPw(false);
         }
     }
-
     // 전화번호 포맷팅 및 유효성 검사
-    const [isCheckTel, setIsCheckTel] = useState(false);
+    const [isCheckTel, setIsCheckTel] = useState(true);
     const handleCheckTel = (inputTel) => {
         let numTel = inputTel.replace(/[^0-9]/g, '');
 
@@ -109,24 +87,26 @@ function UserSignUpModal(props) {
         }
     }
 
-    // 회원가입 처리
-    const registerEvent = async (e) => {
+    const handleUserUpdate = (e) => {
         e.preventDefault();
 
-        if (isCheckId === true && isCheckPw === true && isCheckTel === true) {
-            axios.post(`http://localhost:8080/MeausrePro/User/SignUp`, {
+        if (!isCheckPw || !isCheckTel) {
+            Swal.fire({
+                icon: "info",
+                text: `필드값을 모두 입력하세요.`,
+                showCancelButton: false,
+                confirmButtonText: '확인'
+            })
+        } else {
+            axios.put(`http://localhost:8080/MeausrePro/User/update/${userInfo.idx}`, {
                 id: id,
                 pass: pass,
                 name: name,
                 tel: tel,
                 role: role,
-                companyIdx: {
-                    idx: company.idx,
-                    company: company.company,
-                    companyName: company.companyName
-                }
+                companyIdx: company
             })
-                .then(res => {
+                .then(res=> {
                     console.log(res);
                     handleCloseModal();
                 })
@@ -138,18 +118,10 @@ function UserSignUpModal(props) {
                         showCancelButton: false,
                         confirmButtonText: '확인'
                     })
-                });
+                })
         }
-        else {
-            Swal.fire({
-                icon: "info",
-                text: `필드값을 모두 입력하세요.`,
-                showCancelButton: false,
-                confirmButtonText: '확인'
-            })
-        }
-    };
-
+    }
+    
     return (
         <div className={`modal fade ${isOpen ? 'show d-block' : ''}`}
              id={'createUser'}
@@ -162,7 +134,7 @@ function UserSignUpModal(props) {
                 <div className={'modal-content'}>
                     <div className={'modal-header'}>
                         <span className={'fs-4 modal-title'} id={'userModalLabel'}>
-                            데이터 추가
+                            회원정보 수정
                         </span>
                         <button type={'button'}
                                 className={'btn-close'}
@@ -173,32 +145,23 @@ function UserSignUpModal(props) {
                     </div>
                     <div className={'modal-body'}>
                         <div className={'loginSection'}>
-                            <form onSubmit={registerEvent} className={'d-grid gap-2'}>
+                            <form onSubmit={handleUserUpdate} className={'d-grid gap-2'}>
                                 <div className={'input-group'}>
                                     <span className={'input-group-text'}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                 className="bi bi-person" viewBox="0 0 16 16">
-                                      <path
-                                          d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"></path>
-                                </svg>
-                        </span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                             className="bi bi-person" viewBox="0 0 16 16">
+                                                  <path
+                                                      d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"></path>
+                                        </svg>
+                                    </span>
                                     <input
                                         type="text"
                                         className={'form-control'}
                                         placeholder="아이디"
                                         value={id}
-                                        onChange={(e) => handleCheckId(e.target.value)}
                                         required
+                                        readOnly
                                     />
-                                </div>
-                                <div className={'ms-3'}>
-                                    {isCheckId === null ? (
-                                        <span className={'text-muted'}>아이디를 입력해주세요.</span>
-                                    ) : isCheckId ? (
-                                        <span className={'text-success'}>사용 가능한 아이디입니다.</span>
-                                    ) : (
-                                        <span className={'text-danger'}>이미 사용 중인 아이디입니다.</span>
-                                    )}
                                 </div>
                                 <div className={'input-group'}>
                                     <span className={'input-group-text'}>
@@ -266,7 +229,7 @@ function UserSignUpModal(props) {
                                         className={'form-control'}
                                         placeholder="이름"
                                         value={name}
-                                        onChange={(e) => setName(e.target.value)}
+                                        readOnly
                                         required
                                     />
                                 </div>
@@ -298,7 +261,7 @@ function UserSignUpModal(props) {
                                     <select
                                         className={'form-select'}
                                         id={'companySelected'}
-                                        value={company ? company.idx: ''}
+                                        value={company ? company.idx : ''}
                                         onChange={(e) => {
                                             const selectedCompany = companyList.find(item => item.idx === parseInt(e.target.value));
                                             setCompany(selectedCompany || null);
@@ -336,7 +299,7 @@ function UserSignUpModal(props) {
                                     type="submit"
                                     className={'signUpBtn mt-3'}
                                 >
-                                    회원가입
+                                    수정
                                 </button>
                             </form>
                         </div>
@@ -347,4 +310,4 @@ function UserSignUpModal(props) {
     );
 }
 
-export default UserSignUpModal;
+export default UserUpdateModal;

@@ -35,4 +35,17 @@ public class UserService {
     public List<MeausreProUser> getNotTopManager() {
         return userRepository.findByAllNotTopManager();
     }
+
+    // 비밀번호 확인
+    public boolean checkPasswrod(String id, String password) {
+        MeausreProUser user = userRepository.findByUserId(id).orElse(null);
+
+        // 사용자가 존재하고 비밀번호가 일치하는지 확인
+        return user != null && user.getPass().equals(password);
+    }
+
+    // 회원정보 수정 시 필요
+    public Optional<MeausreProUser> findByIdx(int idx) {
+        return userRepository.findByIdx(idx);
+    }
 }

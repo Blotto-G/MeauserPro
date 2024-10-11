@@ -2,12 +2,12 @@ import { useContext, useEffect, useState } from "react";
 import UserContext from "../context/UserContext.jsx";
 import { useNavigate } from "react-router";
 import MapComponent from "../component/MapComponent.jsx";
-import ProjectCreateModal from "../component/ProjectCreateModal.jsx";
-import SectionCreateModal from "../component/SectionCreateModal.jsx";
+import ProjectCreateModal from "../component/modal/ProjectCreateModal.jsx";
+import SectionCreateModal from "../component/modal/SectionCreateModal.jsx";
 import MainSideBar from "../component/sidebar/MainSideBar.jsx";
 import CustomSidebar from "../component/sidebar/CustomSidebar.jsx";
 import axios from "axios";
-import ProjectEditModal from "../component/ProjectEditModal.jsx";
+import ProjectEditModal from "../component/modal/ProjectEditModal.jsx";
 
 function Main() {
     const { user } = useContext(UserContext);

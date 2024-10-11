@@ -3,7 +3,7 @@ import UserContext from "../context/UserContext.jsx";
 import {useNavigate} from "react-router";
 import axios from "axios";
 import CustomSidebar from "../component/sidebar/CustomSidebar.jsx";
-import CompanyModal from "../component/CompanyModal.jsx";
+import CompanyModal from "../component/modal/CompanyModal.jsx";
 
 function GroupManagement() {
     const { user } = useContext(UserContext);

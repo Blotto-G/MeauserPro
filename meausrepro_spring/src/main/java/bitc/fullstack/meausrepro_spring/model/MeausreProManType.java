@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name="meausre_management_type")
-public class MeausreManType {
+public class MeausreProManType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idx")
@@ -31,12 +31,6 @@ public class MeausreManType {
     @Column(name = "gage_4")
     private Double gage4; // 측정값 4
 
-    @Column(name = "temperature")
-    private Double temperature; // 측정온도
-
-    @Column(name = "excavation")
-    private Double excavation; // 굴착고
-
     @Column(name = "in_name", length = 45)
     private String inName;  // 계측기
 
@@ -51,19 +45,4 @@ public class MeausreManType {
 
     @Column(name = "gh")
     private Double gh; // G.H
-
-    @Column(name = "direction_angle")
-    private char directionAngle;  // 방향각도
-
-    @Column(name = "direction_value")
-    private Double directionValue;  // 방향각도 값
-
-    @Column(name = "direction_opp_value")
-    private Double directionOppValue;  // 방향각도 180 값
-
-    @Column(name = "direction_depth")
-    private Double directionDepth;  // 방향각도 측정심도
-
-    @Column(name = "crack")
-    private Double crack;  // 초기균열폭
 }

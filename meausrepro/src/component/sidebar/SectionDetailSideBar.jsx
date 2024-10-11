@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 function SectionDetailSideBar(props) {
     const {section, handleSectionUpdated, handleClose, deleteSection } = props;
@@ -75,10 +76,19 @@ function SectionDetailSideBar(props) {
 
     // 구간 삭제 처리
     const handleDeleteClick = () => {
-        if (window.confirm("이 구간을 삭제하시겠습니까?")) {
-            deleteSection(section.idx);
-            handleCloseClick(); // 삭제 후 사이드바 닫기
-        }
+        Swal.fire({
+            title: '구간 삭제',
+            text: "이 구간을 삭제하시겠습니까?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: '삭제',
+            cancelButtonText: '취소'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteSection(section.idx);
+                handleCloseClick(); // 삭제 후 사이드바 닫기
+            }
+        });
     };
 
     return (
