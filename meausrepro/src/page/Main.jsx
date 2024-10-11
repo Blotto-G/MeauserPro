@@ -8,6 +8,7 @@ import MainSideBar from "../component/sidebar/MainSideBar.jsx";
 import CustomSidebar from "../component/sidebar/CustomSidebar.jsx";
 import axios from "axios";
 import ProjectEditModal from "../component/modal/ProjectEditModal.jsx";
+import InstrumentCreateModal from "../component/modal/InstrumentCreateModal.jsx";
 
 function Main() {
     const { user } = useContext(UserContext);
@@ -29,6 +30,12 @@ function Main() {
     const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false); // 수정 모달 상태 추가
     const [sectionList, setSectionList] = useState([]);
+
+    const [isInstrumentModalOpen, setIsInstrumentModalOpen] = useState(false); // 계측기 생성 모달
+    const [insGeometryData, setInsGeometryData] = useState(''); // 계측기 좌표 저장
+    const [isDrawingEnabledMarker, setIsDrawingEnabledMarker] = useState(false); // 마커 생성
+    const [isInsBtnText, setIsInsBtnText] = useState('계측기 추가'); // 계측기 추가 버튼 텍스트 관리
+    const [isSelectedSection, setIsSelectedSection] = useState(null);
 
 
     // 로그인 정보 없을 시, 로그인 페이지로 이동
@@ -162,6 +169,33 @@ function Main() {
             });
     };
 
+    // 계측기 좌표 데이터 받는 함수
+    const handelInsGeometryData = (insCoordinates) => {
+        setInsGeometryData(insCoordinates);
+        setIsInstrumentModalOpen(true);
+        console.log(insCoordinates);
+    };
+
+    // 계측기 추가 버튼 클릭 시 마커 생성 모드 활성화 및 취소
+    const enableDrawingMarkers = () => {
+        if (isDrawingEnabledMarker) {
+            setIsDrawingEnabledMarker(false);
+            setIsInsBtnText('계측기 추가')
+        } else {
+            setIsDrawingEnabledMarker(true);
+            setIsInsBtnText('계측기 추가')
+        }
+    };
+
+    // 계측기 생성 모달 닫기
+    const closeInstrumentModal = () => {
+        setIsInstrumentModalOpen(false);
+    };
+
+    const handleSectionClick = (section) => {
+        setIsSelectedSection(section);
+    };
+
     return (
         <div className={'d-flex vh-100'}>
             <CustomSidebar topManager={user.topManager} />
@@ -180,6 +214,8 @@ function Main() {
                     handleSectionList={handleSectionList}
                     openEditModal={openEditModal}
                     deleteProject={deleteProject}
+                    enableDrawingMarkers={enableDrawingMarkers} // 계측기 마커
+                    instrumentBtnText={isInsBtnText} // 계측기 추가 버튼
                 />
                 <div className={'flex-grow-1'}>
                     <MapComponent
@@ -190,6 +226,10 @@ function Main() {
                         isModalOpen={isProjectModalOpen}
                         setIsMapReady={setIsMapReady}
                         setMoveToPolygon={setMoveToPolygon}
+                        sendInsGeometry={handelInsGeometryData} // 계측기 지오매트리 정보
+                        isDrawingEnabledMarker={isDrawingEnabledMarker} // 마커 생성 활성화
+                        setIsDrawingEnabledMarker={setIsDrawingEnabledMarker} // 마커 생성
+                        isInsModalOpen={isInstrumentModalOpen} // 계측기 모달창 열기
                     />
                     <ProjectCreateModal
                         geometryData={geometryData}
@@ -207,6 +247,13 @@ function Main() {
                         isOpen={isSectionModalOpen}
                         closeModal={closeSectionModal}
                         onSectionCreated={onSectionCreated} // 구간 생성 후 호출될 함수 전달
+                    />
+                    <InstrumentCreateModal
+                        insGeometryData={insGeometryData} // 계측기 좌표
+                        projectData={isSelectedProject}
+                        sectionData={isSelectedSection}
+                        isOpen={isInstrumentModalOpen}
+                        closeModal={closeInstrumentModal}
                     />
                 </div>
             </div>

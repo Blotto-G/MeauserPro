@@ -17,11 +17,16 @@ function MainSideBar(props) {
         openEditModal,
         sectionList, // Main에서 전달받은 sectionList 사용
         setSectionList, // Main에서 전달받은 setSectionList 사용
-        handleSectionList
+        handleSectionList,
+        enableDrawingMarkers,
+        instrumentBtnText
     } = props;
 
     const [isSelectProject, setIsSelectProject] = useState(null);
     const [selectedSection, setSelectedSection] = useState(null); // 선택된 구간 정보
+
+    // 특정 구간 계측기
+    const [instrumentList, setInstrumentList] = useState([]);
 
     // 프로젝트 선택 및 폴리곤 이동
     const handleSelectProject = (project) => {
@@ -36,6 +41,7 @@ function MainSideBar(props) {
     // 선택된 구간 정보 저장 및 세부 정보 가져오기
     const handleSelectSection = (section) => {
         setSelectedSection(section); // 선택된 구간 정보 저장
+        handleInstrumentList(section.idx);
     };
 
     // 구간 업데이트 후 섹션 리스트 다시 가져오기
@@ -87,6 +93,20 @@ function MainSideBar(props) {
                 console.error("구간 삭제 중 오류 발생:", err);
             });
     };
+
+
+    // 특정 구간 계측기 보기
+    const handleInstrumentList = (sectionId) => {
+        axios.get(`http://localhost:8080/MeausrePro/Instrument/${sectionId}`)
+            .then(res=> {
+                console.log(res);
+                const { data } = res;
+                setInstrumentList(data);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
 
     return (
         <div className={'sideBarWrapper'}>
@@ -151,12 +171,27 @@ function MainSideBar(props) {
                                 {sectionList.map((item) => (
                                     <li key={item.idx}
                                         className={`projectItem ${selectedSection?.idx === item.idx ? 'selected' : ''}`}>
-                                        <button
-                                            type={'button'}
-                                            onClick={() => handleSelectSection(item)}
-                                        >
-                                            {item.sectionName}
-                                        </button>
+                                        <div className={'d-flex justify-content-between'}>
+                                            <button
+                                                type={'button'}
+                                                onClick={() => handleSelectSection(item)}
+                                            >
+                                                {item.sectionName}
+                                            </button>
+                                            <button
+                                                className={'projectBtn py-2 rounded-3 mx-3'}
+                                                type={'button'}
+                                                onClick={enableDrawingMarkers}>
+                                                {instrumentBtnText}
+                                            </button>
+                                        </div>
+                                        <ul className={"nav nav-pills flex-column mb-auto border border-3 rounded-3"}>
+                                            {instrumentList.map((item) => {
+                                                return (
+                                                    <li key={item.idx} className={`mb-2`}>{item.intType}</li>
+                                                );
+                                            })};
+                                        </ul>
                                     </li>
                                 ))}
                             </ul>
