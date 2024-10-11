@@ -28,6 +28,8 @@ function Main() {
     const [isBtnText, setIsBtnText] = useState('프로젝트 생성');
     const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false); // 수정 모달 상태 추가
+    const [sectionList, setSectionList] = useState([]);
+
 
     // 로그인 정보 없을 시, 로그인 페이지로 이동
     useEffect(() => {
@@ -73,7 +75,32 @@ function Main() {
         setIsDrawingEnabled(false);
         setIsBtnText('프로젝트 생성');
         setIsProjectModalOpen(false);
-        setMapKey(prevKey => prevKey + 1); // 프로젝트 생성 후에도 맵을 다시 로드
+    };
+
+    // 구간 생성 완료 시 호출될 함수
+    const onSectionCreated = () => {
+        if (isSelectedProject) {
+            // 선택된 프로젝트의 구간 목록을 다시 가져오기
+            axios.get(`http://localhost:8080/MeausrePro/Section/${isSelectedProject.idx}`)
+                .then((res) => {
+                    setSectionList(res.data); // 구간 목록 업데이트
+                })
+                .catch(err => {
+                    console.error('구간 목록 업데이트 중 오류 발생:', err);
+                });
+        }
+        setIsSectionModalOpen(false); // 모달 닫기
+    };
+
+    // 프로젝트 전체 구간 들고오기
+    const handleSectionList = (projectId) => {
+        axios.get(`http://localhost:8080/MeausrePro/Section/${projectId}`)
+            .then((res) => {
+                setSectionList(res.data);
+            })
+            .catch(err => {
+                console.log(err);
+            });
     };
 
     // 구간 저장 모달 열기
@@ -85,6 +112,7 @@ function Main() {
     const closeSectionModal = () => {
         setIsSectionModalOpen(false);
     };
+
 
     const handleProjectClick = (project) => {
         setIsSelectedProject(project);
@@ -134,6 +162,8 @@ function Main() {
             });
     };
 
+
+
     return (
         <div className={'d-flex vh-100'}>
             <CustomSidebar topManager={user.topManager} />
@@ -145,8 +175,11 @@ function Main() {
                     openSectionModal={openSectionModal}
                     projectBtnText={isBtnText}
                     projectList={projectList}
+                    sectionList={sectionList} // sectionList 전달
                     moveToPolygon={moveToPolygon}
                     setProjectList={setProjectList}
+                    setSectionList={setSectionList} // setSectionList 전달
+                    handleSectionList={handleSectionList}
                     openEditModal={openEditModal}
                     deleteProject={deleteProject}
                 />
@@ -175,6 +208,7 @@ function Main() {
                         project={isSelectedProject}
                         isOpen={isSectionModalOpen}
                         closeModal={closeSectionModal}
+                        onSectionCreated={onSectionCreated} // 구간 생성 후 호출될 함수 전달
                     />
                 </div>
             </div>

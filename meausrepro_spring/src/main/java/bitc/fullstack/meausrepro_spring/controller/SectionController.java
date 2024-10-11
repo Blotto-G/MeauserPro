@@ -41,4 +41,15 @@ public class SectionController {
             return ResponseEntity.badRequest().body("수정에 실패했습니다.");
         }
     }
+
+    // 구간 삭제
+    @DeleteMapping("/delete/{idx}")
+    public ResponseEntity<String> deleteSection(@PathVariable("idx") int idx) {
+        boolean isDeleted = sectionService.deleteSection(idx);
+        if (isDeleted) {
+            return ResponseEntity.ok("삭제 완료ㅛ");
+        } else {
+            return ResponseEntity.status(404).body("해당 구간을 찾을 수 없습니다.");
+        }
+    }
 }

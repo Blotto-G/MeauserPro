@@ -1,14 +1,25 @@
 import { useContext, useEffect, useState } from "react";
 import UserContext from "../../context/UserContext.jsx";
-import axios from "axios";
 import SectionDetailSideBar from "./SectionDetailSideBar.jsx";
+import axios from "axios";
 
 function MainSideBar(props) {
     const { user } = useContext(UserContext);
-    const { enableDrawing, openSectionModal, handleProjectClick, projectBtnText, projectList, moveToPolygon, deleteProject, openEditModal } = props;
+    const {
+        enableDrawing,
+        openSectionModal,
+        handleProjectClick,
+        projectBtnText,
+        projectList,
+        moveToPolygon,
+        deleteProject,
+        openEditModal,
+        sectionList, // Main에서 전달받은 sectionList 사용
+        setSectionList, // Main에서 전달받은 setSectionList 사용
+        handleSectionList
+    } = props;
 
     const [isSelectProject, setIsSelectProject] = useState(null);
-    const [sectionList, setSectionList] = useState([]);
     const [selectedSection, setSelectedSection] = useState(null); // 선택된 구간 정보
 
     // 프로젝트 선택 및 폴리곤 이동
@@ -18,18 +29,8 @@ function MainSideBar(props) {
         }
         handleProjectClick(project);
         setIsSelectProject(project);
+        // 선택된 프로젝트의 구간 목록을 다시 가져오기 위해 Main에서 전달된 함수 사용
         handleSectionList(project.idx);
-    };
-
-    // 프로젝트 전체 구간 들고오기
-    const handleSectionList = (projectId) => {
-        axios.get(`http://localhost:8080/MeausrePro/Section/${projectId}`)
-            .then((res) => {
-                setSectionList(res.data);
-            })
-            .catch(err => {
-                console.log(err);
-            });
     };
 
     // 선택된 구간 정보 저장 및 세부 정보 가져오기
@@ -40,7 +41,10 @@ function MainSideBar(props) {
     // 구간 업데이트 후 섹션 리스트 다시 가져오기
     const handleSectionUpdated = (updatedSection) => {
         setSelectedSection(updatedSection); // 선택된 구간 정보 업데이트
-        handleSectionList(isSelectProject.idx); // 프로젝트의 전체 구간 리스트 다시 가져오기
+        if (isSelectProject) {
+            // 선택된 프로젝트의 구간 목록을 다시 가져오기 위해 Main의 함수 사용
+            setSectionList(prev => [...prev]); // 단순히 리스트를 리셋해서 다시 렌더링하게 함
+        }
     };
 
     // SectionDetailSideBar 닫기
@@ -61,6 +65,19 @@ function MainSideBar(props) {
         handleClose();
         setIsSelectProject(null);
     }
+
+    const deleteSection = (sectionId) => {
+        console.log(`삭제할 구간 ID: ${sectionId}`); // 확인용 로그
+        axios.delete(`http://localhost:8080/MeausrePro/Section/delete/${sectionId}`)
+            .then(() => {
+                alert("구간이 삭제되었습니다.");
+                // 삭제 후 구간 목록을 업데이트하여 반영합니다.
+                setSectionList(prevList => prevList.filter(section => section.idx !== sectionId));
+            })
+            .catch(err => {
+                console.error("구간 삭제 중 오류 발생:", err);
+            });
+    };
 
     return (
         <div className={'sideBarWrapper'}>
@@ -171,6 +188,7 @@ function MainSideBar(props) {
                     section={selectedSection}
                     handleSectionUpdated={handleSectionUpdated}
                     handleClose={handleClose}
+                    deleteSection={deleteSection}
                 />
             )}
         </div>

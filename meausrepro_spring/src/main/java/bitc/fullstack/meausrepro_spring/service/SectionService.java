@@ -43,4 +43,14 @@ public class SectionService {
         }
         return false;
     }
+
+    // 구간 삭제
+    public boolean deleteSection(int idx) {
+        Optional<MeausreProSection> section = sectionRepository.findById(String.valueOf(idx));
+        if (section.isPresent()) {
+            sectionRepository.deleteById(String.valueOf(idx));
+            return true;
+        }
+        return false;
+    }
 }
