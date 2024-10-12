@@ -19,10 +19,10 @@ function MapComponent(props) {
 
     const [isMapReady, setIsMapReady] = useState(false);
 
-    const [insMarkerCoords, setInsMarkerCoords] = useState([]);
+    const [insMarkerCoords, setInsMarkerCoords] = useState([]); // 계측기 마커 위치(위도, 경도값)
     const [currentInsMarker, setCurrentInsMarker] = useState(null);
     const [contextInsMenuVisible, setContextInsMenuVisible] = useState(false);
-    const [insMarkers, setInsMarkers] = useState([]) // 계측기 마커
+    const [insMarkers, setInsMarkers] = useState([]) // 저장된 계측기 마커 목록
     const [drawnInsMarker, setDrawnInsMarker] = useState([]); // 새로 그린 계측기 마커 관리
     const [currentInsMarkerId, setCurrentInsMarkerId] = useState(null); // 현재 계측기마커 ID 상태 추가
 
@@ -406,22 +406,6 @@ function MapComponent(props) {
         return new naver.maps.LatLng(parseFloat(lat), parseFloat(lng));
     };
 
-    // // 진행 중인 계측기 마커 불러오기
-    // useEffect((sectionId) => {
-    //     if (sectionId) {
-    //         axios
-    //             .get(`http://localhost:8080/MeausrePro/Instrument/${sectionId}`)
-    //             .then((res) => {
-    //                 const { data } = res;
-    //                 setInsMarkers(data); // 전체 계측기 데이터를 저장
-    //             })
-    //             .catch((err) => {
-    //                 console.log(err);
-    //             });
-    //     }
-    // }, [sectionId]);
-
-
     // 저장된 계측기 마커를 지도에 그리기
     useEffect(() => {
         if (mapInstance && insMarkers.length > 0) {
@@ -429,7 +413,7 @@ function MapComponent(props) {
 
             const newInsMarkers = insMarkers.map((instrument) => {
                 if (!instrument.insGeometry) {
-                    console.warn("유효하지 않은 지오메트리 데이터1:", instrument);
+                    console.warn("유효하지 않은 지오메트리 데이터:", instrument);
                     return null;
                 }
 
@@ -455,8 +439,8 @@ function MapComponent(props) {
                     setCurrentInsMarkerId(instrument.idx); // 저장된 폴리곤 ID 설정
 
                     // 현재 계측기 마커의 좌표를 상태에 저장 (수정할 수 있도록)
-                    const markerPosition = insMarker.getPosition();
-                    const coords = [markerPosition.lat(), markerPosition.lng()];
+                    const currentMarker = insMarker.getPosition();
+                    const coords = [currentMarker.lat(), currentMarker.lng()];
                     setInsMarkerCoords(coords);  // 상태에 저장
                 });
 
@@ -514,19 +498,32 @@ function MapComponent(props) {
             setCurrentInsMarker(marker);
         });
         setCurrentInsMarker(marker);
+
+        // 마커 비활성화 시 지도에서 제거
+        return marker;
     };
 
 
     // 계측기 마커 생성 모드
     useEffect(() => {
+        let markerInstance = null;
         if (isDrawingEnabledMarker && mapInstance) {
-            createInsMarker(mapInstance);
+            markerInstance = createInsMarker(mapInstance);
+        } else if (markerInstance) {
+            markerInstance.setMap(null); // 마커 생성 모드가 비활성화된 경우
         }
+        // 클린업 함수로 마커 해제
+        return () => {
+            if (markerInstance) {
+                markerInstance.setMap(null);
+            }
+        };
     }, [isDrawingEnabledMarker, mapInstance]);
 
 
     const handleSaveIns = () => {
-        if (insMarkerCoords.length === 0) {
+        // insMarkerCoords가 객체라면 배열로 변환
+        if (!insMarkerCoords || Object.keys(insMarkerCoords).length === 0) {
             console.log("저장할 좌표가 없습니다.");
             return;
         }
@@ -547,11 +544,16 @@ function MapComponent(props) {
 
         console.log("좌표 저장 완료:", insMarkerCoords);
 
+        // 객체 형태의 위도와 경도를 배열로 변환
+        const insMarkerCoordsArray = [[insMarkerCoords.lat, insMarkerCoords.lng]];
+
         // 계측기 마커 다시 그리기 로직 추가
-        // 서버에서 데이터를 다시 가져오는 대신, 바로 화면에 업데이트
         const newInsMarker = new naver.maps.Marker({
             map: mapInstance, // 현재 지도 인스턴스에 추가
-            position: insMarkerCoords.map(([lat, lng]) => new naver.maps.LatLng(lat, lng))
+            position: insMarkerCoordsArray.map(([lat, lng]) => new naver.maps.LatLng(lat, lng)),
+            icon: {
+                url: 'src/assets/images/circle-fill-blue.svg',
+            },
         });
 
         // 저장된 계측기 마커를 상태에 저장
@@ -576,7 +578,7 @@ function MapComponent(props) {
     };
 
 
-    const handleSaveInsGeometry = () => {
+    const handleSaveInsGeometry = (sectionId) => {
         if (currentInsMarker && currentInsMarkerId) {
             const wkt = `POINT(${insMarkerCoords[1]} ${insMarkerCoords[0]})`;
 
@@ -594,7 +596,7 @@ function MapComponent(props) {
                     setContextInsMenuVisible(false);
 
                     // 서버에서 업데이트된 데이터 다시 불러오기
-                    axios.get(`http://localhost:8080/MeausrePro/Instrument/${id}`)
+                    axios.get(`http://localhost:8080/MeausrePro/Instrument/${sectionId}`)
                         .then(res => {
                             const { data } = res;
                             setInsMarkers(data); // 서버에서 새로운 계측기 마커 데이터 받아와서 업데이트

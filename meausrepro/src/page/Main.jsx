@@ -97,8 +97,17 @@ function Main() {
                 .catch(err => {
                     console.error('구간 목록 업데이트 중 오류 발생:', err);
                 });
+            // 선택된 프로젝트의 계측기 목록을 다시 가져오기
+            axios.get(`http://localhost:8080/MeausrePro/Instrument/${isSelectedSection.idx}`)
+                .then(res => {
+                    setInstrumentList(res.data);
+                })
+                .catch(err => {
+                    console.log('계측기 목록 업데이트 중 오류 발생:', err);
+                })
         }
         setIsSectionModalOpen(false); // 모달 닫기
+        setIsInstrumentModalOpen(false);
     };
 
     // 프로젝트 전체 구간 들고오기
@@ -188,13 +197,17 @@ function Main() {
     };
 
     // 계측기 추가 버튼 클릭 시 마커 생성 모드 활성화 및 취소
-    const enableDrawingMarkers = () => {
+    const enableDrawingMarkers = (section) => {
         if (isDrawingEnabledMarker) {
             setIsDrawingEnabledMarker(false);
             setIsInsBtnText('계측기 추가')
+            handleSectionClick(section);
+            handleInstrumentList(section.idx);
         } else {
             setIsDrawingEnabledMarker(true);
             setIsInsBtnText('계측기 추가')
+            // handleSectionClick(section);
+            // handleInstrumentList(section.idx);
         }
     };
 
@@ -223,8 +236,8 @@ function Main() {
     };
 
     // 구간 전체 계측기 들고오기
-    const handleInstrumentList = (sectionId) => {
-        axios.get(`http://localhost:8080/MeausrePro/Instrument/${sectionId}`)
+    const handleInstrumentList = (projectId) => {
+        axios.get(`http://localhost:8080/MeausrePro/Instrument/${projectId}`)
             .then((res) => {
                 setInstrumentList(res.data);
             })

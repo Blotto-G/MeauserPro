@@ -34,6 +34,11 @@ public class InstrumentService {
         return instrumentRepository.findAllBySectionId(sectionId);
     }
 
+    // 특정 구간 계측기 보기
+    public List<MeausreProInstrument> projectInstruments(int projectId) {
+        return instrumentRepository.findAllByProjectId(projectId);
+    }
+
     // 계측기 지오메트리 업데이트
     public boolean updateInsGeometry(int instrumentId, String newInsGeometry) {
         Optional<MeausreProInstrument> instrumentOptional = instrumentRepository.findById(String.valueOf(instrumentId));

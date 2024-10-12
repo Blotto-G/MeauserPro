@@ -36,6 +36,12 @@ public class InstrumentController {
         return instrumentService.sectionInstruments(sectionId);
     }
 
+    // 프로젝트별 계측기 보기
+    @GetMapping("/{projectId}")
+    public List<MeausreProInstrument> projectInstruments(@PathVariable("projectId") int projectId) {
+        return instrumentService.projectInstruments(projectId);
+    }
+
     // 계측기 지오메트리 업데이트
     @PutMapping("/updateInsGeometry")
     public ResponseEntity<String> updateInsGeometry(@RequestBody InsGeometryDto insGeometryDto) {

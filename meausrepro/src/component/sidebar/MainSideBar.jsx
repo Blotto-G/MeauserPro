@@ -169,34 +169,36 @@ function MainSideBar(props) {
                             <div className={'sideBarHeader pb-0 pt-3'}>
                                 <span className={'fw-bold'}>구간</span>
                             </div>
-                            <ul className={'sideBarProjectList'}>
-                                {sectionList.map((item) => (
-                                    <li key={item.idx}
-                                        className={`projectItem ${selectedSection?.idx === item.idx ? 'selected' : ''}`}>
-                                        <div className={'d-flex justify-content-between'}>
-                                            <button
-                                                type={'button'}
-                                                onClick={() => handleSelectSection(item)}
-                                            >
-                                                {item.sectionName}
-                                            </button>
-                                            <button
-                                                className={'projectBtn py-2 rounded-3 mx-3'}
-                                                type={'button'}
-                                                onClick={enableDrawingMarkers}>
-                                                {instrumentBtnText}
-                                            </button>
-                                        </div>
-                                        <ul className={"nav nav-pills flex-column mb-auto border border-3 rounded-3"}>
-                                            {instrumentList.map((item) => {
-                                                return (
-                                                    <li key={item.idx} className={`mb-2`}>{item.intType}</li>
-                                                );
-                                            })};
-                                        </ul>
-                                    </li>
-                                ))}
-                            </ul>
+                            <div>
+                                <ul className={'sideBarProjectList'}>
+                                    {sectionList.map((item) => (
+                                        <li key={item.idx}
+                                            className={`projectItem ${selectedSection?.idx === item.idx ? 'selected' : ''}`}>
+                                            <div className={'d-flex justify-content-between'}>
+                                                <button
+                                                    type={'button'}
+                                                    onClick={() => handleSelectSection(item)}
+                                                >
+                                                    {item.sectionName}
+                                                </button>
+                                                <button
+                                                    className={'projectBtn py-2 rounded-3 mx-3'}
+                                                    type={'button'}
+                                                    onClick={() => enableDrawingMarkers(item)}>
+                                                    {instrumentBtnText}
+                                                </button>
+                                            </div>
+                                        </li>
+                                    ))}
+                                    <ul className={"nav nav-pills flex-column mb-auto border border-3 rounded-3"}>
+                                        {instrumentList.map((item) => {
+                                            return (
+                                                <li key={item.idx} className={`mb-2`}>{item.idx}</li>
+                                            );
+                                        })};
+                                    </ul>
+                                </ul>
+                            </div>
                         </div>
                         <button
                             className={'projectBtn py-2 rounded-3 mx-3'}

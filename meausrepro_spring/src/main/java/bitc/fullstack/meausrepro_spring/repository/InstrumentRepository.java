@@ -9,10 +9,14 @@ import java.util.Optional;
 
 public interface InstrumentRepository extends JpaRepository<MeausreProInstrument, String> {
     // 특정 구간 계측기 보기
-    @Query("SELECT p FROM MeausreProInstrument p WHERE p.sectionId.idx = :sectionId ORDER BY p.idx ASC")
+    @Query("SELECT i FROM MeausreProInstrument i WHERE i.sectionId.idx = :sectionId ORDER BY i.idx ASC")
     List<MeausreProInstrument> findAllBySectionId(int sectionId);
 
+    // 프로젝트별 계측기 보기
+    @Query("SELECT i FROM MeausreProInstrument i WHERE i.sectionId.projectId.idx = :projectId ORDER BY i.idx ASC")
+    List<MeausreProInstrument> findAllByProjectId(int projectId);
+
     // 계측기 번호로 해당 계측기 찾기
-    @Query("SELECT p FROM  MeausreProInstrument  p WHERE p.idx = :idx")
+    @Query("SELECT i FROM  MeausreProInstrument i WHERE i.idx = :idx")
     Optional<MeausreProInstrument> findByIdx(int idx);
 }

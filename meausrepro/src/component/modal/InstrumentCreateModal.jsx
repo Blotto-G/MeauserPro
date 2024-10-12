@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 
 function InstrumentCreateModal(props) {
-    const { insGeometryData, projectData, section, isOpen, closeModal, onInstrumentCreated } = props;
+    const {insGeometryData, projectData, section, isOpen, closeModal, onInstrumentCreated} = props;
 
     const [siteName, setSiteName] = useState('');
     const [sectionName, setSectionName] = useState('');
@@ -25,37 +25,59 @@ function InstrumentCreateModal(props) {
     const dateNow = new Date();
     const today = dateNow.toISOString().slice(0, 10);
 
+
     // 입력 필드 상태 관리
-    const [insType, setInsType] = useState('Z');    // 'Z' : 선택X
+    const [insType, setInsType] = useState('');
     const [insNum, setInsNum] = useState('');
     const [insName, setInsName] = useState('');
     const [insNo, setInsNo] = useState('');
     const [createDate, setCreateDate] = useState(today);
     const [insLocation, setInsLocation] = useState('');
-    const [measurement1, setMeasurement1] = useState(null);
-    const [measurement2, setMeasurement2] = useState(null);
-    const [measurement3, setMeasurement3] = useState(null);
-    const [verticalPlus, setVerticalPlus] = useState(null);
-    const [verticalMinus, setVerticalMinus] = useState(null);
-    // const [division, setDivision] = useState('상')
-    // const [depExcavation, setDepExcavation] = useState(null);
-    // const [constantOne, setConstantOne] = useState(null);
-    // const [constantTwo, setConstantTwo] = useState(null);
-    // const [constantThree, setConstantThree] = useState(null);
-    // const [horizontalPlus, setHorizontalPlus] = useState(null);
-    // const [horizontalMinus, setHorizontalMinus] = useState(null);
-    // const [displacement, setDisplacement] = useState(null);
-    // const [depIndicated, setDepIndicated] = useState(null);
+    const [measurement1, setMeasurement1] = useState(0);
+    const [measurement2, setMeasurement2] = useState(0);
+    const [measurement3, setMeasurement3] = useState(0);
+    const [verticalPlus, setVerticalPlus] = useState(0);
+    const [verticalMinus, setVerticalMinus] = useState(0);
 
+    const verticalPlusBase =
+        insType === '하중계_버팀대' || insType === '하중계_PSBEAM' ? 900 :
+            insType === '하중계_앵커' ? 50 :
+                0;
+    const verticalMinusBase =
+        insType === '하중계_버팀대' ? 0 :
+            insType === '하중계_PSBEAM' ? 700 :
+            insType === '하중계_앵커' ? 30 :
+                0;
+
+    useEffect(() => {
+        setVerticalPlus(verticalPlusBase);
+        setVerticalMinus(verticalMinusBase);
+    }, [insType]);
 
     // 구간 생성
     const handleCreateInstrument = async () => {
         console.log(insGeometryData);
         const wkt = `POINT(${insGeometryData[1]} ${insGeometryData[0]})`;
         console.log(wkt);
+
+        const insTypeData = {
+            '지중경사계': 'A',
+            '지하수위계': 'B',
+            '간극수압계': 'C',
+            '지표침하계': 'D',
+            '하중계_버팀대': 'E',
+            '하중계_PSBEAM': 'F',
+            '하중계_앵커': 'G',
+            '변형률계(버팀대)': 'H',
+            '구조물기울기계': 'I',
+            '균열측정계': 'J',
+        };
+
+        const selectedInsType = insTypeData[insType]; // 선택된 insType에 맞는 데이터 매핑
+
         axios.post(`http://localhost:8080/MeausrePro/Instrument/save`, {
             sectionId: section,
-            insType: insType,
+            insType: selectedInsType,
             insNum: insNum,
             insName: insName,
             insNo: insNo,
@@ -67,22 +89,12 @@ function InstrumentCreateModal(props) {
             measurement3: measurement3,
             verticalPlus: verticalPlus,
             verticalMinus: verticalMinus
-            // division: division,
-            // depExcavation: depExcavation,
-            // constantOne: constantOne,
-            // constantTwo: constantTwo,
-            // constantThree: constantThree,
-            // horizontalPlus: horizontalPlus,
-            // horizontalMinus: horizontalMinus,
-            // displacement: displacement,
-            // depIndicated: depIndicated
         })
             .then(res => {
-                if (!insType || !insNum || !createDate || !insLocation || !verticalPlus || !verticalMinus) {
+                if (!selectedInsType || !insNum || !createDate || !insLocation || !verticalPlus || !verticalMinus) {
                     alert("모든 필드를 입력해주세요.");
                     return;
-                }
-                else {
+                } else {
                     console.log('계측기 생성 성공:', res.data);
                     if (onInstrumentCreated) {
                         onInstrumentCreated(); // 계측기 생성 후 계측기 목록을 다시 불러오도록 호출
@@ -97,99 +109,26 @@ function InstrumentCreateModal(props) {
 
     // 모달 닫기 전 입력창 비우기
     const handleCloseModal = () => {
-        setInsType('Z');
+        setInsType('');
         setInsNum('');
         setInsName('');
         setInsNo('');
         setCreateDate('');
         setInsLocation('');
-        setMeasurement1('');
-        setMeasurement2('');
-        setMeasurement3('');
-        setVerticalPlus('');
-        setVerticalMinus('');
-        // setDivision('');
-        // setDepExcavation('');
-        // setConstantOne('');
-        // setConstantTwo('');
-        // setConstantThree('');
-        // setHorizontalPlus('');
-        // setHorizontalMinus('');
-        // setDisplacement('');
-        // setDepIndicated('');
+        setMeasurement1(0);
+        setMeasurement2(0);
+        setMeasurement3(0);
+        setVerticalPlus(0);
+        setVerticalMinus(0);
         onInstrumentCreated();
         closeModal();
     };
 
-    const [selectdInsType, setSelectedInsType] = useState('');
 
-    const handleInsTypeChange = (e) => {
-        setSelectedInsType(e.target.value);
+    const handleSelectInsTypeChange = (e) => {
+        const selectedInsType = e.target.value;
+        setInsType(selectedInsType);
     };
-
-
-    // const handleIncreaseDep = () => {
-    //     setDepExcavation(prev => prev + 1); // 오른쪽 버튼 클릭 시 값 증가
-    // };
-    // const handleIncreaseConOne = () => {
-    //     setConstantOne(prev => prev + 1);
-    // };
-    // const handleIncreaseConTwo = () => {
-    //     setConstantTwo(prev => prev + 1);
-    // };
-    // const handleIncreaseConThree = () => {
-    //     setConstantThree(prev => prev + 1);
-    // };
-    // const handleIncreaseHoriP = () => {
-    //     setHorizontalPlus(prev => prev + 1);
-    // };
-    // const handleIncreaseHoriM = () => {
-    //     setHorizontalMinus(prev => prev + 1);
-    // };
-    const handleIncreaseVeriP = () => {
-        setVerticalPlus(prev => prev + 1);
-    };
-    const handleIncreaseVeriM = () => {
-        setVerticalMinus(prev => prev + 1);
-    };
-    // const handleIncreaseDisplacement = () => {
-    //     setDisplacement(prev => prev + 1);
-    // };
-    // const handleIncreaseDepIndi = () => {
-    //     setDepIndicated(prev => prev + 1);
-    // };
-    //
-    //
-    // const handleDecreaseDep = () => {
-    //     setDepExcavation(prev => prev - 1); // 왼쪽 버튼 클릭 시 값 감소
-    // };
-    // const handleDecreaseConOne = () => {
-    //     setConstantOne(prev => prev - 1);
-    // };
-    // const handleDecreaseConTwo = () => {
-    //     setConstantTwo(prev => prev - 1);
-    // };
-    // const handleDecreaseConThree = () => {
-    //     setConstantThree(prev => prev - 1);
-    // };
-    // const handleDecreaseHoriP = () => {
-    //     setHorizontalPlus(prev => prev - 1);
-    // };
-    // const handleDecreaseHoriM = () => {
-    //     setHorizontalMinus(prev => prev - 1);
-    // };
-    const handleDecreaseVeriP = () => {
-        setVerticalPlus(prev => prev - 1);
-    };
-    const handleDecreaseVeriM = () => {
-        setVerticalMinus(prev => prev - 1);
-    };
-    // const handleDecreaseDisplacement = () => {
-    //     setDisplacement(prev => prev - 1);
-    // };
-    // const handleDecreaseDepIndi = () => {
-    //     setDepIndicated(prev => prev - 1);
-    // };
 
     return (
         <div
@@ -234,13 +173,19 @@ function InstrumentCreateModal(props) {
                                            className={'form-label mt-2'}>
                                         계측기 종류:
                                     </label>
-                                    <select className={'form-select'} id={'insType'} onChange={handleInsTypeChange}>
-                                        <option selected value="Z">구간내계측기종류선택</option>
-                                        <option value="A">하중계_버팀대</option>
-                                        <option value="B">하중계_PSBEAM</option>
-                                        <option value="C">하중계_앵커</option>
-                                        <option value="D">지표침하계</option>
-                                        <option value="E">균열측정계</option>
+                                    <select className={'form-select'} id={'insType'} value={insType}
+                                            onChange={handleSelectInsTypeChange}>
+                                        <option selected value="">구간내계측기종류선택</option>
+                                        <option value="지중경사계">지중경사계</option>
+                                        <option value="지하수위계">지하수위계</option>
+                                        <option value="간극수압계">간극수압계</option>
+                                        <option value="지표침하계">지표침하계</option>
+                                        <option value="하중계_버팀대">하중계_버팀대</option>
+                                        <option value="하중계_PSBEAM">하중계_PSBEAM</option>
+                                        <option value="하중계_앵커">하중계_앵커</option>
+                                        <option value="변형률계(버팀대)">변형률계(버팀대)</option>
+                                        <option value="구조물기울기계">구조물기울기계</option>
+                                        <option value="균열측정계">균열측정계</option>
                                     </select>
                                 </div>
                                 <div className={'col d-flex flex-column'}>
@@ -291,7 +236,8 @@ function InstrumentCreateModal(props) {
                                            className={'form-label mt-2'}>
                                         지오매트리정보:
                                     </label>
-                                    <input type={'text'} className={'form-control'} id={'insGeometry'} value={insGeometryData}
+                                    <input type={'text'} className={'form-control'} id={'insGeometry'}
+                                           value={insGeometryData}
                                            onChange={(e) => setInsNo(e.target.value)}
                                            placeholder={'지오매트리정보를 입력하세요'} readOnly
                                     />
@@ -310,7 +256,7 @@ function InstrumentCreateModal(props) {
                                         onChange={(e) => setCreateDate(e.target.value)}/>
                                 </div>
                             </div>
-                            {selectdInsType === 'A' && (
+                            {['하중계_버팀대', '하중계_PSBEAM', '하중계_앵커'].includes(insType) && (
                                 <div>
 
                                     <div className={'row mt-2'}>
@@ -319,22 +265,44 @@ function InstrumentCreateModal(props) {
                                                    className={'form-label mt-2'}>
                                                 관리기준치1차:
                                             </label>
-                                            <input type={'text'} className={'form-control'} id={'measurement1'}
-                                                   value={measurement1}
-                                                   onChange={(e) => setMeasurement1(e.target.value)} placeholder={'NaN'}
-                                                   disabled={'false'}
-                                            />
+                                            <div className={'input-group'}>
+                                                <button className={'btn btn-outline-secondary'} type={'button'}
+                                                        onClick={() => {
+                                                            setMeasurement1(measurement1 - 1)
+                                                        }}>-
+                                                </button>
+                                                <input type="text" id={'measurement1'} value={measurement1}
+                                                       className={'form-control text-center'}
+                                                       placeholder={'관리기준치1차를 입력하세요'}
+                                                       onChange={(e) => setMeasurement1(e.target.value)}/>
+                                                <button className={'btn btn-outline-secondary'} type={'button'}
+                                                        onClick={() => {
+                                                            setMeasurement1(measurement1 + 1)
+                                                        }}>+
+                                                </button>
+                                            </div>
                                         </div>
                                         <div className={'col d-flex flex-column'}>
                                             <label htmlFor={'measurement2'}
                                                    className={'form-label mt-2'}>
                                                 관리기준치2차:
                                             </label>
-                                            <input type={'text'} className={'form-control'} id={'measurement2'}
-                                                   value={measurement2}
-                                                   onChange={(e) => setMeasurement2(e.target.value)} placeholder={'NaN'}
-                                                   disabled={'false'}
-                                            />
+                                            <div className={'input-group'}>
+                                                <button className={'btn btn-outline-secondary'} type={'button'}
+                                                        onClick={() => {
+                                                            setMeasurement2(measurement2 - 1)
+                                                        }}>-
+                                                </button>
+                                                <input type="text" id={'measurement2'} value={measurement2}
+                                                       className={'form-control text-center'}
+                                                       placeholder={'관리기준치2차를 입력하세요'}
+                                                       onChange={(e) => setMeasurement2(e.target.value)}/>
+                                                <button className={'btn btn-outline-secondary'} type={'button'}
+                                                        onClick={() => {
+                                                            setMeasurement2(measurement2 + 1)
+                                                        }}>+
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -344,11 +312,22 @@ function InstrumentCreateModal(props) {
                                                    className={'form-label mt-2'}>
                                                 관리기준치3차:
                                             </label>
-                                            <input type={'text'} className={'form-control'} id={'measurement3'}
-                                                   value={measurement3}
-                                                   onChange={(e) => setMeasurement3(e.target.value)} placeholder={'NaN'}
-                                                   disabled={'false'}
-                                            />
+                                            <div className={'input-group'}>
+                                                <button className={'btn btn-outline-secondary'} type={'button'}
+                                                        onClick={() => {
+                                                            setMeasurement3(measurement3 - 1)
+                                                        }}>-
+                                                </button>
+                                                <input type="text" id={'measurement3'} value={measurement3}
+                                                       className={'form-control text-center'}
+                                                       placeholder={'관리기준치3차를 입력하세요'}
+                                                       onChange={(e) => setMeasurement3(e.target.value)}/>
+                                                <button className={'btn btn-outline-secondary'} type={'button'}
+                                                        onClick={() => {
+                                                            setMeasurement3(measurement3 + 1)
+                                                        }}>+
+                                                </button>
+                                            </div>
                                         </div>
                                         <div className={'col d-flex flex-column'}>
                                             <label htmlFor={'verticalPlus'}
@@ -357,14 +336,15 @@ function InstrumentCreateModal(props) {
                                             </label>
                                             <div className={'input-group'}>
                                                 <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={handleDecreaseVeriP}>-
+                                                        onClick={() => {
+                                                            setVerticalPlus(verticalPlus - 1)
+                                                        }}>-
                                                 </button>
-                                                <input type="number" id={'verticalPlus'} value={verticalPlus}
+                                                <input type="text" id={'verticalPlus'} value={verticalPlus}
                                                        className={'form-control text-center'}
-                                                       placeholder={'20'}
                                                        onChange={(e) => setVerticalPlus(e.target.value)}/>
                                                 <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={handleIncreaseVeriP}>+
+                                                        onClick={() => {setVerticalPlus(verticalPlus + 1)}}>+
                                                 </button>
                                             </div>
                                         </div>
@@ -378,14 +358,13 @@ function InstrumentCreateModal(props) {
                                             </label>
                                             <div className={'input-group'}>
                                                 <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={handleDecreaseVeriM}>-
+                                                        onClick={() => {setVerticalMinus(verticalMinus - 1)}}>-
                                                 </button>
-                                                <input type="number" id={'verticalMinus'} value={verticalMinus}
+                                                <input type="text" id={'verticalMinus'} value={verticalMinus}
                                                        className={'form-control text-center'}
-                                                       placeholder={'-5'}
                                                        onChange={(e) => setVerticalMinus(e.target.value)}/>
                                                 <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={handleIncreaseVeriM}>+
+                                                        onClick={() => {setVerticalMinus(verticalMinus + 1)}}>+
                                                 </button>
                                             </div>
                                         </div>
