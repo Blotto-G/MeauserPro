@@ -183,14 +183,14 @@ function MainSideBar(props) {
                                             <button
                                                 className={'projectBtn py-2 rounded-3 mx-3'}
                                                 type={'button'}
-                                                onClick={enableDrawingMarkers}>
+                                                onClick={() => enableDrawingMarkers(item)}>
                                                 {instrumentBtnText}
                                             </button>
                                         </div>
                                         <ul className={"nav nav-pills flex-column mb-auto border border-3 rounded-3"}>
                                             {instrumentList.map((item) => {
                                                 return (
-                                                    <li key={item.idx} className={`mb-2`}>{item.intType}</li>
+                                                    <li key={item.idx} className={`mb-2`}>{item.intType === 'A'}</li>
                                                 );
                                             })};
                                         </ul>

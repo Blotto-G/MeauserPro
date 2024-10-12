@@ -188,13 +188,17 @@ function Main() {
     };
 
     // 계측기 추가 버튼 클릭 시 마커 생성 모드 활성화 및 취소
-    const enableDrawingMarkers = () => {
+    const enableDrawingMarkers = (section) => {
         if (isDrawingEnabledMarker) {
             setIsDrawingEnabledMarker(false);
             setIsInsBtnText('계측기 추가')
+            handleSectionClick(section);
+            handleInstrumentList(section.idx);
         } else {
             setIsDrawingEnabledMarker(true);
             setIsInsBtnText('계측기 추가')
+            handleSectionClick(section);
+            handleInstrumentList(section.idx);
         }
     };
 
