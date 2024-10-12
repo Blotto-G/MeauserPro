@@ -97,17 +97,17 @@ function Main() {
                 .catch(err => {
                     console.error('구간 목록 업데이트 중 오류 발생:', err);
                 });
-            // 선택된 프로젝트의 계측기 목록을 다시 가져오기
-            axios.get(`http://localhost:8080/MeausrePro/Instrument/${isSelectedSection.idx}`)
-                .then(res => {
-                    setInstrumentList(res.data);
-                })
-                .catch(err => {
-                    console.log('계측기 목록 업데이트 중 오류 발생:', err);
-                })
+            // // 선택된 프로젝트의 계측기 목록을 다시 가져오기
+            // axios.get(`http://localhost:8080/MeausrePro/Instrument/${isSelectedSection.idx}`)
+            //     .then(res => {
+            //         setInstrumentList(res.data);
+            //     })
+            //     .catch(err => {
+            //         console.log('계측기 목록 업데이트 중 오류 발생:', err);
+            //     })
         }
         setIsSectionModalOpen(false); // 모달 닫기
-        setIsInstrumentModalOpen(false);
+        // setIsInstrumentModalOpen(false);
     };
 
     // 프로젝트 전체 구간 들고오기

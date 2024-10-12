@@ -46,8 +46,8 @@ function InstrumentCreateModal(props) {
     const verticalMinusBase =
         insType === '하중계_버팀대' ? 0 :
             insType === '하중계_PSBEAM' ? 700 :
-            insType === '하중계_앵커' ? 30 :
-                0;
+                insType === '하중계_앵커' ? 30 :
+                    0;
 
     useEffect(() => {
         setVerticalPlus(verticalPlusBase);
