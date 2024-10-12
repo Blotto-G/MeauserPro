@@ -235,9 +235,9 @@ function Main() {
         setIsInstrumentModalOpen(false); // 모달 닫기
     };
 
-    // 구간 전체 계측기 들고오기
-    const handleInstrumentList = (projectId) => {
-        axios.get(`http://localhost:8080/MeausrePro/Instrument/${projectId}`)
+    // 구간 전체 계측기 들고오기 ???? 혹은 프로젝트 전체 계측기 들고오기
+    const handleInstrumentList = (sectionId) => {
+        axios.get(`http://localhost:8080/MeausrePro/Instrument/${sectionId}`)
             .then((res) => {
                 setInstrumentList(res.data);
             })
