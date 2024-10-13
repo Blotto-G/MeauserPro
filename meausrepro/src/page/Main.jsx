@@ -284,6 +284,8 @@ function Main() {
                         isDrawingEnabledMarker={isDrawingEnabledMarker} // 마커 생성 활성화
                         setIsDrawingEnabledMarker={setIsDrawingEnabledMarker} // 마커 생성
                         isInsModalOpen={isInstrumentModalOpen} // 계측기 모달창 열기
+                        projectData={isSelectedProject}
+                        sectionData={isSelectedSection}
                     />
                     <ProjectCreateModal
                         geometryData={geometryData}

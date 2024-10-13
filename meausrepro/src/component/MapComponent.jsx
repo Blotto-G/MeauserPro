@@ -4,7 +4,7 @@ import axios from "axios";
 
 function MapComponent(props) {
     const { user } = useContext(UserContext);
-    const { sendGeometry, isDrawingEnabled, setIsDrawingEnabled, isModalOpen, setMoveToPolygon, sendInsGeometry, isDrawingEnabledMarker, setIsDrawingEnabledMarker, isInsModalOpen } = props;
+    const { sendGeometry, isDrawingEnabled, setIsDrawingEnabled, isModalOpen, setMoveToPolygon, sendInsGeometry, isDrawingEnabledMarker, setIsDrawingEnabledMarker, isInsModalOpen, projectData, sectionData } = props;
 
     const [polygonCoords, setPolygonCoords] = useState([]);
     const [currentPolygon, setCurrentPolygon] = useState(null);
@@ -25,6 +25,23 @@ function MapComponent(props) {
     const [insMarkers, setInsMarkers] = useState([]) // 저장된 계측기 마커 목록
     const [drawnInsMarker, setDrawnInsMarker] = useState([]); // 새로 그린 계측기 마커 관리
     const [currentInsMarkerId, setCurrentInsMarkerId] = useState(null); // 현재 계측기마커 ID 상태 추가
+
+    const [projectId, setProjectId] = useState(null);
+    const [sectionId, setSectionId] = useState(null);
+
+    useEffect(() => {
+        if (projectData && isMapReady && mapInstance) {
+            // 초기값 설정
+            setProjectId(projectData.idx || 0);
+        }
+    }, [projectData, isMapReady, mapInstance]);
+
+    useEffect(() => {
+        if (sectionData && isMapReady && mapInstance) {
+            // 초기값 설정
+            setSectionId(sectionData.idx || 0);
+        }
+    }, [sectionData, isMapReady, mapInstance]);
 
 
     // 지도 로드
@@ -400,16 +417,32 @@ function MapComponent(props) {
             .replace("POINT(", "")
             .replace(")", "")
             .trim()
+            .split(" ");
 
-        const [lng, lat] = insGeometry.split(" ");
+        const [lng, lat] = insGeometry.map(Number);
 
         return new naver.maps.LatLng(parseFloat(lat), parseFloat(lng));
     };
 
+    // 진행 중인 프로젝트 계측기 마커 불러오기
+    useEffect(() => {
+        if (projectId) {
+            axios
+                .get(`http://localhost:8080/MeausrePro/Instrument/${projectId}`)
+                .then((res) => {
+                    const { data } = res;
+                    setInsMarkers(data); // 전체 계측기 데이터를 저장
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
+    }, [projectId]);
+
     // 저장된 계측기 마커를 지도에 그리기
     useEffect(() => {
         if (mapInstance && insMarkers.length > 0) {
-            drawnInsMarker.forEach((marker) => marker.setMap(null)); // 기존 계측기 마커를 먼저 지운다.
+            drawnInsMarker.forEach((insMarker) => insMarker.setMap(null)); // 기존 계측기 마커를 먼저 지운다.
 
             const newInsMarkers = insMarkers.map((instrument) => {
                 if (!instrument.insGeometry) {
@@ -420,11 +453,49 @@ function MapComponent(props) {
                 const insGeometry = insGeometryData(instrument.insGeometry);
                 if (insGeometry.length === 0) return null;
 
+                // insType에 따라 아이콘 URL 결정
+                let iconUrl;
+                switch (instrument.insType) {
+                    case "A":
+                        iconUrl = 'src/assets/images/지중경사계.svg';
+                        break;
+                    case "B":
+                        iconUrl = 'src/assets/images/지하수위계.svg';
+                        break;
+                    case "C":
+                        iconUrl = 'src/assets/images/간극수압계.svg';
+                        break;
+                    case "D":
+                        iconUrl = 'src/assets/images/지표침하계.svg';
+                        break;
+                    case "E":
+                        iconUrl = 'src/assets/images/하중계버팀대.svg';
+                        break;
+                    case "F":
+                        iconUrl = 'src/assets/images/하중계PSBEAM.svg';
+                        break;
+                    case "G":
+                        iconUrl = 'src/assets/images/하중계앵커.svg';
+                        break;
+                    case "H":
+                        iconUrl = 'src/assets/images/변형률계(버팀대).svg';
+                        break;
+                    case "I":
+                        iconUrl = 'src/assets/images/구조물기울기계.svg';
+                        break;
+                    case "J":
+                        iconUrl = 'src/assets/images/균열측정계.svg';
+                        break;
+                    default:
+                        console.warn("알 수 없는 insType:", instrument.insType);
+                        return null; // 알 수 없는 insType인 경우 마커 생성하지 않음
+                }
+
                 const insMarker = new naver.maps.Marker({
                     map: mapInstance,
                     position: insGeometry,
                     icon: {
-                        url: 'src/assets/images/circle-fill-red.svg', // 아이콘 URL
+                        url: iconUrl, // 아이콘 URL
                     }
                 });
 
@@ -522,8 +593,7 @@ function MapComponent(props) {
 
 
     const handleSaveIns = () => {
-        // insMarkerCoords가 객체라면 배열로 변환
-        if (!insMarkerCoords || Object.keys(insMarkerCoords).length === 0) {
+        if (!insMarkerCoords || insMarkerCoords.length === 0) {
             console.log("저장할 좌표가 없습니다.");
             return;
         }
@@ -544,13 +614,10 @@ function MapComponent(props) {
 
         console.log("좌표 저장 완료:", insMarkerCoords);
 
-        // 객체 형태의 위도와 경도를 배열로 변환
-        const insMarkerCoordsArray = [[insMarkerCoords.lat, insMarkerCoords.lng]];
-
         // 계측기 마커 다시 그리기 로직 추가
         const newInsMarker = new naver.maps.Marker({
-            map: mapInstance, // 현재 지도 인스턴스에 추가
-            position: insMarkerCoordsArray.map(([lat, lng]) => new naver.maps.LatLng(lat, lng)),
+            map: mapInstance,
+            position: new naver.maps.LatLng(insMarkerCoords[0], insMarkerCoords[1]),
             icon: {
                 url: 'src/assets/images/circle-fill-blue.svg',
             },
@@ -578,7 +645,7 @@ function MapComponent(props) {
     };
 
 
-    const handleSaveInsGeometry = (sectionId) => {
+    const handleSaveInsGeometry = () => {
         if (currentInsMarker && currentInsMarkerId) {
             const wkt = `POINT(${insMarkerCoords[1]} ${insMarkerCoords[0]})`;
 

@@ -30,11 +30,11 @@ public class InstrumentController {
         return ResponseEntity.ok("계측기 데이터 저장 성공");
     }
 
-    // 특정 구간 계측기 보기
-    @GetMapping("/{sectionId}")
-    public List<MeausreProInstrument> sectionInstruments(@PathVariable("sectionId") int sectionId) {
-        return instrumentService.sectionInstruments(sectionId);
-    }
+//    // 특정 구간 계측기 보기
+//    @GetMapping("/{sectionId}")
+//    public List<MeausreProInstrument> sectionInstruments(@PathVariable("sectionId") int sectionId) {
+//        return instrumentService.sectionInstruments(sectionId);
+//    }
 
     // 프로젝트별 계측기 보기
     @GetMapping("/{projectId}")
