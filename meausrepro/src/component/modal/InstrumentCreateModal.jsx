@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 
 function InstrumentCreateModal(props) {
-    const {insGeometryData, projectData, section, isOpen, closeModal, onInstrumentCreated} = props;
+    const {insGeometryData, projectData, section, isOpen, closeModal, onInstrumentCreated, instrumentList} = props;
 
     const [siteName, setSiteName] = useState('');
     const [sectionName, setSectionName] = useState('');
@@ -20,7 +20,6 @@ function InstrumentCreateModal(props) {
             setSectionName(section.sectionName || '');
         }
     }, [section, isOpen]);
-
 
     const dateNow = new Date();
     const today = dateNow.toISOString().slice(0, 10);
@@ -108,7 +107,7 @@ function InstrumentCreateModal(props) {
         setTenAllowable(tenAllowableBase);
     }, [insType]);
 
-    // 구간 생성
+    // 계측기 생성 (기본 데이터)
     const handleCreateInstrument = async () => {
         console.log(insGeometryData);
         const wkt = `POINT(${insGeometryData[1]} ${insGeometryData[0]})`;
@@ -160,86 +159,87 @@ function InstrumentCreateModal(props) {
                 console.log('구간 생성 중 오류 발생:', err);
             })
 
-        // axios.post(`http://localhost:8080/MeausrePro/InstrumentType/save`, {
-        //     logger: logger,
-        //     aPlus: aPlus,
-        //     aMinus: aMinus,
-        //     bPlus: bPlus,
-        //     bMinus: bMinus,
-        //     knTone: knTone,
-        //     displacement: displacement,
-        //     depExcavation: depExcavation,
-        //     zeroRead: zeroRead,
-        //     instrument: instrument,
-        //     tenAllowable: tenAllowable,
-        //     tenDesign: tenDesign
-        // })
-        //     .then(res => {
-        //         if (!displacement || !depExcavation) {
-        //             alert("모든 필드를 입력해주세요.");
-        //             return;
-        //         } else {
-        //             console.log('계측기 생성 성공:', res.data);
-        //             if (onInstrumentCreated) {
-        //                 onInstrumentCreated(); // 계측기 생성 후 계측기 목록을 다시 불러오도록 호출
-        //             }
-        //             handleCloseModal();
-        //         }
-        //
-        //         switch (selectedInsType) {
-        //             case '하중계_버팀대':
-        //                 if (!zeroRead || !instrument || !knTone) {
-        //                     alert("모든 필드를 입력해주세요.");
-        //                     return;
-        //                 } else {
-        //                     console.log('계측기 생성 성공:', res.data);
-        //                     if (onInstrumentCreated) {
-        //                         onInstrumentCreated();
-        //                     }
-        //                     handleCloseModal();
-        //                 }
-        //                 break;
-        //             case '하중계_PSBEAM':
-        //                 if (!zeroRead || !instrument || !knTone || !tenAllowable) {
-        //                     alert("모든 필드를 입력해주세요.");
-        //                     return;
-        //                 } else {
-        //                     console.log('계측기 생성 성공:', res.data);
-        //                     if (onInstrumentCreated) {
-        //                         onInstrumentCreated();
-        //                     }
-        //                     handleCloseModal();
-        //                 }
-        //                 break;
-        //             case '하중계_앵커':
-        //                 if (!zeroRead || !instrument || !tenDesign) {
-        //                     alert("모든 필드를 입력해주세요.");
-        //                     return;
-        //                 } else {
-        //                     console.log('계측기 생성 성공:', res.data);
-        //                     if (onInstrumentCreated) {
-        //                         onInstrumentCreated();
-        //                     }
-        //                     handleCloseModal();
-        //                 }
-        //                 break;
-        //             case '구조물기울기계':
-        //                 if (!aPlus || !aMinus || !bPlus || !bMinus) {
-        //                     alert("모든 필드를 입력해주세요.");
-        //                     return;
-        //                 } else {
-        //                     console.log('계측기 생성 성공:', res.data);
-        //                     if (onInstrumentCreated) {
-        //                         onInstrumentCreated();
-        //                     }
-        //                     handleCloseModal();
-        //                 }
-        //                 break;
-        //         }
-        //     })
-        //     .catch(err => {
-        //         console.log('구간 생성 중 오류 발생:', err);
-        //     })
+        axios.post(`http://localhost:8080/MeausrePro/InstrumentType/save`, {
+            instrId: instrumentList.idx,
+            logger: logger,
+            aPlus: aPlus,
+            aMinus: aMinus,
+            bPlus: bPlus,
+            bMinus: bMinus,
+            knTone: knTone,
+            displacement: displacement,
+            depExcavation: depExcavation,
+            zeroRead: zeroRead,
+            instrument: instrument,
+            tenAllowable: tenAllowable,
+            tenDesign: tenDesign
+        })
+            .then(res => {
+                if (!displacement || !depExcavation) {
+                    alert("모든 필드를 입력해주세요.");
+                    return;
+                } else {
+                    console.log('계측기 생성 성공:', res.data);
+                    if (onInstrumentCreated) {
+                        onInstrumentCreated(); // 계측기 생성 후 계측기 목록을 다시 불러오도록 호출
+                    }
+                    handleCloseModal();
+                }
+
+                switch (selectedInsType) {
+                    case '하중계_버팀대':
+                        if (!zeroRead || !instrument || !knTone) {
+                            alert("모든 필드를 입력해주세요.");
+                            return;
+                        } else {
+                            console.log('계측기 생성 성공:', res.data);
+                            if (onInstrumentCreated) {
+                                onInstrumentCreated();
+                            }
+                            handleCloseModal();
+                        }
+                        break;
+                    case '하중계_PSBEAM':
+                        if (!zeroRead || !instrument || !knTone || !tenAllowable) {
+                            alert("모든 필드를 입력해주세요.");
+                            return;
+                        } else {
+                            console.log('계측기 생성 성공:', res.data);
+                            if (onInstrumentCreated) {
+                                onInstrumentCreated();
+                            }
+                            handleCloseModal();
+                        }
+                        break;
+                    case '하중계_앵커':
+                        if (!zeroRead || !instrument || !tenDesign) {
+                            alert("모든 필드를 입력해주세요.");
+                            return;
+                        } else {
+                            console.log('계측기 생성 성공:', res.data);
+                            if (onInstrumentCreated) {
+                                onInstrumentCreated();
+                            }
+                            handleCloseModal();
+                        }
+                        break;
+                    case '구조물기울기계':
+                        if (!aPlus || !aMinus || !bPlus || !bMinus) {
+                            alert("모든 필드를 입력해주세요.");
+                            return;
+                        } else {
+                            console.log('계측기 생성 성공:', res.data);
+                            if (onInstrumentCreated) {
+                                onInstrumentCreated();
+                            }
+                            handleCloseModal();
+                        }
+                        break;
+                }
+            })
+            .catch(err => {
+                console.log('구간 생성 중 오류 발생:', err);
+            })
     };
 
 

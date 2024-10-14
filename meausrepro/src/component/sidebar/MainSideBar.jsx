@@ -20,11 +20,17 @@ function MainSideBar(props) {
         handleSectionList,
         enableDrawingMarkers,
         instrumentBtnText,
-        handleSectionClick
+        handleSectionClick,
+
+        // 수진님꺼 추가
+        // onInstrumentCreated, // Main으로부터 받은 함수
+        // instrumentList,  // Main에서 전달된 계측기 리스트 사용
+        // handleInstrumentList, // Main에서 전달된 함수 사용
     } = props;
 
     const [isSelectProject, setIsSelectProject] = useState(null);
     const [selectedSection, setSelectedSection] = useState(null); // 선택된 구간 정보
+    const [selectedInstrument, setSelectedInstrument] = useState(null);  // 선택된 계측기 정보 저장
 
     // 특정 구간 계측기
     const [instrumentList, setInstrumentList] = useState([]);
@@ -58,6 +64,7 @@ function MainSideBar(props) {
     // SectionDetailSideBar 닫기
     const handleClose = () => {
         setSelectedSection(null);
+        setSelectedInstrument(null); // 계측기 정보 초기화
     };
 
     // 프로젝트 삭제
@@ -109,6 +116,32 @@ function MainSideBar(props) {
                 console.log(err);
             })
     }
+
+    // 수진님꺼 추가
+    // // 계측기 선택 시 상세 정보 열기
+    // const handleSelectInstrument = (instrument) => {
+    //     setSelectedInstrument(instrument); // 계측기 상세 정보 열기
+    //     // 구간 상세 정보는 닫고 리스트는 유지
+    //     setSelectedSection(selectedSection); // 구간 리스트는 유지, 상세 정보는 닫힘
+    // };
+    //
+    // // 계측기 삭제
+    // const deleteInstrument = (idx) => {
+    //     axios.delete(`http://localhost:8080/MeausrePro/Instrument/delete/${idx}`)
+    //         .then((res) => {
+    //             console.log('계측기 삭제 성공:', res.data);
+    //             setInstrumentList(prevList => prevList.filter(instrument => instrument.idx !== idx))
+    //         })
+    //         .catch((err) => {
+    //             console.error('계측기 삭제 중 오류 발생:', err);
+    //         });
+    // };
+    //
+    // useEffect(() => {
+    //     if (instrumentList.length > 0) {
+    //         console.log("계측기 목록 업데이트됨:", instrumentList);
+    //     }
+    // }, [instrumentList]);
 
     return (
         <div className={'sideBarWrapper'}>
@@ -190,6 +223,38 @@ function MainSideBar(props) {
                                             </div>
                                         </li>
                                     ))}
+                                    {/*수진님꺼 추가*/}
+                                    {/*{sectionList.map((section) => (*/}
+                                    {/*    <li key={section.idx} className={`projectItem ${selectedSection?.idx === section.idx ? 'selected' : ''}`}>*/}
+                                    {/*        <div className={'d-flex justify-content-between'}>*/}
+                                    {/*            <button type={'button'} onClick={() => handleSelectSection(section)}>*/}
+                                    {/*                {section.sectionName}*/}
+                                    {/*            </button>*/}
+                                    {/*            <button className={'projectBtn py-2 rounded-3 mx-3'} type={'button'} onClick={() => enableDrawingMarkers(section)} style={{fontSize: '12px'}}>*/}
+                                    {/*                {instrumentBtnText}*/}
+                                    {/*            </button>*/}
+                                    {/*        </div>*/}
+                                    {/*        /!* 선택된 구간에만 계측기 리스트 보여줌 *!/*/}
+                                    {/*        {selectedSection?.idx === section.idx && (*/}
+                                    {/*            <ul className={"instrument-list"}>*/}
+                                    {/*                {instrumentList.length > 0 ? (*/}
+                                    {/*                    instrumentList.map((instrument, index) => (*/}
+                                    {/*                        instrument && instrument.insName ? (*/}
+                                    {/*                            <li key={instrument.idx} className={`instrument-item`}*/}
+                                    {/*                                onClick={() => handleSelectInstrument(instrument)}>*/}
+                                    {/*                                {instrument.insName}*/}
+                                    {/*                            </li>*/}
+                                    {/*                        ) : (*/}
+                                    {/*                            <li key={index} className="text-muted">계측기 정보가 잘못되었습니다</li>*/}
+                                    {/*                        )*/}
+                                    {/*                    ))*/}
+                                    {/*                ) : (*/}
+                                    {/*                    <li className="text-muted">계측기 정보가 없습니다</li>*/}
+                                    {/*                )}*/}
+                                    {/*            </ul>*/}
+                                    {/*        )}*/}
+                                    {/*    </li>*/}
+                                    {/*))}*/}
                                     <ul className={"nav nav-pills flex-column mb-auto border border-3 rounded-3"}>
                                         {instrumentList.map((item) => {
                                             return (
@@ -199,71 +264,6 @@ function MainSideBar(props) {
                                     </ul>
                                 </ul>
                             </div>
-
-                            {/* 1 번째*/}
-
-                            {/*<div>*/}
-                            {/*    <ul className={'sideBarProjectList'}>*/}
-                            {/*        {sectionList.map((item) => (*/}
-                            {/*            <li key={item.idx}*/}
-                            {/*                className={`projectItem ${selectedSection?.idx === item.idx ? 'selected' : ''}`}>*/}
-                            {/*                <div className={'d-flex justify-content-between'}>*/}
-                            {/*                    <button*/}
-                            {/*                        type={'button'}*/}
-                            {/*                        onClick={() => handleSelectSection(item)}*/}
-                            {/*                    >*/}
-                            {/*                        {item.sectionName}*/}
-                            {/*                    </button>*/}
-                            {/*                    <button*/}
-                            {/*                        className={'projectBtn py-2 rounded-3 mx-3'}*/}
-                            {/*                        type={'button'}*/}
-                            {/*                        onClick={() => enableDrawingMarkers(item)}>*/}
-                            {/*                        {instrumentBtnText}*/}
-                            {/*                    </button>*/}
-                            {/*                </div>*/}
-                            {/*            </li>*/}
-                            {/*        ))}*/}
-                            {/*        <ul className={"nav nav-pills flex-column mb-auto border border-3 rounded-3"}>*/}
-                            {/*            {instrumentList.map((item) => {*/}
-                            {/*                return (*/}
-                            {/*                    <li key={item.idx} className={`mb-2`}>{item.idx}</li>*/}
-                            {/*                );*/}
-                            {/*            })};*/}
-                            {/*        </ul>*/}
-                            {/*    </ul>*/}
-                            {/*</div>*/}
-
-
-                            {/* 2번째 */}
-
-                            {/*<ul className={'sideBarProjectList'}>*/}
-                            {/*    {sectionList.map((item) => (*/}
-                            {/*        <li key={item.idx}*/}
-                            {/*            className={`projectItem ${selectedSection?.idx === item.idx ? 'selected' : ''}`}>*/}
-                            {/*            <div className={'d-flex justify-content-between'}>*/}
-                            {/*                <button*/}
-                            {/*                    type={'button'}*/}
-                            {/*                    onClick={() => handleSelectSection(item)}*/}
-                            {/*                >*/}
-                            {/*                    {item.sectionName}*/}
-                            {/*                </button>*/}
-                            {/*                <button*/}
-                            {/*                    className={'projectBtn py-2 rounded-3 mx-3'}*/}
-                            {/*                    type={'button'}*/}
-                            {/*                    onClick={enableDrawingMarkers}>*/}
-                            {/*                    {instrumentBtnText}*/}
-                            {/*                </button>*/}
-                            {/*            </div>*/}
-                            {/*            <ul className={"nav nav-pills flex-column mb-auto border border-3 rounded-3"}>*/}
-                            {/*                {instrumentList.map((item) => {*/}
-                            {/*                    return (*/}
-                            {/*                        <li key={item.idx} className={`mb-2`}>{item.intType}</li>*/}
-                            {/*                    );*/}
-                            {/*                })};*/}
-                            {/*            </ul>*/}
-                            {/*        </li>*/}
-                            {/*    ))}*/}
-                            {/*</ul>*/}
                         </div>
                         <button
                             className={'projectBtn py-2 rounded-3 mx-3'}
@@ -304,6 +304,26 @@ function MainSideBar(props) {
                     deleteSection={deleteSection}
                 />
             )}
+            {/*수진님꺼 추가*/}
+            {/*/!* 구간 상세 사이드바 (계측기 선택 시에도 구간 리스트 유지) *!/*/}
+            {/*{selectedSection && !selectedInstrument && (*/}
+            {/*    <SectionDetailSideBar*/}
+            {/*        section={selectedSection}*/}
+            {/*        handleSectionUpdated={handleSectionUpdated}*/}
+            {/*        handleClose={handleClose}*/}
+            {/*        deleteSection={deleteSection}*/}
+            {/*    />*/}
+            {/*)}*/}
+            
+            {/*/!* 계측기 상세 사이드바 (계측기 리스트 유지) *!/*/}
+            {/*{selectedInstrument && (*/}
+            {/*    <InsDetailSideBar*/}
+            {/*        instrument={selectedInstrument}*/}
+            {/*        onInstrumentCreated={onInstrumentCreated} // 생성 후 처리 함수 전달*/}
+            {/*        handleClose={() => setSelectedInstrument(null)} // 계측기 상세 정보 닫기*/}
+            {/*        deleteInstrument={deleteInstrument}  // 여기서 전달*/}
+            {/*    />*/}
+            {/*)}*/}
         </div>
     );
 }

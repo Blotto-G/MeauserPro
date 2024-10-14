@@ -663,7 +663,7 @@ function MapComponent(props) {
                     setContextInsMenuVisible(false);
 
                     // 서버에서 업데이트된 데이터 다시 불러오기
-                    axios.get(`http://localhost:8080/MeausrePro/Instrument/${sectionId}`)
+                    axios.get(`http://localhost:8080/MeausrePro/Instrument/${projectId}`)
                         .then(res => {
                             const { data } = res;
                             setInsMarkers(data); // 서버에서 새로운 계측기 마커 데이터 받아와서 업데이트

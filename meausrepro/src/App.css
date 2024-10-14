@@ -183,7 +183,8 @@ body {
   position: relative;
 }
 .sideBar,
-.sectionDetailSideBar {
+.sectionDetailSideBar,
+.insDetailSideBar{
   width: 280px;
   padding: 1.5em 0em;
   background-color: white;
@@ -242,6 +243,7 @@ body {
 .projectBtn{
   background-color: #a1e5c4;
   color: white;
+  font-size: 18px;
 }
 .projectItem button,
 .sideBarBtn {
@@ -308,4 +310,15 @@ body {
   border: 1px solid #8fbda2;
   color: white;
   background-color: #8fbda2;
+}
+
+.instrument-list {
+  list-style: none;
+  padding: 5px;
+  margin: 5px;
+}
+
+.instrument-item {
+  padding: 5px;
+  font-size: 15px; /* 글자 크기 */
 }

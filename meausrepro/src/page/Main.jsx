@@ -97,17 +97,8 @@ function Main() {
                 .catch(err => {
                     console.error('구간 목록 업데이트 중 오류 발생:', err);
                 });
-            // // 선택된 프로젝트의 계측기 목록을 다시 가져오기
-            // axios.get(`http://localhost:8080/MeausrePro/Instrument/${isSelectedSection.idx}`)
-            //     .then(res => {
-            //         setInstrumentList(res.data);
-            //     })
-            //     .catch(err => {
-            //         console.log('계측기 목록 업데이트 중 오류 발생:', err);
-            //     })
         }
         setIsSectionModalOpen(false); // 모달 닫기
-        // setIsInstrumentModalOpen(false);
     };
 
     // 프로젝트 전체 구간 들고오기
@@ -220,21 +211,6 @@ function Main() {
         setIsSelectedSection(section);
     };
 
-    // 계측기 생성 완료 시 호출될 함수
-    const onInstrumentCreated = () => {
-        if (isSelectedSection) {
-            // 선택된 구간의 계측기 목록을 다시 가져오기
-            axios.get(`http://localhost:8080/MeausrePro/Instrument/${isSelectedSection.idx}`)
-                .then((res) => {
-                    setInstrumentList(res.data); // 계측기 목록 업데이트
-                })
-                .catch(err => {
-                    console.error('계측기 목록 업데이트 중 오류 발생:', err);
-                });
-        }
-        setIsInstrumentModalOpen(false); // 모달 닫기
-    };
-
     // 프로젝트 전체 계측기 들고오기
     const handleInstrumentList = (projectId) => {
         axios.get(`http://localhost:8080/MeausrePro/Instrument/${projectId}`)
@@ -245,6 +221,42 @@ function Main() {
                 console.log(err);
             });
     };
+
+    // 계측기 생성 완료 시 호출될 함수
+    const onInstrumentCreated = () => {
+        if (isSelectedProject) {
+            handleInstrumentList(isSelectedProject.idx);
+        }
+        setIsInstrumentModalOpen(false); // 모달 닫기
+    };
+
+    // useEffect로 프로젝트 선택 시 자동으로 계측기 목록 가져오기
+    useEffect(() => {
+        if (isSelectedProject) {
+            handleInstrumentList(isSelectedProject.idx);
+        }
+    }, [isSelectedProject]); // isSelectedProject 상태가 변경될 때 실행
+
+    // 수진님꺼 추가
+    // // 계측기 리스트를 불러오는 코드
+    // const handleInstrumentList = (sectionId) => {
+    //     axios.get(`http://localhost:8080/MeausrePro/Instrument/section/${sectionId}`)
+    //         .then((res) => {
+    //             setInstrumentList(res.data);  // 계측기 리스트 업데이트
+    //         })
+    //         .catch((err) => {
+    //             console.log("계측기 리스트 불러오기 중 오류 발생:", err);
+    //         });
+    // };
+    //
+    // const onInstrumentCreated = (newInstrument) => {
+    //     if (newInstrument && newInstrument.idx) {
+    //         console.log("새로 생성된 계측기:", newInstrument);
+    //         setInstrumentList((prevList) => [...prevList, newInstrument]); // 기존 목록에 새 계측기 추가
+    //     } else {
+    //         console.error("계측기 정보가 잘못되었습니다:", newInstrument);
+    //     }
+    // };
 
     return (
         <div className={'d-flex vh-100'}>
@@ -270,6 +282,11 @@ function Main() {
                     handleSectionClick={handleSectionClick}
                     enableDrawingMarkers={enableDrawingMarkers} // 계측기 마커
                     instrumentBtnText={isInsBtnText} // 계측기 추가 버튼
+
+                    // 수진님꺼 추가
+                    // onInstrumentCreated={onInstrumentCreated}
+                    // instrumentList={instrumentList} // 상태 전달
+                    // handleInstrumentList={handleInstrumentList} // 함수 전달
                 />
                 <div className={'flex-grow-1'}>
                     <MapComponent
@@ -312,7 +329,6 @@ function Main() {
                         closeModal={closeInstrumentModal}
                         onInstrumentCreated={onInstrumentCreated} // 계측기 생성 후 호출될 함수 전달
                         instrumentList={instrumentList}
-                        setInstrumentList={setInstrumentList}
                     />
                 </div>
             </div>

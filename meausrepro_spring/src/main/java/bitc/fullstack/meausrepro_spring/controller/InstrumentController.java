@@ -55,4 +55,42 @@ public class InstrumentController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("계측기를 찾을 수 없습니다.");
         }
     }
+
+    // 계측기 수정
+    @PutMapping("/update")
+    public ResponseEntity<String> updateInstrument(@RequestBody MeausreProInstrument instrument) {
+        Optional<MeausreProInstrument> existingInstrument = instrumentService.findById(instrument.getIdx());
+        if (existingInstrument.isPresent()) {
+            // 필드 업데이트를 원하는 것만 선택적으로 덮어쓰기
+            MeausreProInstrument updatedInstrument = existingInstrument.get();
+            updatedInstrument.setInsName(instrument.getInsName());
+            updatedInstrument.setInsType(instrument.getInsType());
+            updatedInstrument.setInsNum(instrument.getInsNum());
+            updatedInstrument.setInsNo(instrument.getInsNo());
+            updatedInstrument.setCreateDate(instrument.getCreateDate());
+            updatedInstrument.setInsLocation(instrument.getInsLocation());
+            updatedInstrument.setMeasurement1(instrument.getMeasurement1());
+            updatedInstrument.setMeasurement2(instrument.getMeasurement2());
+            updatedInstrument.setMeasurement3(instrument.getMeasurement3());
+            updatedInstrument.setVerticalPlus(instrument.getVerticalPlus());
+            updatedInstrument.setVerticalMinus(instrument.getVerticalMinus());
+
+            instrumentService.save(updatedInstrument);  // 변경된 값 저장
+            return ResponseEntity.ok("계측기 수정 성공");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("계측기를 찾을 수 없습니다.");
+        }
+    }
+
+    // 계측기 삭제
+    @DeleteMapping("/delete/{idx}")
+    public ResponseEntity<String> deleteInstrument(@PathVariable("idx") int idx) {
+        Optional<MeausreProInstrument> instrument = instrumentService.findById(idx);
+        if (instrument.isPresent()) {
+            instrumentService.deleteById(idx); // 계측기 삭제
+            return ResponseEntity.ok("계측기 삭제 성공");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("계측기를 찾을 수 없습니다.");
+        }
+    }
 }

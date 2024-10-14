@@ -1,8 +1,11 @@
 package bitc.fullstack.meausrepro_spring.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -13,6 +16,10 @@ public class MeausreProProject {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="idx", nullable = false)
     private int idx; // 프로젝트 번호
+
+    @OneToMany(mappedBy = "projectId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<MeausreProSection> sections;
 
     @ManyToOne
     @JoinColumn(name="user_idx", nullable = false)
