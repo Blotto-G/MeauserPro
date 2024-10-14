@@ -206,8 +206,8 @@ function Main() {
         } else {
             setIsDrawingEnabledMarker(true);
             setIsInsBtnText('계측기 추가')
-            // handleSectionClick(section);
-            // handleInstrumentList(section.idx);
+            handleSectionClick(section);
+            handleInstrumentList(section.idx);
         }
     };
 
@@ -235,9 +235,9 @@ function Main() {
         setIsInstrumentModalOpen(false); // 모달 닫기
     };
 
-    // 구간 전체 계측기 들고오기 ???? 혹은 프로젝트 전체 계측기 들고오기
-    const handleInstrumentList = (sectionId) => {
-        axios.get(`http://localhost:8080/MeausrePro/Instrument/${sectionId}`)
+    // 프로젝트 전체 계측기 들고오기
+    const handleInstrumentList = (projectId) => {
+        axios.get(`http://localhost:8080/MeausrePro/Instrument/${projectId}`)
             .then((res) => {
                 setInstrumentList(res.data);
             })
@@ -311,6 +311,8 @@ function Main() {
                         isOpen={isInstrumentModalOpen}
                         closeModal={closeInstrumentModal}
                         onInstrumentCreated={onInstrumentCreated} // 계측기 생성 후 호출될 함수 전달
+                        instrumentList={instrumentList}
+                        setInstrumentList={setInstrumentList}
                     />
                 </div>
             </div>

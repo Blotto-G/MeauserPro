@@ -619,7 +619,7 @@ function MapComponent(props) {
             map: mapInstance,
             position: new naver.maps.LatLng(insMarkerCoords[0], insMarkerCoords[1]),
             icon: {
-                url: 'src/assets/images/circle-fill-blue.svg',
+                url: 'src/assets/images/circle-fill-red.svg',
             },
         });
 

@@ -39,19 +39,73 @@ function InstrumentCreateModal(props) {
     const [verticalPlus, setVerticalPlus] = useState(0);
     const [verticalMinus, setVerticalMinus] = useState(0);
 
+    // 계측기별 추가 입력 필드 상태 관리
+    const [logger, setLogger] = useState('');
+    const [aPlus, setAPlus] = useState('');
+    const [aMinus, setAMinus] = useState('');
+    const [bPlus, setBPlus] = useState('');
+    const [bMinus, setBMinus] = useState('');
+    const [knTone, setKnTone] = useState(0); // 1KN_TONE
+    const [displacement, setDisplacement] = useState(0); // 설계변위량
+    const [depExcavation, setDepExcavation] = useState(0); // 굴착고
+    const [zeroRead, setZeroRead] = useState(0); // ZERO_READ
+    const [instrument, setInstrument] = useState(0); // 계기상수
+    const [tenAllowable, setTenAllowable] = useState(0); // 허용인장력
+    const [tenDesign, setTenDesign] = useState(0); // 설계긴장력
+
+
+    const measurement1Base =
+        insType === '변형률계(버팀대)' ? 103 :
+            insType === '구조물기울기계' ? 0.001 :
+                insType === '균열측정계' ? 0.2 :
+            0;
+
+    const measurement2Base =
+        insType === '변형률계(버팀대)' ? 137 :
+            insType === '구조물기울기계' ? 0.0012 :
+                insType === '균열측정계' ? 0.38 :
+            0;
+
+    const measurement3Base =
+        insType === '변형률계(버팀대)' ? 171 :
+            insType === '구조물기울기계' ? 0.002 :
+                insType === '균열측정계' ? 0.5 :
+            0;
+
     const verticalPlusBase =
         insType === '하중계_버팀대' || insType === '하중계_PSBEAM' ? 900 :
             insType === '하중계_앵커' ? 50 :
+                insType === '변형률계(버팀대)' ? 60 :
+                    insType === '구조물기울기계' ? 0.001 :
+                        insType === '균열측정계' ? 0.6 :
                 0;
+
     const verticalMinusBase =
         insType === '하중계_버팀대' ? 0 :
             insType === '하중계_PSBEAM' ? 700 :
                 insType === '하중계_앵커' ? 30 :
-                    0;
+                    insType === '변형률계(버팀대)' ? -60 :
+                        insType === '구조물기울기계' ? -0.001 :
+                            insType === '균열측정계' ? -0.1 :
+                        0;
+
+    const knToneBase =
+        insType === '하중계_버팀대' ? 0.1020408163 :
+            insType === '하중계_PSBEAM' ? 0.1020408163 :
+            0;
+
+    const tenAllowableBase =
+        insType === '하중계_PSBEAM' ? 1188 :
+            0;
 
     useEffect(() => {
+        setMeasurement1(measurement1Base);
+        setMeasurement2(measurement2Base);
+        setMeasurement3(measurement3Base);
         setVerticalPlus(verticalPlusBase);
         setVerticalMinus(verticalMinusBase);
+        setKnTone(knToneBase);
+        setTenAllowable(tenAllowableBase);
     }, [insType]);
 
     // 구간 생성
@@ -75,6 +129,11 @@ function InstrumentCreateModal(props) {
 
         const selectedInsType = insTypeData[insType]; // 선택된 insType에 맞는 데이터 매핑
 
+        if (!selectedInsType || !insNum || !createDate || !insLocation || !verticalPlus || !verticalMinus) {
+            alert("모든 필드를 입력해주세요.");
+            return;
+        }
+
         axios.post(`http://localhost:8080/MeausrePro/Instrument/save`, {
             sectionId: section,
             insType: selectedInsType,
@@ -91,21 +150,98 @@ function InstrumentCreateModal(props) {
             verticalMinus: verticalMinus
         })
             .then(res => {
-                if (!selectedInsType || !insNum || !createDate || !insLocation || !verticalPlus || !verticalMinus) {
-                    alert("모든 필드를 입력해주세요.");
-                    return;
-                } else {
-                    console.log('계측기 생성 성공:', res.data);
-                    if (onInstrumentCreated) {
-                        onInstrumentCreated(); // 계측기 생성 후 계측기 목록을 다시 불러오도록 호출
-                    }
-                    handleCloseModal();
+                console.log('계측기 생성 성공:', res.data);
+                if (onInstrumentCreated) {
+                    onInstrumentCreated(); // 계측기 생성 후 계측기 목록을 다시 불러오도록 호출
                 }
+                handleCloseModal();
             })
             .catch(err => {
                 console.log('구간 생성 중 오류 발생:', err);
             })
-    }
+
+        // axios.post(`http://localhost:8080/MeausrePro/InstrumentType/save`, {
+        //     logger: logger,
+        //     aPlus: aPlus,
+        //     aMinus: aMinus,
+        //     bPlus: bPlus,
+        //     bMinus: bMinus,
+        //     knTone: knTone,
+        //     displacement: displacement,
+        //     depExcavation: depExcavation,
+        //     zeroRead: zeroRead,
+        //     instrument: instrument,
+        //     tenAllowable: tenAllowable,
+        //     tenDesign: tenDesign
+        // })
+        //     .then(res => {
+        //         if (!displacement || !depExcavation) {
+        //             alert("모든 필드를 입력해주세요.");
+        //             return;
+        //         } else {
+        //             console.log('계측기 생성 성공:', res.data);
+        //             if (onInstrumentCreated) {
+        //                 onInstrumentCreated(); // 계측기 생성 후 계측기 목록을 다시 불러오도록 호출
+        //             }
+        //             handleCloseModal();
+        //         }
+        //
+        //         switch (selectedInsType) {
+        //             case '하중계_버팀대':
+        //                 if (!zeroRead || !instrument || !knTone) {
+        //                     alert("모든 필드를 입력해주세요.");
+        //                     return;
+        //                 } else {
+        //                     console.log('계측기 생성 성공:', res.data);
+        //                     if (onInstrumentCreated) {
+        //                         onInstrumentCreated();
+        //                     }
+        //                     handleCloseModal();
+        //                 }
+        //                 break;
+        //             case '하중계_PSBEAM':
+        //                 if (!zeroRead || !instrument || !knTone || !tenAllowable) {
+        //                     alert("모든 필드를 입력해주세요.");
+        //                     return;
+        //                 } else {
+        //                     console.log('계측기 생성 성공:', res.data);
+        //                     if (onInstrumentCreated) {
+        //                         onInstrumentCreated();
+        //                     }
+        //                     handleCloseModal();
+        //                 }
+        //                 break;
+        //             case '하중계_앵커':
+        //                 if (!zeroRead || !instrument || !tenDesign) {
+        //                     alert("모든 필드를 입력해주세요.");
+        //                     return;
+        //                 } else {
+        //                     console.log('계측기 생성 성공:', res.data);
+        //                     if (onInstrumentCreated) {
+        //                         onInstrumentCreated();
+        //                     }
+        //                     handleCloseModal();
+        //                 }
+        //                 break;
+        //             case '구조물기울기계':
+        //                 if (!aPlus || !aMinus || !bPlus || !bMinus) {
+        //                     alert("모든 필드를 입력해주세요.");
+        //                     return;
+        //                 } else {
+        //                     console.log('계측기 생성 성공:', res.data);
+        //                     if (onInstrumentCreated) {
+        //                         onInstrumentCreated();
+        //                     }
+        //                     handleCloseModal();
+        //                 }
+        //                 break;
+        //         }
+        //     })
+        //     .catch(err => {
+        //         console.log('구간 생성 중 오류 발생:', err);
+        //     })
+    };
+
 
     // 모달 닫기 전 입력창 비우기
     const handleCloseModal = () => {
@@ -113,17 +249,28 @@ function InstrumentCreateModal(props) {
         setInsNum('');
         setInsName('');
         setInsNo('');
-        setCreateDate('');
+        setCreateDate(today);
         setInsLocation('');
         setMeasurement1(0);
         setMeasurement2(0);
         setMeasurement3(0);
         setVerticalPlus(0);
         setVerticalMinus(0);
+        setLogger('');
+        setAPlus('');
+        setAMinus('');
+        setBPlus('');
+        setBMinus('');
+        setKnTone(0);
+        setDisplacement(0);
+        setDepExcavation(0);
+        setZeroRead(0);
+        setInstrument(0);
+        setTenAllowable(0);
+        setTenDesign(0);
         onInstrumentCreated();
         closeModal();
     };
-
 
     const handleSelectInsTypeChange = (e) => {
         const selectedInsType = e.target.value;
@@ -168,7 +315,7 @@ function InstrumentCreateModal(props) {
                             </label>
                             <span onChange={(e) => setSectionName(e.target.value)}>{sectionName}</span>
                             <div className={'row mt-2'}>
-                                <div className={'col d-flex flex-column'}>
+                                <div className={'col-6 d-flex flex-column'}>
                                     <label htmlFor={'insType'}
                                            className={'form-label mt-2'}>
                                         계측기 종류:
@@ -188,7 +335,7 @@ function InstrumentCreateModal(props) {
                                         <option value="균열측정계">균열측정계</option>
                                     </select>
                                 </div>
-                                <div className={'col d-flex flex-column'}>
+                                <div className={'col-6 d-flex flex-column'}>
                                     <label htmlFor={'insNum'}
                                            className={'form-label mt-2'}>
                                         계측기 관리번호:
@@ -201,9 +348,7 @@ function InstrumentCreateModal(props) {
                                            placeholder={'계측기 관리번호를 입력하세요'}
                                     />
                                 </div>
-                            </div>
-                            <div className={'row mt-2'}>
-                                <div className={'col d-flex flex-column'}>
+                                <div className={'col-6 d-flex flex-column mt-2'}>
                                     <label htmlFor={'insName'}
                                            className={'form-label mt-2'}>
                                         제품명:
@@ -216,7 +361,7 @@ function InstrumentCreateModal(props) {
                                            placeholder={'제품명을 입력하세요'}
                                     />
                                 </div>
-                                <div className={'col d-flex flex-column'}>
+                                <div className={'col-6 d-flex flex-column mt-2'}>
                                     <label htmlFor={'insNo'}
                                            className={'form-label mt-2'}>
                                         시리얼NO:
@@ -230,157 +375,399 @@ function InstrumentCreateModal(props) {
                                     />
                                 </div>
                             </div>
-                            <div className={'row mt-2'}>
-                                <div className={'col d-flex flex-column'}>
-                                    <label htmlFor={'insGeometry'}
-                                           className={'form-label mt-2'}>
-                                        지오매트리정보:
-                                    </label>
-                                    <input type={'text'} className={'form-control'} id={'insGeometry'}
-                                           value={insGeometryData}
-                                           onChange={(e) => setInsNo(e.target.value)}
-                                           placeholder={'지오매트리정보를 입력하세요'} readOnly
-                                    />
-                                </div>
-                                <div className={'col d-flex flex-column'}>
-                                    <label htmlFor={'createDate'}
-                                           className={'form-label mt-2'}>
-                                        설치일자:
-                                    </label>
-                                    <input
-                                        type={'date'}
-                                        id={'createDate'}
-                                        className={'form-control'}
-                                        value={createDate}
-                                        min={today}
-                                        onChange={(e) => setCreateDate(e.target.value)}/>
-                                </div>
-                            </div>
-                            {['하중계_버팀대', '하중계_PSBEAM', '하중계_앵커'].includes(insType) && (
+                            {['', '지중경사계', '지하수위계', '간극수압계', '지표침하계', '하중계_버팀대', '하중계_PSBEAM', '하중계_앵커', '변형률계(버팀대)', '구조물기울기계', '균열측정계'].includes(insType) && (
                                 <div>
-
-                                    <div className={'row mt-2'}>
-                                        <div className={'col d-flex flex-column'}>
-                                            <label htmlFor={'measurement1'}
-                                                   className={'form-label mt-2'}>
-                                                관리기준치1차:
-                                            </label>
-                                            <div className={'input-group'}>
-                                                <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={() => {
-                                                            setMeasurement1(measurement1 - 1)
-                                                        }}>-
-                                                </button>
-                                                <input type="text" id={'measurement1'} value={measurement1}
-                                                       className={'form-control text-center'}
-                                                       placeholder={'관리기준치1차를 입력하세요'}
-                                                       onChange={(e) => setMeasurement1(e.target.value)}/>
-                                                <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={() => {
-                                                            setMeasurement1(measurement1 + 1)
-                                                        }}>+
-                                                </button>
+                                    <div className={'row'}>
+                                        {['간극수압계', '하중계_버팀대', '하중계_PSBEAM', '하중계_앵커', '변형률계(버팀대)'].includes(insType) && (
+                                            <div className={'col-6 d-flex flex-column mt-2'}>
+                                                <label htmlFor={'logger'}
+                                                       className={'form-label mt-2'}>
+                                                    logger명:
+                                                </label>
+                                                <input type={'text'}
+                                                       className={'form-control'}
+                                                       id={'logger'}
+                                                       value={logger}
+                                                       onChange={(e) => setLogger(e.target.value)}
+                                                       placeholder={'계측기 관리번호를 입력하세요'}
+                                                />
                                             </div>
-                                        </div>
-                                        <div className={'col d-flex flex-column'}>
-                                            <label htmlFor={'measurement2'}
+                                        )}
+                                        <div className={'col-6 d-flex flex-column mt-2'}>
+                                            <label htmlFor={'insGeometry'}
                                                    className={'form-label mt-2'}>
-                                                관리기준치2차:
+                                                지오매트리정보:
                                             </label>
-                                            <div className={'input-group'}>
-                                                <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={() => {
-                                                            setMeasurement2(measurement2 - 1)
-                                                        }}>-
-                                                </button>
-                                                <input type="text" id={'measurement2'} value={measurement2}
-                                                       className={'form-control text-center'}
-                                                       placeholder={'관리기준치2차를 입력하세요'}
-                                                       onChange={(e) => setMeasurement2(e.target.value)}/>
-                                                <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={() => {
-                                                            setMeasurement2(measurement2 + 1)
-                                                        }}>+
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className={'row mt-2'}>
-                                        <div className={'col d-flex flex-column'}>
-                                            <label htmlFor={'measurement3'}
-                                                   className={'form-label mt-2'}>
-                                                관리기준치3차:
-                                            </label>
-                                            <div className={'input-group'}>
-                                                <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={() => {
-                                                            setMeasurement3(measurement3 - 1)
-                                                        }}>-
-                                                </button>
-                                                <input type="text" id={'measurement3'} value={measurement3}
-                                                       className={'form-control text-center'}
-                                                       placeholder={'관리기준치3차를 입력하세요'}
-                                                       onChange={(e) => setMeasurement3(e.target.value)}/>
-                                                <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={() => {
-                                                            setMeasurement3(measurement3 + 1)
-                                                        }}>+
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div className={'col d-flex flex-column'}>
-                                            <label htmlFor={'verticalPlus'}
-                                                   className={'form-label mt-2'}>
-                                                수직변위(+Y):
-                                            </label>
-                                            <div className={'input-group'}>
-                                                <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={() => {
-                                                            setVerticalPlus(verticalPlus - 1)
-                                                        }}>-
-                                                </button>
-                                                <input type="text" id={'verticalPlus'} value={verticalPlus}
-                                                       className={'form-control text-center'}
-                                                       onChange={(e) => setVerticalPlus(e.target.value)}/>
-                                                <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={() => {setVerticalPlus(verticalPlus + 1)}}>+
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className={'row mt-2'}>
-                                        <div className={'col d-flex flex-column'}>
-                                            <label htmlFor={'verticalMinus'}
-                                                   className={'form-label mt-2'}>
-                                                수직변위(-Y):
-                                            </label>
-                                            <div className={'input-group'}>
-                                                <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={() => {setVerticalMinus(verticalMinus - 1)}}>-
-                                                </button>
-                                                <input type="text" id={'verticalMinus'} value={verticalMinus}
-                                                       className={'form-control text-center'}
-                                                       onChange={(e) => setVerticalMinus(e.target.value)}/>
-                                                <button className={'btn btn-outline-secondary'} type={'button'}
-                                                        onClick={() => {setVerticalMinus(verticalMinus + 1)}}>+
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div className={'col d-flex flex-column'}>
-                                            <label htmlFor={'insLocation'}
-                                                   className={'form-label mt-2'}>
-                                                설치위치:
-                                            </label>
-                                            <input type={'text'}
-                                                   className={'form-control'}
-                                                   id={'insLocation'}
-                                                   value={insLocation}
-                                                   onChange={(e) => setInsLocation(e.target.value)}
-                                                   placeholder={'설치위치를 입력하세요'}
+                                            <input type={'text'} className={'form-control'} id={'insGeometry'}
+                                                   value={insGeometryData}
+                                                   onChange={(e) => setInsNo(e.target.value)}
+                                                   placeholder={'지오매트리정보를 입력하세요'} readOnly
                                             />
                                         </div>
+                                        <div className={'col-6 d-flex flex-column mt-2'}>
+                                            <label htmlFor={'createDate'}
+                                                   className={'form-label mt-2'}>
+                                                설치일자:
+                                            </label>
+                                            <input
+                                                type={'date'}
+                                                id={'createDate'}
+                                                className={'form-control'}
+                                                value={createDate}
+                                                min={today}
+                                                onChange={(e) => setCreateDate(e.target.value)}/>
+                                        </div>
+                                        {['하중계_버팀대', '하중계_PSBEAM', '하중계_앵커', '변형률계(버팀대)', '구조물기울기계', '균열측정계'].includes(insType) && (
+                                            <div className={'col-6 d-flex flex-column mt-2'}>
+                                                <label htmlFor={'displacement'}
+                                                       className={'form-label mt-2'}>
+                                                    설계변위량:
+                                                </label>
+                                                <div className={'input-group'}>
+                                                    <button className={'btn btn-outline-secondary'} type={'button'}
+                                                            onClick={() => {
+                                                                setDisplacement(displacement - 1)
+                                                            }}>-
+                                                    </button>
+                                                    <input type="text" id={'displacement'} value={displacement}
+                                                           className={'form-control text-center'}
+                                                           onChange={(e) => setDisplacement(e.target.value)}/>
+                                                    <button className={'btn btn-outline-secondary'} type={'button'}
+                                                            onClick={() => {
+                                                                setDisplacement(displacement + 1)
+                                                            }}>+
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {['하중계_버팀대', '하중계_PSBEAM', '하중계_앵커', '변형률계(버팀대)', '구조물기울기계', '균열측정계'].includes(insType) && (
+                                            <div className={'col-6 d-flex flex-column mt-2'}>
+                                                <label htmlFor={'measurement1'}
+                                                       className={'form-label mt-2'}>
+                                                    관리기준치1차:
+                                                </label>
+                                                <div className={'input-group'}>
+                                                    <button className={'btn btn-outline-secondary'} type={'button'}
+                                                            onClick={() => {
+                                                                setMeasurement1(measurement1 - 1)
+                                                            }}>-
+                                                    </button>
+                                                    <input type="text" id={'measurement1'} value={measurement1}
+                                                           className={'form-control text-center'}
+                                                           onChange={(e) => setMeasurement1(e.target.value)}/>
+                                                    <button className={'btn btn-outline-secondary'} type={'button'}
+                                                            onClick={() => {
+                                                                setMeasurement1(measurement1 + 1)
+                                                            }}>+
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {['하중계_버팀대', '하중계_PSBEAM', '하중계_앵커', '변형률계(버팀대)', '구조물기울기계', '균열측정계'].includes(insType) && (
+                                            <div className={'col-6 d-flex flex-column mt-2'}>
+                                                <label htmlFor={'depExcavation'}
+                                                       className={'form-label mt-2'}>
+                                                    굴착고:
+                                                </label>
+                                                <div className={'input-group'}>
+                                                    <button className={'btn btn-outline-secondary'} type={'button'}
+                                                            onClick={() => {
+                                                                setDepExcavation(depExcavation - 1)
+                                                            }}>-
+                                                    </button>
+                                                    <input type="text" id={'depExcavation'} value={depExcavation}
+                                                           className={'form-control text-center'}
+                                                           onChange={(e) => setDepExcavation(e.target.value)}/>
+                                                    <button className={'btn btn-outline-secondary'} type={'button'}
+                                                            onClick={() => {
+                                                                setDepExcavation(depExcavation + 1)
+                                                            }}>+
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {['하중계_버팀대', '하중계_PSBEAM', '하중계_앵커', '변형률계(버팀대)', '구조물기울기계', '균열측정계'].includes(insType) && (
+                                            <div className={'col-6 d-flex flex-column mt-2'}>
+                                                <label htmlFor={'measurement2'}
+                                                       className={'form-label mt-2'}>
+                                                    관리기준치2차:
+                                                </label>
+                                                <div className={'input-group'}>
+                                                    <button className={'btn btn-outline-secondary'} type={'button'}
+                                                            onClick={() => {
+                                                                setMeasurement2(measurement2 - 1)
+                                                            }}>-
+                                                    </button>
+                                                    <input type="text" id={'measurement2'} value={measurement2}
+                                                           className={'form-control text-center'}
+                                                           onChange={(e) => setMeasurement2(e.target.value)}/>
+                                                    <button className={'btn btn-outline-secondary'} type={'button'}
+                                                            onClick={() => {
+                                                                setMeasurement2(measurement2 + 1)
+                                                            }}>+
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {['지중경사계', '지하수위계', '간극수압계', '지표침하계', '하중계_버팀대', '하중계_PSBEAM', '하중계_앵커', '변형률계(버팀대)', '구조물기울기계', '균열측정계'].includes(insType) && (
+                                            <div className={'col-6 d-flex flex-column mt-2'}>
+                                                <label htmlFor={'insLocation'}
+                                                       className={'form-label mt-2'}>
+                                                    설치위치:
+                                                </label>
+                                                <input type={'text'}
+                                                       className={'form-control'}
+                                                       id={'insLocation'}
+                                                       value={insLocation}
+                                                       onChange={(e) => setInsLocation(e.target.value)}
+                                                       placeholder={'설치위치를 입력하세요'}
+                                                />
+                                            </div>
+                                        )}
+                                        {['하중계_버팀대', '하중계_PSBEAM', '하중계_앵커', '변형률계(버팀대)', '구조물기울기계', '균열측정계'].includes(insType) && (
+                                            <div className={'col-6 d-flex flex-column mt-2'}>
+                                                <label htmlFor={'measurement3'}
+                                                       className={'form-label mt-2'}>
+                                                    관리기준치3차:
+                                                </label>
+                                                <div className={'input-group'}>
+                                                    <button className={'btn btn-outline-secondary'} type={'button'}
+                                                            onClick={() => {
+                                                                setMeasurement3(measurement3 - 1)
+                                                            }}>-
+                                                    </button>
+                                                    <input type="text" id={'measurement3'} value={measurement3}
+                                                           className={'form-control text-center'}
+                                                           onChange={(e) => setMeasurement3(e.target.value)}/>
+                                                    <button className={'btn btn-outline-secondary'} type={'button'}
+                                                            onClick={() => {
+                                                                setMeasurement3(measurement3 + 1)
+                                                            }}>+
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {['하중계_버팀대', '하중계_PSBEAM', '하중계_앵커'].includes(insType) && (
+                                            <div className={'col-6 d-flex flex-column mt-2'}>
+                                                <label htmlFor={'zeroRead'}
+                                                       className={'form-label mt-2'}>
+                                                    ZERO READ:
+                                                </label>
+                                                <div className={'input-group'}>
+                                                    <button className={'btn btn-outline-secondary'} type={'button'}
+                                                            onClick={() => {
+                                                                setZeroRead(zeroRead - 1)
+                                                            }}>-
+                                                    </button>
+                                                    <input type="text" id={'zeroRead'} value={zeroRead}
+                                                           className={'form-control text-center'}
+                                                           onChange={(e) => setZeroRead(e.target.value)}/>
+                                                    <button className={'btn btn-outline-secondary'} type={'button'}
+                                                            onClick={() => {
+                                                                setZeroRead(zeroRead + 1)
+                                                            }}>+
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {['하중계_버팀대', '하중계_PSBEAM', '하중계_앵커', '변형률계(버팀대)', '구조물기울기계', '균열측정계'].includes(insType) && (
+                                            <div className={'col-6 d-flex flex-column mt-2'}>
+                                                <label htmlFor={'verticalPlus'}
+                                                       className={'form-label mt-2'}>
+                                                    수직변위(+Y):
+                                                </label>
+                                                <div className={'input-group'}>
+                                                    <button className={'btn btn-outline-secondary'} type={'button'}
+                                                            onClick={() => {
+                                                                setVerticalPlus(verticalPlus - 1)
+                                                            }}>-
+                                                    </button>
+                                                    <input type="text" id={'verticalPlus'} value={verticalPlus}
+                                                           className={'form-control text-center'}
+                                                           onChange={(e) => setVerticalPlus(e.target.value)}/>
+                                                    <button className={'btn btn-outline-secondary'} type={'button'}
+                                                            onClick={() => {
+                                                                setVerticalPlus(verticalPlus + 1)
+                                                            }}>+
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {['하중계_버팀대', '하중계_PSBEAM', '하중계_앵커', '변형률계(버팀대)', '구조물기울기계', '균열측정계'].includes(insType) && (
+                                            <div className={'col-6 d-flex flex-column mt-2'}>
+                                                <label htmlFor={'verticalMinus'}
+                                                       className={'form-label mt-2'}>
+                                                    수직변위(-Y):
+                                                </label>
+                                                <div className={'input-group'}>
+                                                    <button className={'btn btn-outline-secondary'} type={'button'}
+                                                            onClick={() => {
+                                                                setVerticalMinus(verticalMinus - 1)
+                                                            }}>-
+                                                    </button>
+                                                    <input type="text" id={'verticalMinus'} value={verticalMinus}
+                                                           className={'form-control text-center'}
+                                                           onChange={(e) => setVerticalMinus(e.target.value)}/>
+                                                    <button className={'btn btn-outline-secondary'} type={'button'}
+                                                            onClick={() => {
+                                                                setVerticalMinus(verticalMinus + 1)
+                                                            }}>+
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {['하중계_버팀대', '하중계_PSBEAM', '하중계_앵커'].includes(insType) && (
+                                            <div className={'col-6 d-flex flex-column mt-2'}>
+                                                <label htmlFor={'instrument'}
+                                                       className={'form-label mt-2'}>
+                                                    계기상수:
+                                                </label>
+                                                <div className={'input-group'}>
+                                                    <button className={'btn btn-outline-secondary'} type={'button'}
+                                                            onClick={() => {
+                                                                setInstrument(instrument - 1)
+                                                            }}>-
+                                                    </button>
+                                                    <input type="text" id={'instrument'} value={instrument}
+                                                           className={'form-control text-center'}
+                                                           onChange={(e) => setInstrument(e.target.value)}/>
+                                                    <button className={'btn btn-outline-secondary'} type={'button'}
+                                                            onClick={() => {
+                                                                setInstrument(instrument + 1)
+                                                            }}>+
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {['하중계_버팀대', '하중계_PSBEAM'].includes(insType) && (
+                                            <div className={'col-6 d-flex flex-column mt-2'}>
+                                                <label htmlFor={'knTone'}
+                                                       className={'form-label mt-2'}>
+                                                    1KN_TONE:
+                                                </label>
+                                                <div className={'input-group'}>
+                                                    <button className={'btn btn-outline-secondary'} type={'button'}
+                                                            onClick={() => {
+                                                                setKnTone(knTone - 1)
+                                                            }}>-
+                                                    </button>
+                                                    <input type="text" id={'knTone'} value={knTone}
+                                                           className={'form-control text-center'}
+                                                           onChange={(e) => setKnTone(e.target.value)}/>
+                                                    <button className={'btn btn-outline-secondary'} type={'button'}
+                                                            onClick={() => {
+                                                                setKnTone(knTone + 1)
+                                                            }}>+
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {insType === '하중계_PSBEAM' && (
+                                            <div className={'col-6 d-flex flex-column mt-2'}>
+                                                <label htmlFor={'tenAllowable'}
+                                                       className={'form-label mt-2'}>
+                                                    허용인장력:
+                                                </label>
+                                                <div className={'input-group'}>
+                                                    <button className={'btn btn-outline-secondary'} type={'button'}
+                                                            onClick={() => {
+                                                                setTenAllowable(tenAllowable - 1)
+                                                            }}>-
+                                                    </button>
+                                                    <input type="text" id={'tenAllowable'} value={tenAllowable}
+                                                           className={'form-control text-center'}
+                                                           onChange={(e) => setTenAllowable(e.target.value)}/>
+                                                    <button className={'btn btn-outline-secondary'} type={'button'}
+                                                            onClick={() => {
+                                                                setTenAllowable(tenAllowable + 1)
+                                                            }}>+
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {insType === '하중계_앵커' && (
+                                            <div className={'col-6 d-flex flex-column mt-2'}>
+                                                <label htmlFor={'tenDesign'}
+                                                       className={'form-label mt-2'}>
+                                                    설계긴장력:
+                                                </label>
+                                                <div className={'input-group'}>
+                                                    <button className={'btn btn-outline-secondary'} type={'button'}
+                                                            onClick={() => {
+                                                                setTenDesign(tenDesign - 1)
+                                                            }}>-
+                                                    </button>
+                                                    <input type="text" id={'tenDesign'} value={tenDesign}
+                                                           className={'form-control text-center'}
+                                                           onChange={(e) => setTenDesign(e.target.value)}/>
+                                                    <button className={'btn btn-outline-secondary'} type={'button'}
+                                                            onClick={() => {
+                                                                setTenDesign(tenDesign + 1)
+                                                            }}>+
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {insType === '구조물기울기계' && (
+                                            <div className={'col-6 d-flex flex-column mt-2'}>
+                                                <label htmlFor={'aPlus'}
+                                                       className={'form-label mt-2'}>
+                                                    A(+):
+                                                </label>
+                                                <input type={'text'}
+                                                       className={'form-control'}
+                                                       id={'aPlus'}
+                                                       value={aPlus}
+                                                       onChange={(e) => setAPlus(e.target.value)}
+                                                       placeholder={'A(+)을 입력하세요'}
+                                                />
+                                            </div>
+                                        )}
+                                        {insType === '구조물기울기계' && (
+                                            <div className={'col-6 d-flex flex-column mt-2'}>
+                                                <label htmlFor={'aMinus'}
+                                                       className={'form-label mt-2'}>
+                                                    A(-):
+                                                </label>
+                                                <input type={'text'}
+                                                       className={'form-control'}
+                                                       id={'aMinus'}
+                                                       value={aMinus}
+                                                       onChange={(e) => setAMinus(e.target.value)}
+                                                       placeholder={'A(-)을 입력하세요'}
+                                                />
+                                            </div>
+                                        )}
+                                        {insType === '구조물기울기계' && (
+                                            <div className={'col-6 d-flex flex-column mt-2'}>
+                                                <label htmlFor={'bPlus'}
+                                                       className={'form-label mt-2'}>
+                                                    B(+):
+                                                </label>
+                                                <input type={'text'}
+                                                       className={'form-control'}
+                                                       id={'bPlus'}
+                                                       value={bPlus}
+                                                       onChange={(e) => setBPlus(e.target.value)}
+                                                       placeholder={'B(+)을 입력하세요'}
+                                                />
+                                            </div>
+                                        )}
+                                        {insType === '구조물기울기계' && (
+                                            <div className={'col-6 d-flex flex-column mt-2'}>
+                                                <label htmlFor={'bMinus'}
+                                                       className={'form-label mt-2'}>
+                                                    B(-):
+                                                </label>
+                                                <input type={'text'}
+                                                       className={'form-control'}
+                                                       id={'bMinus'}
+                                                       value={bMinus}
+                                                       onChange={(e) => setBMinus(e.target.value)}
+                                                       placeholder={'B(-)을 입력하세요'}
+                                                />
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             )}
