@@ -39,6 +39,7 @@ function Main() {
     const [instrumentList, setInstrumentList] = useState([]);
 
 
+
     // 로그인 정보 없을 시, 로그인 페이지로 이동
     useEffect(() => {
         if (!user || !user.id) {
@@ -242,8 +243,6 @@ function Main() {
         }
     };
 
-
-    /////////////////////////
     // 프로젝트 전체 계측기 들고오기
     const handleProjectInstrumentList = (projectId) => {
         axios.get(`http://localhost:8080/MeausrePro/Instrument/${projectId}`)
@@ -287,9 +286,8 @@ function Main() {
                     onInstrumentCreated={onInstrumentCreated}
                     instrumentList={instrumentList} // 상태 전달
                     handleInstrumentList={handleInstrumentList} // 함수 전달
+                    handleProjectInstrumentList={handleProjectInstrumentList} // 함수 전달
 
-                    ///////////////
-                    handleProjectInstrumentList={handleProjectInstrumentList}
                 />
                 <div className={'flex-grow-1'}>
                     <MapComponent
@@ -306,7 +304,6 @@ function Main() {
                         isInsModalOpen={isInstrumentModalOpen} // 계측기 모달창 열기
                         projectData={isSelectedProject}
                         sectionData={isSelectedSection}
-                        ////////////
                         instrumentList={instrumentList}
                     />
                     <ProjectCreateModal

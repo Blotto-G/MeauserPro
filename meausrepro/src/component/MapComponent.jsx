@@ -666,8 +666,7 @@ function MapComponent(props) {
         }
     };
 
-
-    //////////////////////////
+    // 계측기 마커 지도 즉시 반영
     useEffect(() => {
         if (mapInstance && instrumentList) {
             drawnInsMarker.forEach((insMarker) => insMarker.setMap(null));
