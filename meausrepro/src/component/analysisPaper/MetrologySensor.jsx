@@ -22,7 +22,7 @@ function MetrologySensor() {
     }, [project]);
 
     return (
-        <div  style={{width: '25%',}}>
+        <div  style={{width: '40%',}}>
             <div className={"container-box"}>
                 <div className={"d-flex"}>
                     <div>

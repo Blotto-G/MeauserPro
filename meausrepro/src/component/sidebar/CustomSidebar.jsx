@@ -42,7 +42,7 @@ function CustomSidebar(props) {
                     </div>
                 </Link>
                 <Link
-                    to="/Report"
+                    to="/report"
                     className={`text-decoration-none`}
                 >
                     <div className={`customSideBarLink ${location.pathname === '/Report' ? 'active' : ''}`}>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {Link} from "react-router-dom";
 
 function SectionDetailSideBar(props) {
     const {section, handleSectionUpdated, handleClose} = props;
@@ -196,6 +197,12 @@ function SectionDetailSideBar(props) {
                     </div>
                 )}
             </div>
+
+            <Link to={"/Report"} className={"text-decoration-none"}>
+                <div>
+                    <button type={"button"} className={"btn btn-primary"}>종합분석지</button>
+                </div>
+            </Link>
         </div>
     );
 }
