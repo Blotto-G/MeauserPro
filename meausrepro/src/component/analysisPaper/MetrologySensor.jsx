@@ -1,4 +1,26 @@
+import axios from "axios";
+import {useEffect, useState} from "react";
+
 function MetrologySensor() {
+
+    const [data, setData] = useState(null);
+    const [project, setProject] = useState(2);
+
+    const selectSection = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8080/MeausrePro/Section/${project}`);
+            setData(response.data[0]);
+
+        } catch (error) {
+            console.error("데이터 가져오기 실패:", error);
+        }
+    };
+    useEffect(() => {
+        if (project) {
+            selectSection();
+        }
+    }, [project]);
+
     return (
         <div  style={{width: '25%',}}>
             <div className={"container-box"}>
@@ -12,20 +34,23 @@ function MetrologySensor() {
                         />
                     </div>
                 </div>
-                <div style={{marginTop: '10px'}}>
+                <div style={{marginTop: '20px'}}>
                     <table className={"table table-bordered"} style={{borderCollapse: 'collapse'}}>
                         <tr>
                             <th className={"custom-th"}>벽체공</th>
-                            <td colSpan={"2"} style={{border: '1px solid #aaa'}}>흙막이판</td>
+                            <td colSpan={"2"} style={{border: '1px solid #aaa'}}>
+                                {data ? data.wallStr : "데이터가 없습니다."}</td>
                         </tr>
                         <tr>
                             <th className={"custom-th"}>지지공</th>
-                            <td colSpan={"2"} style={{border: '1px solid #aaa'}}>앵커유형</td>
+                            <td colSpan={"2"} style={{border: '1px solid #aaa'}}>
+                                {data ? data.groundStr : "데이터가 없습니다."}</td>
                         </tr>
                         <tr>
                             <th rowSpan={"2"} className={"custom-th"}>주요관리대상물</th>
                             <th className={"custom-th"} style={{ borderLeft: '1px solid #aaa' }}>배면</th>
-                            <td style={{border: '1px solid #aaa'}}>RC용벽</td>
+                            <td style={{border: '1px solid #aaa'}}>
+                                {data ? data.rearTarget : "데이터가 없습니다."}</td>
                         </tr>
                         <tr>
                             <th className={"custom-th"} style={{ borderLeft: '1px solid #aaa' }}>지중</th>

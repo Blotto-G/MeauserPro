@@ -28,6 +28,7 @@ function SectionDetailSideBar(props) {
             updateSection();
         }
     };
+
     // 구간 수정
     const updateSection = () => {
         axios.put(`http://localhost:8080/MeausrePro/Section/update`, {
