@@ -23,7 +23,7 @@ public class InstrumentController {
     private InstrumentTypeService instrumentTypeService;
 
     @PostMapping("/save")
-    public ResponseEntity<MeausreProInsType> save(@RequestBody InsGeometryDto request) {
+    public ResponseEntity<MeausreProInstrument> save(@RequestBody InsGeometryDto request) {
         MeausreProInstrument instrument = request.getInstrument();
         MeausreProInsType insType = request.getInsType();
 
@@ -38,10 +38,10 @@ public class InstrumentController {
         insType.setInstrId(savedInstrument);
 
         // insType 저장
-        MeausreProInsType savedInsType = instrumentTypeService.save(insType);
+        instrumentTypeService.save(insType);
 
         // 저장된 데이터 반환
-        return ResponseEntity.ok(savedInsType);
+        return ResponseEntity.ok(savedInstrument);
     }
 
     // 특정 구간 계측기 보기

@@ -242,6 +242,26 @@ function Main() {
         }
     };
 
+
+    /////////////////////////
+    // 프로젝트 전체 계측기 들고오기
+    const handleProjectInstrumentList = (projectId) => {
+        axios.get(`http://localhost:8080/MeausrePro/Instrument/${projectId}`)
+            .then((res) => {
+                setInstrumentList(res.data);
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    };
+
+    // useEffect로 프로젝트 선택 시 자동으로 계측기 목록 가져오기
+    useEffect(() => {
+        if (isSelectedProject) {
+            handleProjectInstrumentList(isSelectedProject.idx);
+        }
+    }, [isSelectedProject]);
+
     return (
         <div className={'d-flex vh-100'}>
             <CustomSidebar topManager={user.topManager} />
@@ -267,6 +287,9 @@ function Main() {
                     onInstrumentCreated={onInstrumentCreated}
                     instrumentList={instrumentList} // 상태 전달
                     handleInstrumentList={handleInstrumentList} // 함수 전달
+
+                    ///////////////
+                    handleProjectInstrumentList={handleProjectInstrumentList}
                 />
                 <div className={'flex-grow-1'}>
                     <MapComponent
@@ -283,6 +306,8 @@ function Main() {
                         isInsModalOpen={isInstrumentModalOpen} // 계측기 모달창 열기
                         projectData={isSelectedProject}
                         sectionData={isSelectedSection}
+                        ////////////
+                        instrumentList={instrumentList}
                     />
                     <ProjectCreateModal
                         geometryData={geometryData}

@@ -4,7 +4,7 @@ import axios from "axios";
 
 function MapComponent(props) {
     const { user } = useContext(UserContext);
-    const { sendGeometry, isDrawingEnabled, setIsDrawingEnabled, isModalOpen, setMoveToPolygon, sendInsGeometry, isDrawingEnabledMarker, setIsDrawingEnabledMarker, isInsModalOpen, projectData, sectionData } = props;
+    const { sendGeometry, isDrawingEnabled, setIsDrawingEnabled, isModalOpen, setMoveToPolygon, sendInsGeometry, isDrawingEnabledMarker, setIsDrawingEnabledMarker, isInsModalOpen, projectData, sectionData, instrumentList } = props;
 
     const [polygonCoords, setPolygonCoords] = useState([]);
     const [currentPolygon, setCurrentPolygon] = useState(null);
@@ -665,6 +665,56 @@ function MapComponent(props) {
                 });
         }
     };
+
+
+    //////////////////////////
+    useEffect(() => {
+        if (mapInstance && instrumentList) {
+            drawnInsMarker.forEach((insMarker) => insMarker.setMap(null));
+
+            const newInsMarkers = instrumentList.map((instrument) => {
+                const insGeometry = insGeometryData(instrument.insGeometry);
+                if (!insGeometry) return null;
+
+                let iconUrl;
+                switch (instrument.insType) {
+                    case "A":
+                        iconUrl = 'src/assets/images/하중계버팀대.svg';
+                        break;
+                    case "B":
+                        iconUrl = 'src/assets/images/하중계PSBEAM.svg';
+                        break;
+                    case "C":
+                        iconUrl = 'src/assets/images/하중계앵커.svg';
+                        break;
+                    case "D":
+                        iconUrl = 'src/assets/images/변형률계(버팀대).svg';
+                        break;
+                    case "E":
+                        iconUrl = 'src/assets/images/구조물기울기계.svg';
+                        break;
+                    case "F":
+                        iconUrl = 'src/assets/images/균열측정계.svg';
+                        break;
+                    default:
+                        console.warn("Unknown insType:", instrument.insType);
+                        return null;
+                }
+
+                const insMarker = new naver.maps.Marker({
+                    map: mapInstance,
+                    position: insGeometry,
+                    icon: {
+                        url: iconUrl,
+                    }
+                });
+
+                return insMarker;
+            }).filter(insMarker => insMarker !== null);
+
+            setDrawnInsMarker(newInsMarkers);
+        }
+    }, [mapInstance, instrumentList]);
 
     return (
         <div className={'w-100 h-100 d-flex flex-column justify-content-center align-items-center pt-3'}>
