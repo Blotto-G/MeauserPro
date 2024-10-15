@@ -303,6 +303,9 @@ function Main() {
                         isInsModalOpen={isInstrumentModalOpen} // 계측기 모달창 열기
                         projectData={isSelectedProject}
                         sectionData={isSelectedSection}
+
+                        ///////// 지도에 계측기 생성 시 바로 마커 아이콘 바뀜
+                        instrumentList={instrumentList}
                     />
                     <ProjectCreateModal
                         geometryData={geometryData}
