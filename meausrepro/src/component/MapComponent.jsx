@@ -4,7 +4,7 @@ import axios from "axios";
 
 function MapComponent(props) {
     const { user } = useContext(UserContext);
-    const { sendGeometry, isDrawingEnabled, setIsDrawingEnabled, isModalOpen, setMoveToPolygon } = props;
+    const { sendGeometry, isDrawingEnabled, setIsDrawingEnabled, isModalOpen, setMoveToPolygon, sendInsGeometry, isDrawingEnabledMarker, setIsDrawingEnabledMarker, isInsModalOpen, projectData, sectionData } = props;
 
     const [polygonCoords, setPolygonCoords] = useState([]);
     const [currentPolygon, setCurrentPolygon] = useState(null);
@@ -18,6 +18,30 @@ function MapComponent(props) {
     const [searchQuery, setSearchQuery] = useState(""); // 주소 검색 기능
 
     const [isMapReady, setIsMapReady] = useState(false);
+
+    const [insMarkerCoords, setInsMarkerCoords] = useState([]); // 계측기 마커 위치(위도, 경도값)
+    const [currentInsMarker, setCurrentInsMarker] = useState(null);
+    const [contextInsMenuVisible, setContextInsMenuVisible] = useState(false);
+    const [insMarkers, setInsMarkers] = useState([]) // 저장된 계측기 마커 목록
+    const [drawnInsMarker, setDrawnInsMarker] = useState([]); // 새로 그린 계측기 마커 관리
+    const [currentInsMarkerId, setCurrentInsMarkerId] = useState(null); // 현재 계측기마커 ID 상태 추가
+
+    const [projectId, setProjectId] = useState(null);
+    const [sectionId, setSectionId] = useState(null);
+
+    useEffect(() => {
+        if (projectData && isMapReady && mapInstance) {
+            // 초기값 설정
+            setProjectId(projectData.idx || 0);
+        }
+    }, [projectData, isMapReady, mapInstance]);
+
+    useEffect(() => {
+        if (sectionData && isMapReady && mapInstance) {
+            // 초기값 설정
+            setSectionId(sectionData.idx || 0);
+        }
+    }, [sectionData, isMapReady, mapInstance]);
 
 
     // 지도 로드
@@ -382,6 +406,278 @@ function MapComponent(props) {
     };
 
 
+    // 계측기 지오매트리 파싱
+    const insGeometryData = (insGeometryStr) => {
+        if (!insGeometryStr || !insGeometryStr.startsWith('POINT')) {
+            console.warn('유효하지 않은 지오메트리 데이터:', insGeometryStr);
+            return null;
+        }
+
+        const insGeometry = insGeometryStr
+            .replace("POINT(", "")
+            .replace(")", "")
+            .trim()
+            .split(" ");
+
+        const [lng, lat] = insGeometry.map(Number);
+
+        return new naver.maps.LatLng(parseFloat(lat), parseFloat(lng));
+    };
+
+    // 진행 중인 프로젝트 계측기 마커 불러오기
+    useEffect(() => {
+        if (projectId) {
+            axios
+                .get(`http://localhost:8080/MeausrePro/Instrument/${projectId}`)
+                .then((res) => {
+                    const { data } = res;
+                    setInsMarkers(data); // 전체 계측기 데이터를 저장
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
+    }, [projectId]);
+
+    // 저장된 계측기 마커를 지도에 그리기
+    useEffect(() => {
+        if (mapInstance && insMarkers.length > 0) {
+            drawnInsMarker.forEach((insMarker) => insMarker.setMap(null)); // 기존 계측기 마커를 먼저 지운다.
+
+            const newInsMarkers = insMarkers.map((instrument) => {
+                if (!instrument.insGeometry) {
+                    console.warn("유효하지 않은 지오메트리 데이터:", instrument);
+                    return null;
+                }
+
+                const insGeometry = insGeometryData(instrument.insGeometry);
+                if (insGeometry.length === 0) return null;
+
+                // insType에 따라 아이콘 URL 결정
+                let iconUrl;
+                switch (instrument.insType) {
+                    case "A":
+                        iconUrl = 'src/assets/images/지중경사계.svg';
+                        break;
+                    case "B":
+                        iconUrl = 'src/assets/images/지하수위계.svg';
+                        break;
+                    case "C":
+                        iconUrl = 'src/assets/images/간극수압계.svg';
+                        break;
+                    case "D":
+                        iconUrl = 'src/assets/images/지표침하계.svg';
+                        break;
+                    case "E":
+                        iconUrl = 'src/assets/images/하중계버팀대.svg';
+                        break;
+                    case "F":
+                        iconUrl = 'src/assets/images/하중계PSBEAM.svg';
+                        break;
+                    case "G":
+                        iconUrl = 'src/assets/images/하중계앵커.svg';
+                        break;
+                    case "H":
+                        iconUrl = 'src/assets/images/변형률계(버팀대).svg';
+                        break;
+                    case "I":
+                        iconUrl = 'src/assets/images/구조물기울기계.svg';
+                        break;
+                    case "J":
+                        iconUrl = 'src/assets/images/균열측정계.svg';
+                        break;
+                    default:
+                        console.warn("알 수 없는 insType:", instrument.insType);
+                        return null; // 알 수 없는 insType인 경우 마커 생성하지 않음
+                }
+
+                const insMarker = new naver.maps.Marker({
+                    map: mapInstance,
+                    position: insGeometry,
+                    icon: {
+                        url: iconUrl, // 아이콘 URL
+                    }
+                });
+
+                // 우클릭 이벤트 추가
+                naver.maps.Event.addListener(insMarker, "rightclick", function (e) {
+                    setContextInsMenuVisible(true);
+                    setContextMenuPosition({
+                        x: e.pointerEvent.pageX,
+                        y: e.pointerEvent.pageY,
+                    });
+                    setCurrentInsMarker(insMarker);
+                    setCurrentInsMarkerId(instrument.idx); // 저장된 폴리곤 ID 설정
+
+                    // 현재 계측기 마커의 좌표를 상태에 저장 (수정할 수 있도록)
+                    const currentMarker = insMarker.getPosition();
+                    const coords = [currentMarker.lat(), currentMarker.lng()];
+                    setInsMarkerCoords(coords);  // 상태에 저장
+                });
+
+                return insMarker;
+            }).filter(insMarker => insMarker !== null); // 유효한 계측기 마커만 남김
+
+            setDrawnInsMarker(newInsMarkers);
+        }
+    }, [mapInstance, insMarkers]);
+
+
+    // 계측기 추가 모드가 활성화되면 기존 마커 숨기기
+    useEffect(() => {
+        if (isDrawingEnabledMarker) {
+            // 모든 저장된 계측기 마커를 지도에서 숨김
+            drawnInsMarker.forEach((insMarker) => insMarker.setMap(null));
+        } else if (!isInsModalOpen && drawnInsMarker.length > 0) {
+            // 모달이 닫히면 기존 계측기 마커 다시 표시
+            drawnInsMarker.forEach((insMarker) => insMarker.setMap(mapInstance));
+        }
+    }, [isDrawingEnabledMarker, isInsModalOpen]);
+
+
+    // 새로운 계측기 마커 그리기
+    const createInsMarker = (map) => {
+        const marker = new naver.maps.Marker({
+            position: new naver.maps.LatLng(37.3595704, 127.105399),
+            map: map,
+            icon: {
+                url: 'src/assets/images/circle-fill-blue.svg', // 아이콘 URL
+            },
+        });
+
+        naver.maps.Event.addListener(map, "click", function (e) {
+            if (isDrawingEnabledMarker && marker.getMap() !== null) {
+                const point = e.latlng;
+
+                marker.setPosition(point);
+
+                // 위도와 경도를 문자열 형식으로 저장
+                const insGeometryStr = `POINT(${point.lng()} ${point.lat()})`;
+                const latLng = insGeometryData(insGeometryStr);
+
+                setInsMarkerCoords([latLng.lat(), latLng.lng()]);
+            }
+        });
+
+        // 우클릭으로 계측기 마커를 확정하거나 다시 그리기
+        naver.maps.Event.addListener(marker, "rightclick", function (e) {
+            setContextInsMenuVisible(true);
+            setContextMenuPosition({
+                x: e.pointerEvent.pageX,
+                y: e.pointerEvent.pageY,
+            });
+            setCurrentInsMarker(marker);
+        });
+        setCurrentInsMarker(marker);
+
+        // 마커 비활성화 시 지도에서 제거
+        return marker;
+    };
+
+
+    // 계측기 마커 생성 모드
+    useEffect(() => {
+        let markerInstance = null;
+        if (isDrawingEnabledMarker && mapInstance) {
+            markerInstance = createInsMarker(mapInstance);
+        } else if (markerInstance) {
+            markerInstance.setMap(null); // 마커 생성 모드가 비활성화된 경우
+        }
+        // 클린업 함수로 마커 해제
+        return () => {
+            if (markerInstance) {
+                markerInstance.setMap(null);
+            }
+        };
+    }, [isDrawingEnabledMarker, mapInstance]);
+
+
+    const handleSaveIns = () => {
+        if (!insMarkerCoords || insMarkerCoords.length === 0) {
+            console.log("저장할 좌표가 없습니다.");
+            return;
+        }
+
+        // 좌표를 부모 컴포넌트로 전송
+        sendInsGeometry(insMarkerCoords);
+
+        // 계측기 마커가 존재하면 지도에서 제거
+        if (currentInsMarker) {
+            currentInsMarker.setMap(null);
+        }
+
+        // 상태 업데이트 (계측기 마커 좌표 초기화 및 상태 리셋)
+        setInsMarkerCoords([]);
+        setCurrentInsMarker(null);
+        setIsDrawingEnabledMarker(false);
+        setContextInsMenuVisible(false);
+
+        console.log("좌표 저장 완료:", insMarkerCoords);
+
+        // 계측기 마커 다시 그리기 로직 추가
+        const newInsMarker = new naver.maps.Marker({
+            map: mapInstance,
+            position: new naver.maps.LatLng(insMarkerCoords[0], insMarkerCoords[1]),
+            icon: {
+                url: 'src/assets/images/circle-fill-red.svg',
+            },
+        });
+
+        // 저장된 계측기 마커를 상태에 저장
+        setDrawnInsMarker([...drawnInsMarker, newInsMarker]);
+    };
+
+
+    // 다시 그리기
+    const handleInsReset = () => {
+        if (currentInsMarker) {
+            currentInsMarker.setMap(null); // 기존 계측기 마커 제거
+        }
+
+        setInsMarkerCoords([]); // 계측기 마커 좌표 초기화
+        setCurrentInsMarker(null); // 현재 계측기 마커 초기화
+        setIsDrawingEnabledMarker(true); // 그리기 활성화
+        setContextInsMenuVisible(false); // 컨텍스트 메뉴 숨기기
+
+        if (mapInstance) {
+            createInsMarker(mapInstance); // 다시 계측기 마커를 그릴 수 있도록 호출
+        }
+    };
+
+
+    const handleSaveInsGeometry = () => {
+        if (currentInsMarker && currentInsMarkerId) {
+            const wkt = `POINT(${insMarkerCoords[1]} ${insMarkerCoords[0]})`;
+
+            // 서버에 지오메트리 업데이트 요청
+            const insGeometryDto = {
+                insGeometryData: wkt,
+                idx: currentInsMarkerId,
+            };
+
+            axios.put(`http://localhost:8080/MeausrePro/Instrument/updateInsGeometry`, insGeometryDto)
+                .then(() => {
+                    currentInsMarker.setMap(null); // 그려진 계측기 마커 제거
+                    setInsMarkerCoords([]); // 계측기 마커 좌표 초기화
+                    setCurrentInsMarker(null);
+                    setContextInsMenuVisible(false);
+
+                    // 서버에서 업데이트된 데이터 다시 불러오기
+                    axios.get(`http://localhost:8080/MeausrePro/Instrument/${sectionId}`)
+                        .then(res => {
+                            const { data } = res;
+                            setInsMarkers(data); // 서버에서 새로운 계측기 마커 데이터 받아와서 업데이트
+                        })
+                        .catch(err => {
+                            console.error("계측기 마커 데이터 다시 불러오기 실패:", err);
+                        });
+                })
+                .catch((error) => {
+                    console.error("계측기 지오메트리 저장 실패:", error);
+                });
+        }
+    };
+
     return (
         <div className={'w-100 h-100 d-flex flex-column justify-content-center align-items-center pt-3'}>
             <div className={'input-group mb-4'} style={{width: '300px'}}>
@@ -407,7 +703,7 @@ function MapComponent(props) {
             </div>
 
             <div id="map" style={{width: "100%", height: "100%"}}></div>
-            {contextMenuVisible && (
+            {contextMenuVisible && !contextInsMenuVisible && (
                 <div
                     style={{
                         position: 'absolute',
@@ -436,7 +732,35 @@ function MapComponent(props) {
                     )}
                 </div>
             )}
-
+            {contextInsMenuVisible && !contextMenuVisible && (
+                <div
+                    style={{
+                        position: 'absolute',
+                        top: `${contextMenuPosition.y}px`,
+                        left: `${contextMenuPosition.x}px`,
+                        background: '#fff',
+                        padding: '10px',
+                        border: '2px solid #333',
+                        zIndex: '1000'
+                    }}
+                >
+                    {currentInsMarkerId ? (
+                        <>
+                            <button onClick={handleSaveInsGeometry}>저장</button>
+                            {/* 기존 계측기 마커 저장 */}
+                            <button onClick={handleInsReset}>다시 그리기</button>
+                            {/* 기존 계측기 마커 다시 그리기 */}
+                        </>
+                    ) : (
+                        <>
+                            <button onClick={handleSaveIns}>저장</button>
+                            {/* 신규 계측기 마커 저장 */}
+                            <button onClick={handleInsReset}>다시 그리기</button>
+                            {/* 신규 계측기 마커 다시 그리기 */}
+                        </>
+                    )}
+                </div>
+            )}
         </div>
     );
 }

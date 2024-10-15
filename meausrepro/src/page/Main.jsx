@@ -8,6 +8,7 @@ import MainSideBar from "../component/sidebar/MainSideBar.jsx";
 import CustomSidebar from "../component/sidebar/CustomSidebar.jsx";
 import axios from "axios";
 import ProjectEditModal from "../component/modal/ProjectEditModal.jsx";
+import InstrumentCreateModal from "../component/modal/InstrumentCreateModal.jsx";
 
 function Main() {
     const { user } = useContext(UserContext);
@@ -29,6 +30,13 @@ function Main() {
     const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false); // 수정 모달 상태 추가
     const [sectionList, setSectionList] = useState([]);
+
+    const [isInstrumentModalOpen, setIsInstrumentModalOpen] = useState(false); // 계측기 생성 모달
+    const [insGeometryData, setInsGeometryData] = useState(''); // 계측기 좌표 저장
+    const [isDrawingEnabledMarker, setIsDrawingEnabledMarker] = useState(false); // 마커 생성
+    const [isInsBtnText, setIsInsBtnText] = useState('계측기 추가'); // 계측기 추가 버튼 텍스트 관리
+    const [isSelectedSection, setIsSelectedSection] = useState(null);
+    const [instrumentList, setInstrumentList] = useState([]);
 
 
     // 로그인 정보 없을 시, 로그인 페이지로 이동
@@ -68,6 +76,7 @@ function Main() {
 
     const closeProjectModal = () => {
         setIsProjectModalOpen(false);
+        setMapKey(prevKey => prevKey + 1);
     };
 
     const onProjectCreated = () => {
@@ -88,8 +97,17 @@ function Main() {
                 .catch(err => {
                     console.error('구간 목록 업데이트 중 오류 발생:', err);
                 });
+            // // 선택된 프로젝트의 계측기 목록을 다시 가져오기
+            // axios.get(`http://localhost:8080/MeausrePro/Instrument/${isSelectedSection.idx}`)
+            //     .then(res => {
+            //         setInstrumentList(res.data);
+            //     })
+            //     .catch(err => {
+            //         console.log('계측기 목록 업데이트 중 오류 발생:', err);
+            //     })
         }
         setIsSectionModalOpen(false); // 모달 닫기
+        // setIsInstrumentModalOpen(false);
     };
 
     // 프로젝트 전체 구간 들고오기
@@ -112,7 +130,6 @@ function Main() {
     const closeSectionModal = () => {
         setIsSectionModalOpen(false);
     };
-
 
     const handleProjectClick = (project) => {
         setIsSelectedProject(project);
@@ -162,7 +179,72 @@ function Main() {
             });
     };
 
+    // 구간 목록 업데이트 후 선택한 구간 정보 업데이트
+    useEffect(() => {
+        if (isSelectedSection) {
+            const updatedSection = sectionList.find(s => s.idx === isSelectedSection.idx);
+            if (updatedSection) {
+                setIsSelectedSection(updatedSection);
+            }
+        }
+    }, [sectionList]);
 
+    // 계측기 좌표 데이터 받는 함수
+    const handelInsGeometryData = (insCoordinates) => {
+        setInsGeometryData(insCoordinates);
+        setIsInstrumentModalOpen(true);
+        console.log(insCoordinates);
+    };
+
+    // 계측기 추가 버튼 클릭 시 마커 생성 모드 활성화 및 취소
+    const enableDrawingMarkers = (section) => {
+        if (isDrawingEnabledMarker) {
+            setIsDrawingEnabledMarker(false);
+            setIsInsBtnText('계측기 추가')
+            handleSectionClick(section);
+            handleInstrumentList(section.idx);
+        } else {
+            setIsDrawingEnabledMarker(true);
+            setIsInsBtnText('계측기 추가')
+            handleSectionClick(section);
+            handleInstrumentList(section.idx);
+        }
+    };
+
+    // 계측기 생성 모달 닫기
+    const closeInstrumentModal = () => {
+        setIsInstrumentModalOpen(false);
+    };
+
+    const handleSectionClick = (section) => {
+        setIsSelectedSection(section);
+    };
+
+    // 계측기 생성 완료 시 호출될 함수
+    const onInstrumentCreated = () => {
+        if (isSelectedSection) {
+            // 선택된 구간의 계측기 목록을 다시 가져오기
+            axios.get(`http://localhost:8080/MeausrePro/Instrument/${isSelectedSection.idx}`)
+                .then((res) => {
+                    setInstrumentList(res.data); // 계측기 목록 업데이트
+                })
+                .catch(err => {
+                    console.error('계측기 목록 업데이트 중 오류 발생:', err);
+                });
+        }
+        setIsInstrumentModalOpen(false); // 모달 닫기
+    };
+
+    // 프로젝트 전체 계측기 들고오기
+    const handleInstrumentList = (projectId) => {
+        axios.get(`http://localhost:8080/MeausrePro/Instrument/${projectId}`)
+            .then((res) => {
+                setInstrumentList(res.data);
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    };
 
     return (
         <div className={'d-flex vh-100'}>
@@ -176,12 +258,18 @@ function Main() {
                     projectBtnText={isBtnText}
                     projectList={projectList}
                     sectionList={sectionList} // sectionList 전달
+                    instrumentList={instrumentList} // instrumentList 전달
                     moveToPolygon={moveToPolygon}
                     setProjectList={setProjectList}
                     setSectionList={setSectionList} // setSectionList 전달
+                    setInstrumentList={setInstrumentList} // setInstrumentList 전달
                     handleSectionList={handleSectionList}
+                    handleInstrumentList={handleInstrumentList}
                     openEditModal={openEditModal}
                     deleteProject={deleteProject}
+                    handleSectionClick={handleSectionClick}
+                    enableDrawingMarkers={enableDrawingMarkers} // 계측기 마커
+                    instrumentBtnText={isInsBtnText} // 계측기 추가 버튼
                 />
                 <div className={'flex-grow-1'}>
                     <MapComponent
@@ -192,6 +280,12 @@ function Main() {
                         isModalOpen={isProjectModalOpen}
                         setIsMapReady={setIsMapReady}
                         setMoveToPolygon={setMoveToPolygon}
+                        sendInsGeometry={handelInsGeometryData} // 계측기 지오매트리 정보
+                        isDrawingEnabledMarker={isDrawingEnabledMarker} // 마커 생성 활성화
+                        setIsDrawingEnabledMarker={setIsDrawingEnabledMarker} // 마커 생성
+                        isInsModalOpen={isInstrumentModalOpen} // 계측기 모달창 열기
+                        projectData={isSelectedProject}
+                        sectionData={isSelectedSection}
                     />
                     <ProjectCreateModal
                         geometryData={geometryData}
@@ -209,6 +303,16 @@ function Main() {
                         isOpen={isSectionModalOpen}
                         closeModal={closeSectionModal}
                         onSectionCreated={onSectionCreated} // 구간 생성 후 호출될 함수 전달
+                    />
+                    <InstrumentCreateModal
+                        insGeometryData={insGeometryData} // 계측기 좌표
+                        projectData={isSelectedProject}
+                        section={isSelectedSection}
+                        isOpen={isInstrumentModalOpen}
+                        closeModal={closeInstrumentModal}
+                        onInstrumentCreated={onInstrumentCreated} // 계측기 생성 후 호출될 함수 전달
+                        instrumentList={instrumentList}
+                        setInstrumentList={setInstrumentList}
                     />
                 </div>
             </div>
