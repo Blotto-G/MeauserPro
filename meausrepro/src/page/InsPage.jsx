@@ -1,8 +1,10 @@
 import CustomSidebar from "../component/sidebar/CustomSidebar.jsx";
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import axios from "axios";
 import UserContext from "../context/UserContext.jsx";
+import {Line} from "react-chartjs-2";
+import 'chart.js/auto';
 
 const InsPage = () => {
     const { id } = useParams(); // url에서 계측기 id 가져옴
@@ -40,6 +42,46 @@ const InsPage = () => {
                 console.error("측정 데이터 조회 중 오류 발생", err.response ? err.response.data : err);
             });
     }, [id]);
+
+
+    // 차트
+    const options = {
+        scales: {
+            y: {
+                beginAtZero: true,
+            },
+        },
+    };
+
+    const data = {
+        labels: measurements.map(measurement => measurement.createDate),
+        datasets: [
+            {
+                label: instrument.instrId.insNum,
+                data: managementTypes.map(type => type.gage1),
+                borderColor: '#5470c6',
+                fill: false,
+            },
+            {
+                label: '1차 기준',
+                data: managementTypes.map(type => type.gage1),
+                borderColor: 'rgba(75, 192, 192, 1)',
+                fill: false,
+            },
+            {
+                label: '2차 기준',
+                data: managementTypes.map(type => type.gage2),
+                borderColor: 'rgba(153, 102, 255, 1)',
+                fill: false,
+            },
+            {
+                label: 'Gage3',
+                data: managementTypes.map(type => type.gage3),
+                borderColor: 'rgba(255, 159, 64, 1)',
+                fill: false,
+            },
+        ],
+    };
 
     return (
         <div className='d-flex vh-100'>
@@ -177,6 +219,8 @@ const InsPage = () => {
                         )}
                         </tbody>
                     </table>
+                    <h3>차트</h3>
+                    <Line data={data} options={options} />
                 </div>
             ) : (
                 <h2>계측기 정보가 없습니다.</h2>
