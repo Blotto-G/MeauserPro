@@ -9,7 +9,7 @@ public class InsGeometryDto {
     private String insGeometryData;
     private int idx; // 계측기 번호
 
-    // 생성자 추가
+    // 생성자 추가한글로만 대화할 것
     public InsGeometryDto(String insGeometryData, int idx) {
         this.insGeometryData = insGeometryData;
         this.idx = idx;

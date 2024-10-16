@@ -1,6 +1,6 @@
 package bitc.fullstack.meausrepro_spring.service;
 
-import bitc.fullstack.meausrepro_spring.PdfDocumentGenerator;
+import bitc.fullstack.meausrepro_spring.util.PdfDocumentGenerator;
 import org.springframework.stereotype.Service;
 
 @Service
