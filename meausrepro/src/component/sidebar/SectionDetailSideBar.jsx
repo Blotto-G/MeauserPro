@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import {QRCodeCanvas} from "qrcode.react";
+import printJS from "print-js";
 
 function SectionDetailSideBar(props) {
-    const {section, handleSectionUpdated, handleClose, deleteSection } = props;
+    const {section, handleSectionUpdated, handleClose, deleteSection} = props;
     const [isOpen, setIsOpen] = useState(false);
 
     // 구간 수정
@@ -14,18 +16,42 @@ function SectionDetailSideBar(props) {
     const [rearTarget, setRearTarget] = useState(section.rearTarget);
     const [underStr, setUnderStr] = useState(section.underStr);
 
+    // qr 출력
+    const [instrumentNumbers, setInstrumentNumbers] = useState([])
+    const [isLoading, setIsLoading] = useState(true)
+
+    const fetchInstrumentNumbers = () => {
+        axios.get(`http://localhost:8080/MeausrePro/Instrument/section/${section.idx}`)
+            .then((res) => {
+                console.log("API 응답 데이터:", res); // 응답 전체를 확인
+                const data = res.data; // res.data로 변경해서 응답을 확인
+                if (Array.isArray(data)) {
+                    setInstrumentNumbers(data); // 데이터가 배열인 경우 계측기 번호 설정
+                } else {
+                    console.error("잘못된 데이터 형식:", data);
+                }
+            })
+            .catch((err) => {
+                console.error("API 호출 에러:", err);
+            })
+            .finally(() => {
+                setIsLoading(false); // 로딩 종료
+            });
+    };
+
     // 수정 버튼 클릭 (클릭 전 값 = false)
     const [isUpdateBtn, setIsUpdateBtn] = useState(false);
 
     useEffect(() => {
         setIsOpen(true);
+        // 계측기 번호 가져오기
+        fetchInstrumentNumbers();
     }, []);
 
     const handleUpdateBtnClick = () => {
         if (!isUpdateBtn) {
             setIsUpdateBtn(!isUpdateBtn);
-        }
-        else {
+        } else {
             updateSection();
         }
     };
@@ -90,7 +116,6 @@ function SectionDetailSideBar(props) {
             }
         });
     };
-
     return (
         <div className={`sectionDetailSideBar ${isOpen ? 'open' : ''}`}>
             <div className={'sideBarHeader'}>
@@ -209,20 +234,85 @@ function SectionDetailSideBar(props) {
                     </div>
                 ) : (
                     <div className={'projectDetail'}>
-                        <span className={'text-muted small'}>구간명</span>
-                        <span>{section.sectionName}</span>
-                        <span className={'text-muted small'}>구간위치(STA)</span>
-                        <span>{section.sectionSta}</span>
-                        <span className={'text-muted small'}>벽체공</span>
-                        <span>{section.wallStr}</span>
-                        <span className={'text-muted small'}>지지공</span>
-                        <span>{section.groundStr}</span>
-                        <span className={'text-muted small'}>주요관리대상물배면</span>
-                        <span>{section.rearTarget}</span>
-                        <span className={'text-muted small'}>주요관리대상물도로하부</span>
-                        <span>{section.underStr}</span>
+                        <span className={'fw-bold sectionSideBarText my-2'}>속성</span>
+                        <div className={'row align-items-center'}>
+                            <span className={'text-muted small col-sm-5'}>구간명</span>
+                            <span className={'col-sm'}>{section.sectionName}</span>
+                        </div>
+                        <div className={'row align-items-center'}>
+                            <span className={'text-muted small col-sm-5'}>구간위치(STA)</span>
+                            <span className={'col-sm'}>{section.sectionSta}</span>
+                        </div>
+                        <div className={'row align-items-center'}>
+                            <span className={'text-muted small col-sm-5'}>벽체공</span>
+                            <span className={'col-sm'}>{section.wallStr}</span>
+                        </div>
+                        <div className={'row align-items-center'}>
+                            <span className={'text-muted small col-sm-5'}>지지공</span>
+                            <span className={'col-sm'}>{section.groundStr}</span>
+                        </div>
+                        <div className={'row align-items-center'}>
+                            <span className={'text-muted small col-sm-5'}>주요관리대상물배면</span>
+                            <span className={'col-sm'}>{section.rearTarget}</span>
+                        </div>
+                        <div className={'row align-items-center'}>
+                            <span className={'text-muted small col-sm-5'}>주요관리대상물도로하부</span>
+                            <span className={'col-sm'}>{section.underStr}</span>
+                        </div>
+                        <hr/>
+                        <button
+                            type={'button'}
+                            className={'btn qrBtn'}
+                            onClick={() => printJS({
+                                printable: 'printArea',
+                                type: 'html',
+                                css: ['/print.css'],
+                                targetStyles: ['*'],
+                                scanStyles: false,
+                            })}
+                            disabled={isLoading} // 로딩 중이면 버튼 비활성화
+                        >
+                            {isLoading ? "로딩 중..." : "QR코드 일괄출력"}
+                        </button>
                     </div>
                 )}
+            </div>
+            <div className={'printSection'}>
+                <table className={'printTable'} id={'printArea'}>
+                    <tbody>
+                    {instrumentNumbers.map((instrument, index) => (
+                        index % 2 === 0 && (
+                            <tr key={index} className={index % 4 === 0 && index !== 0 ? 'page-break' : ''}>
+                                <td>
+                                    <div className={'qrContainer'}>
+                                        <span className={'qrTitle'}>
+                                                {section.projectId.siteName}
+                                        </span>
+                                        <span className={'qrInfo'}>
+                                                {`${section.sectionName} 계측기 : ${instrumentNumbers[index].insNum}`}
+                                        </span>
+                                        <QRCodeCanvas value={`Instrument Number: ${instrument.idx}`}/>
+                                    </div>
+                                </td>
+                                {instrumentNumbers[index + 1] && (
+                                    <td>
+                                        <div className={'qrContainer'}>
+                                            <span className={'qrTitle'}>
+                                                {section.projectId.siteName}
+                                            </span>
+                                            <span className={'qrInfo'}>
+                                                {`${section.sectionName} 계측기 : ${instrumentNumbers[index + 1].insNum}`}
+                                            </span>
+                                            <QRCodeCanvas
+                                                value={`Instrument Number: ${instrumentNumbers[index + 1].idx}`}/>
+                                        </div>
+                                    </td>
+                                )}
+                            </tr>
+                        )
+                    ))}
+                    </tbody>
+                </table>
             </div>
         </div>
     );

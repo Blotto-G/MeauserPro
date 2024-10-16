@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import {useContext, useEffect, useState} from "react";
 import UserContext from "../context/UserContext.jsx";
 import { useNavigate } from "react-router";
 import MapComponent from "../component/MapComponent.jsx";
@@ -9,9 +9,10 @@ import CustomSidebar from "../component/sidebar/CustomSidebar.jsx";
 import axios from "axios";
 import ProjectEditModal from "../component/modal/ProjectEditModal.jsx";
 import InstrumentCreateModal from "../component/modal/InstrumentCreateModal.jsx";
-import ChartTest from "./ChartTest.jsx";
+import InsPage from "./InsPage.jsx";
 
 function Main() {
+
     const { user } = useContext(UserContext);
     const navigate = useNavigate();
 
@@ -334,9 +335,6 @@ function Main() {
                         instrumentList={instrumentList}
                         setInstrumentList={setInstrumentList}
                     />
-                    <div className={'flex-grow-1'}>
-                        <ChartTest path={'/MeausrePro/ChartTest'} element={<ChartTest />} />
-                    </div>
                 </div>
             </div>
         </div>

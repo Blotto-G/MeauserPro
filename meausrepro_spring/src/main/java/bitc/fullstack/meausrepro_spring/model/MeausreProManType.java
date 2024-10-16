@@ -31,21 +31,6 @@ public class MeausreProManType {
     @Column(name = "gage_4")
     private Double gage4; // 측정값 4
 
-    @Column(name = "in_name", length = 45)
-    private String inName;  // 계측기
-
-    @Column(name = "bs")
-    private Double bs; // B.S
-
-    @Column(name = "fs")
-    private Double fs; // F.S
-
-    @Column(name = "ih")
-    private Double ih; // I.H
-
-    @Column(name = "gh")
-    private Double gh; // G.H
-
     @Column(name= "crack_width")
     private Double crackWidth; // 초기 균열폭
 }

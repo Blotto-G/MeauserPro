@@ -18,8 +18,10 @@ public class ManagementService {
         return managementRepository.save(management);
     }
 
-    // 특정 계측기 그래프 보기
-    public List<MeausreProManagement> insManagements(int instrId) {
-        return managementRepository.findAllByInstrId(instrId);
+    // 조회
+    public List<MeausreProManagement> findByInstrument(int instrIdx) {
+        MeausreProInstrument instrument = new MeausreProInstrument();
+        instrument.setIdx(instrIdx); // 계측기 ID 설정
+        return managementRepository.findByInstr(instrument); // 해당 계측기와 관련된 관리 정보 반환
     }
 }

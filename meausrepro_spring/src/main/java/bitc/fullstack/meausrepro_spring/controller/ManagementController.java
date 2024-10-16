@@ -1,7 +1,6 @@
 package bitc.fullstack.meausrepro_spring.controller;
 
 import bitc.fullstack.meausrepro_spring.dto.ManagementDTO;
-import bitc.fullstack.meausrepro_spring.model.MeausreProInsType;
 import bitc.fullstack.meausrepro_spring.model.MeausreProInstrument;
 import bitc.fullstack.meausrepro_spring.model.MeausreProManType;
 import bitc.fullstack.meausrepro_spring.model.MeausreProManagement;
@@ -12,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +37,7 @@ public class ManagementController {
         if (instrument.isPresent()) {
             // 기본정보부터 저장
             MeausreProInstrument ins = instrument.get();
-            management.setInstr_id(ins);
+            management.setInstr(ins);
 
             MeausreProManagement saveManagement = managementService.save(management);
 
@@ -52,9 +52,45 @@ public class ManagementController {
         }
     }
 
-    // 특정 계측기 그래프 보기
-    @GetMapping("/instrument/{instrId}")
-    public List<MeausreProManagement> insManagements(@PathVariable("instrId") int instrId) {
-        return managementService.insManagements(instrId);
+    @GetMapping("/details/{instrIdx}")
+    public ResponseEntity<List<ManagementDTO>> getManagementDetails(@PathVariable int instrIdx) {
+        // 계측기 관련 관리 정보를 조회
+        Optional<MeausreProInstrument> instrumentOpt = instrumentService.findById(instrIdx);
+
+        if (!instrumentOpt.isPresent()) {
+            return ResponseEntity.notFound().build(); // 계측기 정보가 없으면 404 반환
+        }
+
+        MeausreProInstrument instrument = instrumentOpt.get();
+
+        // 관리 정보 조회
+        List<MeausreProManagement> managementList = managementService.findByInstrument(instrIdx);
+
+        if (managementList.isEmpty()) {
+            return ResponseEntity.notFound().build(); // 관리 정보가 없으면 404 반환
+        }
+
+        // 모든 관리 정보를 조회하여 DTO 리스트로 변환
+        List<ManagementDTO> managementDTOList = new ArrayList<>();
+
+        for (MeausreProManagement management : managementList) {
+            Optional<MeausreProManType> manTypeOpt = manTypeService.findByMaIdx(management.getIdx());
+
+            if (!manTypeOpt.isPresent()) {
+                continue; // 추가 정보가 없으면 무시하고 다음으로 넘어감
+            }
+
+            MeausreProManType manType = manTypeOpt.get();
+
+            // DTO에 정보를 설정
+            ManagementDTO dto = new ManagementDTO();
+            dto.setManagement(management);
+            dto.setManagementType(manType);
+
+            // 리스트에 추가
+            managementDTOList.add(dto);
+        }
+
+        return ResponseEntity.ok(managementDTOList); // 관리 정보 리스트 반환
     }
 }

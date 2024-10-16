@@ -48,6 +48,7 @@ public class InstrumentController {
     // 특정 구간 계측기 보기
     @GetMapping("/section/{sectionId}")
     public List<MeausreProInstrument> sectionInstruments(@PathVariable("sectionId") int sectionId) {
+        System.out.println("\n" + sectionId);
         return instrumentService.sectionInstruments(sectionId);
     }
 
@@ -140,6 +141,7 @@ public class InstrumentController {
     // 계측기 삭제
     @DeleteMapping("/delete/{idx}")
     public ResponseEntity<String> deleteInstrument(@PathVariable("idx") int idx) {
+        System.out.println("삭제 요청된 계측기 idx: " + idx); // 로그 추가
         Optional<MeausreProInstrument> instrument = instrumentService.findById(idx);
         if (instrument.isPresent()) {
             instrumentService.deleteById(idx); // 계측기 삭제

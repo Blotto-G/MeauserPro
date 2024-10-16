@@ -4,6 +4,7 @@ import axios from "axios";
 import SectionDetailSideBar from "./SectionDetailSideBar.jsx";
 import Swal from "sweetalert2";
 import InsDetailSideBar from "./InsDetailSideBar.jsx";
+import InsPage from "../../page/InsPage.jsx";
 
 function MainSideBar(props) {
     const {user} = useContext(UserContext);
@@ -59,7 +60,7 @@ function MainSideBar(props) {
         setSelectedSection(updatedSection); // 선택된 구간 정보 업데이트
         if (isSelectProject) {
             setSectionList(prevList => prevList.map(section =>
-            section.idx === updatedSection.idx ? updatedSection : section))
+                section.idx === updatedSection.idx ? updatedSection : section))
         }
     };
 
@@ -126,7 +127,7 @@ function MainSideBar(props) {
     };
 
 
-    
+
     // 계측기 업데이트 후 리스트 다시 가져오기
     const handleInstrumentUpdated = (updatedIns) => {
         setInstrumentList(prevList =>

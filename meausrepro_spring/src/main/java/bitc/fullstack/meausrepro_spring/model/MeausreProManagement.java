@@ -17,7 +17,7 @@ public class MeausreProManagement {
 
     @ManyToOne
     @JoinColumn(name="instr_id", nullable = false)
-    private MeausreProInstrument instr_id; // 계측기 번호
+    private MeausreProInstrument instr; // 계측기 번호
 
     @Column(name="instr_type", nullable = false)
     private char instrType; // 계측기 타입

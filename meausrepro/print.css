@@ -1,0 +1,139 @@
+/* 프린트 시 사용 */
+.page-break {
+    page-break-before: always;
+}
+@media print {
+    /* 프린트 시 사용 */
+    .page-break {
+        page-break-before: always;
+    }
+
+    .printTable {
+        width: 100%;
+        height: 100%;
+        padding: 30px;
+        border-collapse: collapse;
+    }
+
+    .printTable td {
+        width: 50%; /* 두 개의 셀로 나누기 */
+        height: 45vh; /* 높이를 조정 */
+        border: 1px solid #c2c2c2;
+        padding: 10px;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .qrContainer {
+        width: 90%;  /* QR 컨테이너 크기 조정 */
+        height: 90%;
+        display: flex;
+        flex-direction: column;
+        gap: 0.1em;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+    }
+
+    .qrTitle {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+    .qrInfo {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
+    .printSection {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+@media screen {
+    /* 프린트 시 사용 */
+    .page-break {
+        page-break-before: always;
+    }
+
+    .printTable {
+        width: 100%;
+        height: 100%;
+        padding: 30px;
+        border-collapse: collapse;
+    }
+
+    .printTable td {
+        width: 50%; /* 두 개의 셀로 나누기 */
+        height: 45vh; /* 높이를 조정 */
+        border: 1px solid #c2c2c2;
+        padding: 10px;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .qrContainer {
+        width: 90%;  /* QR 컨테이너 크기 조정 */
+        height: 90%;
+        display: flex;
+        flex-direction: column;
+        gap: 0.1em;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+    }
+
+    .qrTitle {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+    .qrInfo {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
+    .printSection {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+.printSection {
+    display: none;
+}
+.printTable {
+    width: 100%;
+    height: 100%;
+    padding: 30px;
+    border-collapse: collapse;
+}
+
+.printTable td {
+    width: 50%; /* 두 개의 셀로 나누기 */
+    height: 45vh; /* 높이를 조정 */
+    border: 1px solid #c2c2c2;
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.qrContainer {
+    width: 90%;  /* QR 컨테이너 크기 조정 */
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1em;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
+.qrTitle {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+.qrInfo {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}

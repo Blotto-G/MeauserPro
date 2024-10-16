@@ -54,4 +54,5 @@ public class MeausreProInsType {
 
     @Column(name = "ten_design")
     private Double tenDesign; // 설계긴장력
+
 }

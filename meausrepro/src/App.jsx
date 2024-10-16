@@ -5,7 +5,7 @@ import Login from "./page/Login.jsx";
 import {UserProvder} from "./context/UserContext.jsx";;
 import UserManagement from "./page/UserManagement.jsx";
 import GroupManagement from "./page/GroupManagement.jsx";
-import ChartTest from "./page/ChartTest.jsx";
+import InsPage from "./page/InsPage.jsx";
 
 function App() {
     return (
@@ -16,9 +16,7 @@ function App() {
                     <Route path={'/MeausrePro'} element={<Main />} />
                     <Route path={'/UserManagement'} element={<UserManagement />} />
                     <Route path={'/GroupManagement'} element={<GroupManagement />}/>
-
-                    {/* 테스트, 추후 삭제 예정 */}
-                    <Route path={'/MeausrePro/ChartTest'} element={<ChartTest />} />
+                    <Route path={"/InsPage/:id"} element={<InsPage />} />
                 </Routes>
             </BrowserRouter>
         </UserProvder>
