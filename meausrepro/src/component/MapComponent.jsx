@@ -251,7 +251,7 @@ function MapComponent(props) {
                 const circle = new naver.maps.Circle({
                     map: map,
                     center: point,
-                    radius: 10,  // 동그란 점의 크기
+                    radius: 1.5,  // 동그란 점의 크기
                     fillColor: "#4285F4",  // 점 색상
                     fillOpacity: 1,
                     strokeWeight: 0,  // 경계선 제거
