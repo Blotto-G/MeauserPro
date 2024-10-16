@@ -319,6 +319,25 @@ body {
   grid-template-rows: auto auto 1fr;
   gap: 0.5rem;
 }
+
+.container-box {
+  background-color: #ffffff;
+  display: inline-block;
+  border: 1px solid #dee2e6;
+  margin: 20px;
+  padding: 20px;
+}
+
+.table {
+  border: 1px solid #aaa;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.custom-th {
+  background-color: #eaeaea !important;
+}
+
 .managementBtn {
   border: 1px solid #a3c2b2;
   color: white;

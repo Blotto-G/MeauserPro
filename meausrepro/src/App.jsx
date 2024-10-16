@@ -5,6 +5,7 @@ import Login from "./page/Login.jsx";
 import {UserProvder} from "./context/UserContext.jsx";;
 import UserManagement from "./page/UserManagement.jsx";
 import GroupManagement from "./page/GroupManagement.jsx";
+import Report from "./page/Report.jsx";
 
 function App() {
     return (
@@ -13,6 +14,7 @@ function App() {
                 <Routes>
                     <Route path={'/'} element={<Login />} />
                     <Route path={'/MeausrePro'} element={<Main />} />
+                    <Route path={'/Report'} element={<Report />} />
                     <Route path={'/UserManagement'} element={<UserManagement />} />
                     <Route path={'/GroupManagement'} element={<GroupManagement />}/>
                 </Routes>
