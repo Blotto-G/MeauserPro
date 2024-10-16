@@ -15,6 +15,9 @@ public class SectionService {
     @Autowired
     private SectionRepository sectionRepository;
 
+    @Autowired
+    private InstrumentService instrumentService;
+
     // 구간 저장
     public ResponseEntity<String> saveSection(@RequestBody MeausreProSection section) {
         sectionRepository.save(section);
@@ -48,6 +51,8 @@ public class SectionService {
     public boolean deleteSection(int idx) {
         Optional<MeausreProSection> section = sectionRepository.findById(String.valueOf(idx));
         if (section.isPresent()) {
+            // 구간에 속한 계측기 삭제
+            instrumentService.deleteInstrumentBySection(section.get().getIdx());
             sectionRepository.deleteById(String.valueOf(idx));
             return true;
         }

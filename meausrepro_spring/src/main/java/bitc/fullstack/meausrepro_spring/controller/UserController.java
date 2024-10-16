@@ -41,6 +41,28 @@ public class UserController {
         }
     }
 
+    // 어플 전용
+    @PostMapping("/AppLogin")
+    public MeausreProUser Applogin(@RequestBody MeausreProUser loginUser) {
+        System.out.println("\n" + loginUser.getId() + "\n");
+        Optional<MeausreProUser> user = userService.findById(loginUser.getId());
+
+        if (user.isPresent()) {
+            if (Objects.equals(user.get().getRole(), "1")) {
+                if (user.get().getPass().equals(loginUser.getPass())) {
+                    return user.get();
+                }
+                else {
+                    throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+                }
+            } else {
+                throw new IllegalArgumentException("앱 관리자만 로그인 가능합니다.");
+            }
+        } else {
+            throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
+        }
+    }
+
     // 아이디 중복 확인
     @PostMapping("/checkId/{id}")
     public boolean checkId(@PathVariable String id) {
@@ -75,18 +97,18 @@ public class UserController {
     @PutMapping("/update/{idx}")
     public ResponseEntity<String> updateUser(@PathVariable int idx, @RequestBody MeausreProUser updateUser) {
         Optional<MeausreProUser> userOptional = userService.findByIdx(idx);
-        
+
         if (userOptional.isPresent()) {
             MeausreProUser existingUser = userOptional.get();
-            
+
             existingUser.setPass(updateUser.getPass());
             existingUser.setName(updateUser.getName());
             existingUser.setCompanyIdx(updateUser.getCompanyIdx());
             existingUser.setTel(updateUser.getTel());
             existingUser.setRole(updateUser.getRole());
-            
+
             userService.signUp(existingUser);
-            
+
             return ResponseEntity.ok("회원정보 수정 완료");
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("회원정보 수정에 실패하였습니다.");

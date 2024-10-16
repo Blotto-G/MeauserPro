@@ -38,6 +38,11 @@ public class ProjectController {
         System.out.println("\n" + id + ": " + topManager + "\n");
         return projectService.inProgress(id, topManager);
     }
+    // 어플 전용 진행 중인 프로젝트 모두 보기
+    @GetMapping("/appInProgress/{id}")
+    public List<MeausreProProject> appInProgress(@PathVariable String id) {
+        return projectService.appInProgress(id);
+    }
 
     // 특정 프로젝트의 폴리곤 정보 조회
     @GetMapping("/polygon/{idx}")

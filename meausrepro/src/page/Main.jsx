@@ -9,6 +9,7 @@ import CustomSidebar from "../component/sidebar/CustomSidebar.jsx";
 import axios from "axios";
 import ProjectEditModal from "../component/modal/ProjectEditModal.jsx";
 import InstrumentCreateModal from "../component/modal/InstrumentCreateModal.jsx";
+import ChartTest from "./ChartTest.jsx";
 
 function Main() {
     const { user } = useContext(UserContext);
@@ -333,6 +334,9 @@ function Main() {
                         instrumentList={instrumentList}
                         setInstrumentList={setInstrumentList}
                     />
+                    <div className={'flex-grow-1'}>
+                        <ChartTest path={'/MeausrePro/ChartTest'} element={<ChartTest />} />
+                    </div>
                 </div>
             </div>
         </div>

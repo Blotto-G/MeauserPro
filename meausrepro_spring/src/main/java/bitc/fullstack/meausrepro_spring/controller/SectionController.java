@@ -47,7 +47,7 @@ public class SectionController {
     public ResponseEntity<String> deleteSection(@PathVariable("idx") int idx) {
         boolean isDeleted = sectionService.deleteSection(idx);
         if (isDeleted) {
-            return ResponseEntity.ok("삭제 완료ㅛ");
+            return ResponseEntity.ok("삭제 완료");
         } else {
             return ResponseEntity.status(404).body("해당 구간을 찾을 수 없습니다.");
         }

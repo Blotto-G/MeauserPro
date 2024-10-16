@@ -19,4 +19,8 @@ public interface ProjectRepository extends JpaRepository<MeausreProProject, Stri
     // 진행 중인 프로젝트 모두 보기 (top_manager = 1 일 경우, db 저장된 모든 진행 중 프로젝트 전체 조회)
     @Query("SELECT p FROM MeausreProProject p WHERE (:topManager = '1' OR p.userIdx.id = :id) AND p.siteCheck = 'N'")
     List<MeausreProProject> findAllByIdInProgress(String id, String topManager);
+
+    // 어플 전용 진행 중인 프로젝트 모두 보기
+    @Query("SELECT p FROM MeausreProProject p WHERE p.companyIdx.idx = :companyId AND p.siteCheck = 'N'")
+    List<MeausreProProject> appFindByAll(int companyId);
 }

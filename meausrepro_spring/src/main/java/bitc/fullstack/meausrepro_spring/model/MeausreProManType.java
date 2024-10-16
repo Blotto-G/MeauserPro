@@ -45,4 +45,7 @@ public class MeausreProManType {
 
     @Column(name = "gh")
     private Double gh; // G.H
+
+    @Column(name= "crack_width")
+    private Double crackWidth; // 초기 균열폭
 }
