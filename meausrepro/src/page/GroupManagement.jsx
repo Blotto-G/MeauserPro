@@ -4,8 +4,9 @@ import {useNavigate} from "react-router";
 import axios from "axios";
 import CustomSidebar from "../component/sidebar/CustomSidebar.jsx";
 import CompanyModal from "../component/modal/CompanyModal.jsx";
-import CompanyUpdateModal from "../component/modal/CompanyUpdateModal.jsx";
+import Pagination from "../component/pagination/Pagination.jsx";
 import Swal from "sweetalert2";
+import CompanyUpdateModal from "../component/modal/CompanyUpdateModal.jsx";
 
 function GroupManagement() {
     const { user } = useContext(UserContext);
@@ -24,6 +25,27 @@ function GroupManagement() {
     const closeCompanyModal = () => {
         setIsCompanyModal(false);
     }
+
+    // 현재 페이지 번호
+    const [page, setPage] = useState(1);
+    // 페이지 당 게시글 수
+    const itemsPerPage = 10;
+
+    // 페이지 이동
+    const changePageHandler = (page) => {
+        setPage(page);
+    };
+
+    // 페이지네이션을 통해 보여줄 slice된 리스트
+    const [currentList, setCurrentList] = useState(companyList);
+
+    const indexOfLastItem = page * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+    useEffect(() => {
+        setCurrentList(companyList.slice(indexOfFirstItem, indexOfLastItem));
+    }, [page, companyList]);
+
     // 로그인 정보 없을 시, 로그인 페이지로 이동
     useEffect(() => {
         if (!user.id) {
@@ -102,7 +124,6 @@ function GroupManagement() {
         });
     };
 
-
     return (
         <div className={'d-flex vh-100'}>
             <CustomSidebar topManager={user.topManager}/>
@@ -141,7 +162,9 @@ function GroupManagement() {
                                             <td>{item.companyName}</td>
                                             <td className={'d-flex justify-content-center'}>
                                                 <div className={'form-check form-switch'}>
-                                                    <input type="checkbox" className={'form-check-input'} checked={item.companyIng === 'Y'} onChange={() => toggleCompanyStatus(index)}/>
+                                                    <input type="checkbox" className={'form-check-input'}
+                                                           checked={item.companyIng === 'Y'}
+                                                           onChange={() => toggleCompanyStatus(index)}/>
                                                 </div>
 
                                             </td>
@@ -158,7 +181,8 @@ function GroupManagement() {
                                                 </button>
                                             </td>
                                             <td>
-                                                <button type={'button'} className={'sideBarBtn projectDelete'} onClick={() => handleDelete(item.idx)}>
+                                                <button type={'button'} className={'sideBarBtn projectDelete'}
+                                                        onClick={() => handleDelete(item.idx)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                                          fill="currentColor"
                                                          className="bi bi-trash3" viewBox="0 0 16 16">
@@ -173,6 +197,14 @@ function GroupManagement() {
 
                                 </tbody>
                             </table>
+                            {companyList.length > 0 && (
+                                <Pagination
+                                    activePage={page}
+                                    itemsCountPerPage={itemsPerPage}
+                                    totalItemsCount={companyList.length}
+                                    onChange={changePageHandler}
+                                />
+                            )}
                         </div>
                         <CompanyModal
                             isOpen={isCompanyModal}

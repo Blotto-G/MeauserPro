@@ -159,6 +159,8 @@ function UserSignUpModal(props) {
         <div className={`modal fade ${isOpen ? 'show d-block' : ''}`}
              id={'createUser'}
              tabIndex={'-1'}
+             data-bs-backdrop={'static'}
+             data-bs-keyboard={'false'}
              aria-labelledby={'userModalLabel'}
              aria-hidden={!isOpen}
              style={{display: isOpen ? 'block' : 'none'}}

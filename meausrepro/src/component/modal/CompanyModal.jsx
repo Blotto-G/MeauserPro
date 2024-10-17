@@ -53,6 +53,8 @@ function CompanyModal(props) {
         <div className={`modal fade ${isOpen ? 'show d-block' : ''}`}
              id={'createCompany'}
              tabIndex={'-1'}
+             data-bs-backdrop={'static'}
+             data-bs-keyboard={'false'}
              aria-labelledby={'companyModalLabel'}
              aria-hidden={!isOpen}
              style={{display: isOpen ? 'block' : 'none'}}

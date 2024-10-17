@@ -1,5 +1,6 @@
 import {useState} from "react";
 import axios from "axios";
+import './Modal.css';
 
 function SectionCreateModal(props) {
     const { project, isOpen, closeModal, onSectionCreated  } = props;
@@ -57,6 +58,8 @@ function SectionCreateModal(props) {
             className={`modal fade ${isOpen ? 'show d-block' : ''}`}
             id={'createSection'}
             tabIndex={'-1'}
+            data-bs-backdrop={'static'}
+            data-bs-keyboard={'false'}
             aria-labelledby={'csModalLabel'}
             aria-hidden={!isOpen}
             style={{display: isOpen ? 'block' : 'none'}}
@@ -64,48 +67,53 @@ function SectionCreateModal(props) {
             <div className={'modal-dialog modal-dialog-centered modal-dialog-scrollable'}>
                 <div className={'modal-content'}>
                     <div className={'modal-header'}>
-                        <span className={'fs-4 modal-title'} id={'cpModalLabel'}>
-                            구간 생성
-                        </span>
-                        <button type={'button'}
-                                className={'btn-close'}
-                                data-bs-dismiss={'modal'}
-                                aria-label={'Close'}
-                                onClick={handleCloseModal}
-                        />
+                        <div className={'modal-header-text'}>
+                            <span id={'cpModalLabel'} className={'modal-title'}>
+                                MeausrePro
+                            </span>
+                            <span className={'modal-info'}>
+                                공사 구간 생성
+                            </span>
+                        </div>
                     </div>
                     <div className={'modal-body'}>
                         <div className={'d-flex flex-column'}>
-                            <label htmlFor={'sectionName'}
-                                   className={'form-label'}>
-                                구간명
-                            </label>
+                            <div className={'modal-body-text'}>
+                                <span>*</span>
+                                <label htmlFor={'sectionName'}
+                                       className={'form-label'}>
+                                    구간명
+                                </label>
+                            </div>
                             <input type={'text'}
-                                   className={'form-control'}
                                    id={'sectionName'}
                                    value={sectionName}
                                    onChange={(e) => setSectionName(e.target.value)}
                                    placeholder={'구간명을 입력하세요'}
                             />
-                            <label htmlFor={'sectionSta'}
-                                   className={'form-label mt-2'}>
-                                구간 위치 (STA)
-                            </label>
+                            <div className={'modal-body-text mt-3'}>
+                                <span>*</span>
+                                <label htmlFor={'sectionSta'}
+                                       className={'form-label mt-2'}>
+                                    구간 위치 (STA)
+                                </label>
+                            </div>
                             <input type={'text'}
-                                   className={'form-control'}
                                    id={'sectionSta'}
                                    value={sectionSta}
                                    onChange={(e) => setSectionSta(e.target.value)}
                                    placeholder={'구간위치를 입력하세요'}
                             />
-                            <div className={'row mt-2'}>
+                            <div className={'row'}>
                                 <div className={'col d-flex flex-column'}>
-                                    <label htmlFor={'wallStr'}
-                                           className={'form-label'}>
-                                        벽체공
-                                    </label>
+                                    <div className={'modal-body-text mt-3'}>
+                                        <span>*</span>
+                                        <label htmlFor={'wallStr'}
+                                               className={'form-label'}>
+                                            벽체공
+                                        </label>
+                                    </div>
                                     <input type={'text'}
-                                           className={'form-control'}
                                            id={'wallStr'}
                                            value={wallStr}
                                            onChange={(e) => setWallStr(e.target.value)}
@@ -113,12 +121,14 @@ function SectionCreateModal(props) {
                                     />
                                 </div>
                                 <div className={'col d-flex flex-column'}>
-                                    <label htmlFor={'groundStr'}
-                                           className={'form-label'}>
-                                        지지공
-                                    </label>
+                                    <div className={'modal-body-text mt-3'}>
+                                        <span>*</span>
+                                        <label htmlFor={'groundStr'}
+                                               className={'form-label'}>
+                                            지지공
+                                        </label>
+                                    </div>
                                     <input type={'text'}
-                                           className={'form-control'}
                                            id={'groundStr'}
                                            value={groundStr}
                                            onChange={(e) => setGroundStr(e.target.value)}
@@ -126,14 +136,16 @@ function SectionCreateModal(props) {
                                     />
                                 </div>
                             </div>
-                            <div className={'row mt-2'}>
+                            <div className={'row'}>
                                 <div className={'col d-flex flex-column'}>
-                                    <label htmlFor={'rearTarget'}
-                                           className={'form-label mt-2'}>
-                                        주요관리 대상물 배면
-                                    </label>
+                                    <div className={'modal-body-text mt-3'}>
+                                        <span>*</span>
+                                        <label htmlFor={'rearTarget'}
+                                               className={'form-label mt-2'}>
+                                            주요관리 대상물 배면
+                                        </label>
+                                    </div>
                                     <input type={'text'}
-                                           className={'form-control'}
                                            id={'rearTarget'}
                                            value={rearTarget}
                                            onChange={(e) => setRearTarget(e.target.value)}
@@ -141,12 +153,14 @@ function SectionCreateModal(props) {
                                     />
                                 </div>
                                 <div className={'col d-flex flex-column'}>
-                                    <label htmlFor={'underStr'}
-                                           className={'form-label mt-2'}>
-                                        주요관리 대상물 도로하부
-                                    </label>
+                                    <div className={'modal-body-text mt-3'}>
+                                        <span>*</span>
+                                        <label htmlFor={'underStr'}
+                                               className={'form-label mt-2'}>
+                                            주요관리 대상물 도로하부
+                                        </label>
+                                    </div>
                                     <input type={'text'}
-                                           className={'form-control'}
                                            id={'underStr'}
                                            value={underStr}
                                            onChange={(e) => setUnderStr(e.target.value)}
@@ -157,14 +171,14 @@ function SectionCreateModal(props) {
                         </div>
                         <div className={'modal-footer'}>
                             <button type={'button'}
-                                    className={'btn btn-outline-dark opacity-50'}
+                                    className={'close-btn'}
                                     data-bs-dismiss={'modal'}
                                     onClick={handleCloseModal}
                             >
                                 Close
                             </button>
                             <button type={'button'}
-                                    className={'btn btn-success opacity-50'} onClick={handleCreateSection}
+                                    className={'confirm-btn'} onClick={handleCreateSection}
                             >
                                 구간 생성
                             </button>

@@ -4,7 +4,6 @@ import axios from "axios";
 import SectionDetailSideBar from "./SectionDetailSideBar.jsx";
 import Swal from "sweetalert2";
 import InsDetailSideBar from "./InsDetailSideBar.jsx";
-import InsPage from "../../page/InsPage.jsx";
 
 function MainSideBar(props) {
     const {user} = useContext(UserContext);
@@ -323,6 +322,8 @@ function MainSideBar(props) {
                     handleInstrumentUpdated={handleInstrumentUpdated}
                     handleClose={() => setSelectedInstrument(null)} // 계측기 상세 정보 닫기
                     deleteInstrument={deleteInstrument}  // 여기서 전달
+                    siteName={isSelectProject.siteName}
+                    sectionName={selectedSection.sectionName}
                 />
             )}
         </div>

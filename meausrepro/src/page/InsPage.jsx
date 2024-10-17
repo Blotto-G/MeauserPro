@@ -62,7 +62,7 @@ const InsPage = () => {
                     <table className='table table-bordered'>
                         <tbody>
                         <tr>
-                            <th>현장명</th>
+                            <th>현 장 명</th>
                             <td>{instrument.instrId?.sectionId?.sectionName}</td>
                         </tr>
                         <tr>
@@ -160,12 +160,13 @@ const InsPage = () => {
                     <table className='table table-bordered'>
                         <thead>
                         <tr>
-                            <th>측정일</th>
+                            <th>측 정 일</th>
                             <th>Gage1</th>
                             {instrument.instrId?.insType !== 'D' && <th>Gage2</th>}
                             {instrument.instrId?.insType !== 'D' && <th>Gage3</th>}
                             {instrument.instrId?.insType === 'E' && <th>Gage4</th>}
                             {instrument.instrId?.insType === 'F' && <th>Crack Width</th>}
+                            <th>비 고</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -182,6 +183,7 @@ const InsPage = () => {
                                         <td>{managementTypes[index]?.gage4}</td>}
                                     {instrument.instrId?.insType === 'F' &&
                                         <td>{measurement.crackWidth}</td>}
+                                    <td>{measurement.comment}</td>
                                 </tr>
                             ))
                         ) : (

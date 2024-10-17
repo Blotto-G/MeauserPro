@@ -47,6 +47,7 @@ public class UserController {
         }
     }
 
+
     // 어플 전용
     @PostMapping("/AppLogin")
     public MeausreProUser Applogin(@RequestBody MeausreProUser loginUser) {

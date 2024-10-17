@@ -16,7 +16,7 @@
     }
 
     .printTable td {
-        width: 50%; /* 두 개의 셀로 나누기 */
+        width: 100%;
         height: 45vh; /* 높이를 조정 */
         border: 1px solid #c2c2c2;
         padding: 10px;
@@ -64,7 +64,7 @@
     }
 
     .printTable td {
-        width: 50%; /* 두 개의 셀로 나누기 */
+        width: 100%;
         height: 45vh; /* 높이를 조정 */
         border: 1px solid #c2c2c2;
         padding: 10px;

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import UserSignUpModal from "../component/modal/UserSignUpModal.jsx";
 import UserUpdateModal from "../component/modal/UserUpdateModal.jsx";
-import Swal from "sweetalert2";
+import Pagination from "../component/pagination/Pagination.jsx";
 
 function UserManagement() {
     const { user } = useContext(UserContext);
@@ -34,6 +34,26 @@ function UserManagement() {
         setIsUserUpdateModal(false);
         setUserToEdit(null); // 닫을 때 선택된 사용자 정보 초기화
     };
+
+    // 현재 페이지 번호
+    const [page, setPage] = useState(1);
+    // 페이지 당 게시글 수
+    const itemsPerPage = 10;
+
+    // 페이지 이동
+    const changePageHandler = (page) => {
+        setPage(page);
+    };
+
+    // 페이지네이션을 통해 보여줄 slice된 리스트
+    const [currentList, setCurrentList] = useState(userList);
+
+    const indexOfLastItem = page * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+    useEffect(() => {
+        setCurrentList(userList.slice(indexOfFirstItem, indexOfLastItem));
+    }, [page, userList]);
 
     // 로그인 정보 없을 시, 로그인 페이지로 이동
     useEffect(() => {
@@ -75,6 +95,7 @@ function UserManagement() {
             }
         });
     };
+
 
     return (
         <div className={'d-flex vh-100'}>
@@ -147,6 +168,14 @@ function UserManagement() {
                                 )}
                                 </tbody>
                             </table>
+                            {userList.length > 0 && (
+                                <Pagination
+                                    activePage={page}
+                                    itemsCountPerPage={itemsPerPage}
+                                    totalItemsCount={userList.length}
+                                    onChange={changePageHandler}
+                                />
+                            )}
                         </div>
                         <UserSignUpModal
                             isOpen={isUserSignUpModal}

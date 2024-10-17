@@ -1,3 +1,4 @@
+import './Modal.css'
 import {useContext, useEffect, useState} from "react";
 import axios from "axios";
 import UserContext from "../../context/UserContext.jsx";
@@ -34,6 +35,10 @@ function ProjectCreateModal(props) {
                 console.log(err);
             })
     }, [])
+    const companyOptions = companyList.map(item => ({
+        value: item.idx,
+        label: item.companyName
+    }))
 
     // 프로젝트 생성
     const handleCreateProject = async () => {
@@ -53,14 +58,13 @@ function ProjectCreateModal(props) {
             contractor: contractor,
             measurer: measurer,
             siteCheck: status,
-            geometry:wkt
+            geometry: wkt
         })
             .then(res => {
                 if (!siteName || !address || !startDate || !endDate || !contractor || !measurer || !status) {
                     alert("모든 필드를 입력해주세요.")
-                    return;
-                }
-                else {
+
+                } else {
                     console.log(res);
                     handleCloseModal();
                 }
@@ -91,6 +95,8 @@ function ProjectCreateModal(props) {
         <div
             className={`modal fade ${isOpen ? 'show d-block' : ''}`}
             id={'createProject'}
+            data-bs-backdrop={'static'}
+            data-bs-keyboard={'false'}
             tabIndex={'-1'}
             aria-labelledby={'cpModalLabel'}
             aria-hidden={!isOpen}
@@ -99,162 +105,173 @@ function ProjectCreateModal(props) {
             <div className={'modal-dialog modal-dialog-centered modal-dialog-scrollable'}>
                 <div className={'modal-content'}>
                     <div className={'modal-header'}>
-                        <span className={'fs-4 modal-title'} id={'cpModalLabel'}>
-                            공사개요
-                        </span>
-                        <button type={'button'}
-                                className={'btn-close'}
-                                data-bs-dismiss={'modal'}
-                                aria-label={'Close'}
-                                onClick={handleCloseModal}
-                        />
+                        <div className={'modal-header-text'}>
+                            <span id={'cpModalLabel'} className={'modal-title'}>
+                                MeausrePro
+                            </span>
+                            <span className={'modal-info'}>
+                                공사 프로젝트 생성
+                            </span>
+                        </div>
                     </div>
                     <div className={'modal-body'}>
-                        <div className={'d-flex flex-column'}>
-                            <div className={'d-flex align-items-center'}>
-                                <span className={'text-danger'}>*</span>
-                                <label htmlFor={'siteName'} className={'form-label'}>
-                                    현장명
-                                </label>
+                        <div className={'modal-body-text'}>
+                            <span>*</span>
+                            <label htmlFor={'siteName'} className={'form-label'}>
+                                현장명
+                            </label>
+                        </div>
+                        <input type={'text'}
+                               id={'siteName'}
+                               value={siteName}
+                               onChange={(e) => setSiteName(e.target.value)}
+                               placeholder={'현장명을 입력하세요'}
+                        />
+                        <div className={'modal-body-text mt-3'}>
+                            <span>*</span>
+                            <label htmlFor={'address'} className={'form-label'}>
+                                주소
+                            </label>
+                        </div>
+                        <input type={'text'}
+                               id={'address'}
+                               value={address}
+                               onChange={(e) => setAddress(e.target.value)}
+                               placeholder={'주소를 입력하세요'}
+                        />
+                        <div className={'modal-body-text mt-3'}>
+                            <span>*</span>
+                            <label htmlFor={'geometryInfo'} className={'form-label'}>
+                                지오매트리정보
+                            </label>
+                        </div>
+                        <input type={'text'}
+                               id={'geometryInfo'}
+                               placeholder={'지오매트리정보를 입력하세요'} value={geometryData} readOnly/>
+                        <div className={'row'}>
+                            <div className={'col d-flex flex-column'}>
+                                <div className={'modal-body-text mt-3'}>
+                                    <span>*</span>
+                                    <label htmlFor={'startDate'} className={'form-label'}>
+                                        시작일자
+                                    </label>
+                                </div>
+                                <input
+                                    type={'date'}
+                                    id={'startDate'}
+                                    value={startDate}
+                                    min={today}
+                                    onChange={(e) => setStartDate(e.target.value)}/>
                             </div>
-                            <input type={'text'}
-                                   className={'form-control'}
-                                   id={'siteName'}
-                                   value={siteName}
-                                   onChange={(e) => setSiteName(e.target.value)}
-                                   placeholder={'현장명을 입력하세요'}
-                            />
-                            <div className={'d-flex align-items-center mt-2'}>
-                                <span className={'text-danger'}>*</span>
-                                <label htmlFor={'address'} className={'form-label'}>
-                                    주소
-                                </label>
+                            <div className={'col d-flex flex-column'}>
+                                <div className={'modal-body-text mt-3'}>
+                                    <span>*</span>
+                                    <label htmlFor={'endDate'} className={'form-label'}>
+                                        종료일자
+                                    </label>
+                                </div>
+                                <input type={'date'}
+                                       id={'endDate'}
+                                       value={endDate}
+                                       min={startDate}
+                                       onChange={(e) => setEndDate(e.target.value)}
+                                       placeholder={'종료일자를 입력하세요'}/>
                             </div>
-                            <input type={'text'}
-                                   className={'form-control'}
-                                   id={'address'}
-                                   value={address}
-                                   onChange={(e) => setAddress(e.target.value)}
-                                   placeholder={'주소를 입력하세요'}
-                            />
-                            <div className={'row mt-2'}>
-                                <div className={'col d-flex flex-column'}>
-                                    <div className={'d-flex align-items-center mt-2'}>
-                                        <span className={'text-danger'}>*</span>
-                                        <label htmlFor={'startDate'} className={'form-label'}>
-                                            시작일자
-                                        </label>
-                                    </div>
-                                    <input
-                                        type={'date'}
-                                        id={'startDate'}
-                                        className={'form-control'}
-                                        value={startDate}
-                                        min={today}
-                                        onChange={(e) => setStartDate(e.target.value)} />
+                        </div>
+                        <div className={'row'}>
+                            <div className={'col d-flex flex-column'}>
+                                <div className={'modal-body-text mt-3'}>
+                                    <span>*</span>
+                                    <label htmlFor={'contractor'} className={'form-label'}>
+                                        시공사
+                                    </label>
                                 </div>
-                                <div className={'col d-flex flex-column'}>
-                                    <div className={'d-flex align-items-center mt-2'}>
-                                        <span className={'text-danger'}>*</span>
-                                        <label htmlFor={'endDate'} className={'form-label'}>
-                                            종료일자
-                                        </label>
-                                    </div>
-                                    <input type={'date'}
-                                           className={'form-control'}
-                                           id={'endDate'}
-                                           value={endDate}
-                                           min={startDate}
-                                           onChange={(e) => setEndDate(e.target.value)}
-                                           placeholder={'종료일자를 입력하세요'}/>
-                                </div>
+                                <input type={'text'}
+                                       id={'contractor'}
+                                       value={contractor}
+                                       onChange={(e) => setContractor(e.target.value)}
+                                       placeholder={'시공사를 입력하세요'}/>
                             </div>
-                            <div className={'row mt-2'}>
-                                <div className={'col d-flex flex-column'}>
-                                    <div className={'d-flex align-items-center mt-2'}>
-                                        <span className={'text-danger'}>*</span>
-                                        <label htmlFor={'contractor'} className={'form-label'}>
-                                            시공사
-                                        </label>
-                                    </div>
-                                    <input type={'text'} className={'form-control'} id={'contractor'} value={contractor} onChange={(e) => setContractor(e.target.value)}
-                                           placeholder={'시공사를 입력하세요'}/>
+                            <div className={'col d-flex flex-column'}>
+                                <div className={'modal-body-text mt-3'}>
+                                    <span>*</span>
+                                    <label htmlFor={'measurer'} className={'form-label'}>
+                                        계측사
+                                    </label>
                                 </div>
-                                <div className={'col d-flex flex-column'}>
-                                    <div className={'d-flex align-items-center mt-2'}>
-                                        <span className={'text-danger'}>*</span>
-                                        <label htmlFor={'measurer'} className={'form-label'}>
-                                            계측사
-                                        </label>
-                                    </div>
-                                    <input type={'text'} className={'form-control'} id={'measurer'}
-                                           placeholder={'계측사를 입력하세요'} value={measurer} onChange={(e) => setMeasurer(e.target.value)}/>
-                                </div>
+                                <input type={'text'}
+                                       id={'measurer'}
+                                       placeholder={'계측사를 입력하세요'} value={measurer}
+                                       onChange={(e) => setMeasurer(e.target.value)}/>
                             </div>
-                            <div className={'d-flex align-items-center mt-2'}>
-                                <span className={'text-danger'}>*</span>
-                                <label className={'form-label'}>
-                                    종료여부
-                                </label>
-                            </div>
-                            <div className={'d-flex gap-2'}>
-                                <div className={'form-check form-check-inline'}>
-                                    <input className={'form-check-input'} type={'radio'} name={'status'}
-                                           id={'going'}
-                                           checked={status === 'N'}
-                                           onChange={() => setStatus('N')}/>
-                                    <label className={'form-check-label'} htmlFor={'going'}>진행</label>
+                        </div>
+                        <div className={'row'}>
+                            <div className={'col d-flex flex-column'}>
+                                <div className={'modal-body-text mt-3'}>
+                                    <span>*</span>
+                                    <label className={'form-label'}>
+                                        종료여부
+                                    </label>
                                 </div>
-                                <div className={'form-check form-check-inline'}>
-                                    <input className={'form-check-input'} type={'radio'} name={'status'}
-                                           id={'finish'}
-                                           checked={status === 'Y'}
-                                           onChange={() => setStatus('Y')}/>
-                                    <label className={'form-check-label'} htmlFor={'finish'}>종료</label>
+                                <div className={'d-flex ms-4 gap-4'}>
+                                    <label className={'custom-checkbox'}>
+                                        <input
+                                            type={'checkbox'}
+                                            name={'status'}
+                                            id={'going'}
+                                            aria-label="진행 상태"
+                                            checked={status === 'N'}
+                                            onChange={() => setStatus('N')}
+                                        />
+                                        <div className={'checkbox'}></div>
+                                        진행
+                                    </label>
+                                    <label className={'custom-checkbox'}>
+                                        <input
+                                            type={'checkbox'}
+                                            name={'status'}
+                                            id={'finish'}
+                                            aria-label="종료 상태"
+                                            checked={status === 'Y'}
+                                            onChange={() => setStatus('Y')}
+                                        />
+                                        <div className={'checkbox'}></div>
+                                        종료
+                                    </label>
                                 </div>
                             </div>
-                            <div className={'row mt-2'}>
-                                <div className={'col d-flex flex-column'}>
-                                    <div className={'d-flex align-items-center mt-2'}>
-                                        <span className={'text-danger'}>*</span>
-                                        <label htmlFor={'geometryInfo'} className={'form-label'}>
-                                            지오매트리정보
-                                        </label>
-                                    </div>
-                                    <input type={'text'} className={'form-control'} id={'geometryInfo'}
-                                           placeholder={'지오매트리정보를 입력하세요'} value={geometryData} readOnly/>
-                                </div>
-                                <div className={'col d-flex flex-column'}>
+                            <div className={'col d-flex flex-column'}>
+                                <div className={'modal-body-text mt-3'}>
                                     <label htmlFor={'workGroup'} className={'form-label'}>
                                         작업그룹
                                     </label>
-                                    <select className={'form-select'}
-                                            onChange={(e) => setCompanyIdx(e.target.value)}
-                                            id={'workGroup'}>
-                                        <option selected>선택하세요</option>
-                                        {companyList.map((item) => {
-                                            return (
-                                                <option value={item.idx} key={item.idx}>
-                                                    {item.companyName}
-                                                </option>
-                                            )
-                                        })}
-                                    </select>
                                 </div>
+                                <select onChange={(e) => setCompanyIdx(e.target.value)}
+                                        id={'workGroup'}>
+                                    <option selected>선택하세요</option>
+                                    {companyList.map((item) => {
+                                        return (
+                                            <option value={item.idx} key={item.idx}>
+                                                {item.companyName}
+                                            </option>
+                                        )
+                                    })}
+                                </select>
                             </div>
                         </div>
                         <div className={'modal-footer'}>
                             <button type={'button'}
-                                    className={'btn btn-outline-dark opacity-50'}
+                                    className={'close-btn'}
                                     data-bs-dismiss={'modal'}
                                     onClick={handleCloseModal}
                             >
                                 Close
                             </button>
                             <button type={'button'}
-                                    className={'btn btn-success opacity-50'} onClick={handleCreateProject}
+                                    className={'confirm-btn'}
+                                    onClick={handleCreateProject}
                             >
-                                프로젝트 생성
+                                생성
                             </button>
                         </div>
                     </div>

@@ -310,6 +310,55 @@ body {
 .mainSection {
     display: inline-block;
 }
+
+/* 페이지네이션 */
+.pagination {
+  display: flex;
+  position: fixed;
+  top: 80%;
+  left: 51%;
+}
+
+.pagination button {
+  background-color: transparent;
+  color: black;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  padding: 10px 15px;
+  margin: 0 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.pagination button.active {
+  background-color: #8ec5aa;
+  color: white;
+}
+
+.pagination button:hover {
+  background-color: #aae0af;
+}
+
+.container-box {
+  background-color: #ffffff;
+  display: inline-block;
+  border: 1px solid #dee2e6;
+  margin: 20px;
+  padding: 20px;
+}
+
+.table {
+  border: 1px solid #aaa;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.custom-th {
+  background-color: #eaeaea !important;
+}
+
 /* 회원정보 및 작업그룹 관리 */
 .managementSection {
     height: 100vh;
@@ -360,6 +409,18 @@ body {
     display: flex;
     flex-direction: column;
     gap: 0.5em;
+}
+
+.rpBtn {
+  border: 1px solid #96C885FF;
+  color: #96C885FF;
+  transition: all 0.5s ease;
+}
+
+.rpBtn:hover {
+  border: 1px solid #96C885FF;
+  color: white;
+  background-color: #96C885FF;
 }
 
 .qrBtn {

@@ -1,3 +1,4 @@
+import './Modal.css';
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import UserContext from "../../context/UserContext.jsx";
@@ -63,28 +64,29 @@ function ProjectEditModal(props) {
             className={`modal fade ${isOpen ? 'show d-block' : ''}`}
             id="editProject"
             tabIndex="-1"
+            data-bs-backdrop={'static'}
+            data-bs-keyboard={'false'}
             aria-labelledby="epModalLabel"
             aria-hidden={!isOpen}
             style={{ display: isOpen ? 'block' : 'none' }}
         >
             <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div className="modal-content">
-                    <div className="modal-header">
-                    <span className="fs-4 modal-title" id="epModalLabel">
-                        프로젝트 수정
-                    </span>
-                        <button
-                            type="button"
-                            className="btn-close"
-                            data-bs-dismiss="modal"
-                            aria-label="Close"
-                            onClick={handleCloseModal}
-                        />
+                    <div className={'modal-header'}>
+                        <div className={'modal-header-text'}>
+                            <span id={'epModalLabel'} className={'modal-title'}>
+                                MeausrePro
+                            </span>
+                            <span className={'modal-info'}>
+                                공사 프로젝트 수정
+                            </span>
+                        </div>
                     </div>
-                    <div className="modal-body">
-                        <div className="d-flex flex-column">
-                            <div className="d-flex align-items-center">
-                                <label htmlFor="siteName" className="form-label">
+                    <div className={'modal-body'}>
+                        <div className={'d-flex flex-column'}>
+                            <div className={'modal-body-text'}>
+                                <span>*</span>
+                                <label htmlFor={'siteName'} className={'form-label'}>
                                     현장명
                                 </label>
                             </div>
@@ -96,67 +98,83 @@ function ProjectEditModal(props) {
                                 onChange={(e) => setSiteName(e.target.value)}
                                 placeholder="현장명을 입력하세요"
                             />
-                            <div className="d-flex align-items-center mt-2">
-                                <label htmlFor="address" className="form-label">
+                            <div className={'modal-body-text mt-3'}>
+                                <span>*</span>
+                                <label htmlFor={'address'} className={'form-label'}>
                                     주소
                                 </label>
                             </div>
                             <input
-                                type="text"
-                                className="form-control"
-                                id="address"
+                                type={'text'}
+                                id={'address'}
                                 value={projectData ? projectData.siteAddress : ''}
                                 disabled
                             />
-                            <div className="row mt-2">
-                                <div className="col d-flex flex-column">
-                                    <div className="d-flex align-items-center mt-2">
-                                        <label htmlFor="startDate" className="form-label">
+                            <div className={'modal-body-text mt-3'}>
+                                <span>*</span>
+                                <label htmlFor={'geometryInfo'}
+                                       className={'form-label'}>
+                                    지오매트리정보
+                                </label>
+                            </div>
+                            <input
+                                type={'text'}
+                                id={'geometryInfo'}
+                                value={projectData ? projectData.geometry : ''}
+                                disabled
+                            />
+                            <div className={'row'}>
+                                <div className={'col d-flex flex-column'}>
+                                    <div className={'modal-body-text mt-3'}>
+                                        <span>*</span>
+                                        <label
+                                            htmlFor={'startDate'}
+                                            className={'form-label'}>
                                             시작일자
                                         </label>
                                     </div>
                                     <input
-                                        type="text"
-                                        id="startDate"
-                                        className="form-control"
+                                        type={'text'}
+                                        id={'startDate'}
                                         value={projectData ? projectData.startDate : ''}
                                         disabled
                                     />
                                 </div>
-                                <div className="col d-flex flex-column">
-                                    <div className="d-flex align-items-center mt-2">
-                                        <label htmlFor="endDate" className="form-label">
+                                <div className={'col d-flex flex-column'}>
+                                    <div className={'modal-body-text mt-3'}>
+                                        <span>*</span>
+                                        <label htmlFor={'endDate'} className={'form-label'}>
                                             종료일자
                                         </label>
                                     </div>
                                     <input
-                                        type="date"
-                                        id="endDate"
-                                        className="form-control"
+                                        type={'date'}
+                                        id={'endDate'}
                                         value={endDate}
                                         min={projectData ? projectData.startDate : ''}
                                         onChange={(e) => setEndDate(e.target.value)}
                                     />
                                 </div>
                             </div>
-                            <div className="row mt-2">
-                                <div className="col d-flex flex-column">
-                                    <div className="d-flex align-items-center mt-2">
-                                        <label htmlFor="contractor" className="form-label">
+                            <div className={'row'}>
+                                <div className={'col d-flex flex-column'}>
+                                    <div className={'modal-body-text mt-3'}>
+                                        <span>*</span>
+                                        <label htmlFor={'contractor'} className={'form-label'}>
                                             시공사
                                         </label>
                                     </div>
                                     <input
-                                        type="text"
-                                        className="form-control"
-                                        id="contractor"
+                                        type={'text'}
+                                        id={'contractor'}
                                         value={projectData ? projectData.contractor : ''}
                                         disabled
                                     />
                                 </div>
-                                <div className="col d-flex flex-column">
-                                    <div className="d-flex align-items-center mt-2">
-                                        <label htmlFor="measurer" className="form-label">
+                                <div className={'col d-flex flex-column'}>
+                                    <div className={'modal-body-text mt-3'}>
+                                        <span>*</span>
+                                        <label htmlFor={'measurer'} className={'form-label'}>
                                             계측사
                                         </label>
                                     </div>
@@ -169,63 +187,53 @@ function ProjectEditModal(props) {
                                     />
                                 </div>
                             </div>
-                            <div className="d-flex align-items-center mt-2">
-                                <label className="form-label">종료여부</label>
-                            </div>
-                            <div className="d-flex gap-2">
-                                <div className="form-check form-check-inline">
-                                    <input
-                                        className="form-check-input"
-                                        type="radio"
-                                        name="status"
-                                        id="going"
-                                        checked={status === 'N'}
-                                        onChange={() => setStatus('N')}
-                                    />
-                                    <label className="form-check-label" htmlFor="going">
-                                        진행
-                                    </label>
-                                </div>
-                                <div className="form-check form-check-inline">
-                                    <input
-                                        className="form-check-input"
-                                        type="radio"
-                                        name="status"
-                                        id="finish"
-                                        checked={status === 'Y'}
-                                        onChange={() => setStatus('Y')}
-                                    />
-                                    <label className="form-check-label" htmlFor="finish">
-                                        종료
-                                    </label>
-                                </div>
-                            </div>
-                            <div className="row mt-2">
-                                <div className="col d-flex flex-column">
-                                    <div className="d-flex align-items-center mt-2">
-                                        <label htmlFor="geometryInfo" className="form-label">
-                                            지오매트리정보
+                            <div className={'row'}>
+                                <div className={'col d-flex flex-column'}>
+                                    <div className={'modal-body-text mt-3'}>
+                                        <span>*</span>
+                                        <label className={'form-label'}>
+                                            종료여부
                                         </label>
                                     </div>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        id="geometryInfo"
-                                        value={projectData ? projectData.geometry : ''}
-                                        disabled
-                                    />
+                                    <div className={'d-flex ms-4 gap-4'}>
+                                        <label className={'custom-checkbox'}>
+                                            <input
+                                                type={'checkbox'}
+                                                name={'status'}
+                                                id={'going'}
+                                                aria-label="진행 상태"
+                                                checked={status === 'N'}
+                                                onChange={() => setStatus('N')}
+                                            />
+                                            <div className={'checkbox'}></div>
+                                            진행
+                                        </label>
+                                        <label className={'custom-checkbox'}>
+                                            <input
+                                                type={'checkbox'}
+                                                name={'status'}
+                                                id={'finish'}
+                                                aria-label="종료 상태"
+                                                checked={status === 'Y'}
+                                                onChange={() => setStatus('Y')}
+                                            />
+                                            <div className={'checkbox'}></div>
+                                            종료
+                                        </label>
+                                    </div>
                                 </div>
-                                <div className="col d-flex flex-column">
-                                    <label htmlFor="workGroup" className="form-label">
-                                        작업그룹
-                                    </label>
+                                <div className={'col d-flex flex-column'}>
+                                    <div className={'modal-body-text mt-3'}>
+                                        <label htmlFor={'workGroup'} className={'form-label'}>
+                                            작업그룹
+                                        </label>
+                                    </div>
                                     <select
-                                        className="form-select"
                                         value={companyIdx}
                                         onChange={(e) => setCompanyIdx(e.target.value)}
                                         id="workGroup"
                                     >
-                                        <option value={null}>선택하세요</option>
+                                        <option>선택하세요</option>
                                         {companyList.map((item) => (
                                             <option value={item.idx} key={item.idx}>
                                                 {item.companyName}
@@ -236,21 +244,21 @@ function ProjectEditModal(props) {
                             </div>
                         </div>
                     </div>
-                    <div className="modal-footer">
+                    <div className={'modal-footer'}>
                         <button
-                            type="button"
-                            className="btn btn-outline-dark opacity-50"
-                            data-bs-dismiss="modal"
+                            type={'button'}
+                            className={'close-btn'}
+                            data-bs-dismiss={'modal'}
                             onClick={handleCloseModal}
                         >
                             Close
                         </button>
                         <button
-                            type="button"
-                            className="btn btn-success opacity-50"
+                            type={'button'}
+                            className={'confirm-btn'}
                             onClick={handleUpdateProject}
                         >
-                            프로젝트 수정
+                            수정
                         </button>
                     </div>
                 </div>

@@ -3,6 +3,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import {QRCodeCanvas} from "qrcode.react";
 import printJS from "print-js";
+import {Link} from "react-router-dom";
 
 function SectionDetailSideBar(props) {
     const {section, handleSectionUpdated, handleClose, deleteSection} = props;
@@ -46,7 +47,7 @@ function SectionDetailSideBar(props) {
         setIsOpen(true);
         // 계측기 번호 가져오기
         fetchInstrumentNumbers();
-    }, []);
+    }, [section]);
 
     const handleUpdateBtnClick = () => {
         if (!isUpdateBtn) {
@@ -260,6 +261,12 @@ function SectionDetailSideBar(props) {
                             <span className={'col-sm'}>{section.underStr}</span>
                         </div>
                         <hr/>
+                        <Link to={"/Report"}>
+                            <div>
+                                <button type={"button"} className={"btn rpBtn"}>종합분석지</button>
+                            </div>
+                        </Link>
+                        <hr/>
                         <button
                             type={'button'}
                             className={'btn qrBtn'}
@@ -279,6 +286,10 @@ function SectionDetailSideBar(props) {
             </div>
             <div className={'printSection'}>
                 <table className={'printTable'} id={'printArea'}>
+                    <colgroup>
+                        <col width={'50%'}/>
+                        <col width={'50%'}/>
+                    </colgroup>
                     <tbody>
                     {instrumentNumbers.map((instrument, index) => (
                         index % 2 === 0 && (
@@ -291,7 +302,7 @@ function SectionDetailSideBar(props) {
                                         <span className={'qrInfo'}>
                                                 {`${section.sectionName} 계측기 : ${instrumentNumbers[index].insNum}`}
                                         </span>
-                                        <QRCodeCanvas value={`Instrument Number: ${instrument.idx}`}/>
+                                        <QRCodeCanvas value={instrument.idx}/>
                                     </div>
                                 </td>
                                 {instrumentNumbers[index + 1] && (
@@ -304,7 +315,7 @@ function SectionDetailSideBar(props) {
                                                 {`${section.sectionName} 계측기 : ${instrumentNumbers[index + 1].insNum}`}
                                             </span>
                                             <QRCodeCanvas
-                                                value={`Instrument Number: ${instrumentNumbers[index + 1].idx}`}/>
+                                                value={instrumentNumbers[index + 1].idx}/>
                                         </div>
                                     </td>
                                 )}

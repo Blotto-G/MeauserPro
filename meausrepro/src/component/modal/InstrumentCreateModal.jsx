@@ -257,6 +257,8 @@ function InstrumentCreateModal(props) {
             className={`modal fade ${isOpen ? 'show d-block' : ''}`}
             id={'createInstrument'}
             tabIndex={'-1'}
+            data-bs-backdrop={'static'}
+            data-bs-keyboard={'false'}
             aria-labelledby={'csModalLabel'}
             aria-hidden={!isOpen}
             style={{display: isOpen ? 'block' : 'none'}}
