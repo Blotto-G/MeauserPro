@@ -117,6 +117,32 @@ function SectionDetailSideBar(props) {
             }
         });
     };
+
+    const [selectedFiles, setSelectedFiles] = useState([]);
+
+    // 파일 선택 핸들러
+    const handleFileSelect = (event) => {
+        const files = Array.from(event.target.files);
+        setSelectedFiles((prevFiles) => [...prevFiles, ...files]);
+    };
+
+    // 사진 추가 버튼 클릭 시 숨겨진 파일 input 요소 클릭을 트리거
+    const handleAddPhotoClick = () => {
+        document.getElementById('fileInput').click();
+    };
+
+    // 이미지 다운로드 핸들러
+    const handleDownload = (file) => {
+        const url = URL.createObjectURL(file);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = file.name; // 다운로드할 파일 이름
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url); // 메모리 해제
+    };
+
     return (
         <div className={`sectionDetailSideBar ${isOpen ? 'open' : ''}`}>
             <div className={'sideBarHeader'}>
@@ -232,6 +258,76 @@ function SectionDetailSideBar(props) {
                                 />
                             </div>
                         </div>
+                        <hr/>
+                        <div className={'d-flex flex-column'}>
+                            <span className={'fw-bold sectionSideBarText my-2'}>사진</span>
+                            <button
+                                type={'button'}
+                                className={'btn btn-outline-success mt-2'}
+                                onClick={handleAddPhotoClick}
+                            >
+                                +사진추가
+                            </button>
+                            <input
+                                type="file"
+                                id="fileInput"
+                                style={{display: 'none'}}
+                                accept="image/*"
+                                onChange={handleFileSelect}
+                            />
+                            <div className={'mt-3'}>
+                                <table className={'table text-center table-hover'} style={{verticalAlign: 'middle'}}>
+                                    <thead>
+                                    <tr>
+                                        <th style={{width: '40%'}}>파일명</th>
+                                        <th style={{width: '60%'}}>이미지 설명</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {selectedFiles.length === 0 ? (
+                                        <tr>
+                                            <td colSpan={2}>출력할 내용이 없습니다.</td>
+                                        </tr>
+                                    ) : (
+                                        selectedFiles.map((file, index) => (
+                                                <tr key={index}>
+                                                    <td>
+                                                        <input
+                                                            type="text"
+                                                            className="form-control"
+                                                            value={file.name}
+                                                            placeholder={'저장된 파일명 나타내기'}
+                                                            disabled
+                                                        />
+                                                    </td>
+                                                    <td className={'d-flex'}>
+                                                        <input
+                                                            type="text"
+                                                            className="form-control"
+                                                            placeholder={'이미지를 설명하세요'}
+                                                        />
+                                                        <button
+                                                            className={'sideBarBtn projectDelete ms-2'}
+                                                            onClick={() =>
+                                                                setSelectedFiles(selectedFiles.filter((_, i) => i !== index))
+                                                            }
+                                                        >
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                                 fill="currentColor"
+                                                                 className="bi bi-trash3" viewBox="0 0 16 16">
+                                                                <path
+                                                                    d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"
+                                                                />
+                                                            </svg>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            )
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 ) : (
                     <div className={'projectDetail'}>
@@ -281,6 +377,79 @@ function SectionDetailSideBar(props) {
                         >
                             {isLoading ? "로딩 중..." : "QR코드 일괄출력"}
                         </button>
+                        <hr/>
+                        <span className={'fw-bold sectionSideBarText mt-2'}>사진</span>
+                        <ul className={'image-preview-section mt-2 list-unstyled'}>
+                            {selectedFiles.length === 0 ? (
+                                <li>업로드된 이미지가 없습니다.</li>
+                            ) : (
+                                selectedFiles.map((file, index) => {
+                                    return (
+                                        // eslint-disable-next-line react/jsx-key
+                                        <a
+                                            onClick={() => handleDownload(file)} // 다운로드 핸들러 연결
+                                            className={'d-flex flex-column align-items-start w-100 text-center text-decoration-none text-dark ps-2 py-2 mb-2 rounded-3'}
+                                            style={{ cursor: 'pointer', background: '#f7f7f7' }} // 커서 스타일 추가
+                                        >
+                                            <li key={index} className={'image-preview d-flex align-items-start my-2'}>
+                                                <img
+                                                    id={`image-${index}`}
+                                                    src={URL.createObjectURL(file)}
+                                                    alt={file.name}
+                                                    className={'me-2'}
+                                                    style={{
+                                                        width: '50px',
+                                                        height: '35px',
+                                                        transition: 'transform 0.2s'
+                                                    }} // 미리보기 이미지 크기
+                                                />
+                                                <div className={'text-start'}>
+                                                    <span>{file.name}</span>
+                                                    <br/>
+                                                    <span>이미지 설명</span>
+                                                </div>
+                                            </li>
+                                        </a>
+                                    );
+                                    // const img = new Image();
+                                    // img.src = URL.createObjectURL(file);
+                                    // img.onload = () => {
+                                    //     const isPortrait = img.height > img.width; // 세로가 더 긴지 체크
+                                    //     if (isPortrait) {
+                                    //         document.getElementById(`image-${index}`).style.transform = 'rotate(90deg)'; // 회전 스타일 적용
+                                    //     }
+                                    // };
+                                    //
+                                    // return (
+                                    //     // eslint-disable-next-line react/jsx-key
+                                    //     <a
+                                    //         onClick={() => handleDownload(file)} // 다운로드 핸들러 연결
+                                    //         className={'d-flex flex-column align-items-center w-100 text-center text-decoration-none text-dark mb-2'}
+                                    //         style={{ cursor: 'pointer', background: '#f7f7f7' }} // 커서 스타일 추가
+                                    //     >
+                                    //         <li key={index} className={'image-preview d-flex align-items-center my-2'}>
+                                    //             <img
+                                    //                 id={`image-${index}`}
+                                    //                 src={URL.createObjectURL(file)}
+                                    //                 alt={file.name}
+                                    //                 className={'me-2'}
+                                    //                 style={{
+                                    //                     width: '50px',
+                                    //                     height: 'auto',
+                                    //                     transition: 'transform 0.2s'
+                                    //                 }} // 미리보기 이미지 크기
+                                    //             />
+                                    //             <div className={'text-start'}>
+                                    //                 <span>{file.name}</span>
+                                    //                 <br/>
+                                    //                 <span>이미지 설명</span>
+                                    //             </div>
+                                    //         </li>
+                                    //     </a>
+                                    // );
+                                })
+                            )}
+                        </ul>
                     </div>
                 )}
             </div>
