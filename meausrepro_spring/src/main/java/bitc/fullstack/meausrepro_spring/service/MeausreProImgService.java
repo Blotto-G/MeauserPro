@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MeausreProImgService {
@@ -37,9 +38,12 @@ public class MeausreProImgService {
         try {
             file.transferTo(uploadFile);
 
+            // 서버 URL 생성 (정적 경로를 통해 접근할 수 있는 URL)
+            String fileUrl = "http://localhost:8080/uploads/" + fileName;
+
             MeausreProImg img = new MeausreProImg();
             img.setSectionId(section);
-            img.setImgSrc(uploadFile.getPath());
+            img.setImgSrc(fileUrl);
             img.setImgDes(null);
 
             return meausreProImgRepository.save(img);
@@ -53,4 +57,18 @@ public class MeausreProImgService {
     public List<MeausreProImg> sectionImages(int sectionId) {
         return meausreProImgRepository.findAllBySectionId(sectionId);
     }
+
+    // 이미지 설명 수정
+    public boolean updateImgDes(MeausreProImg image) {
+        Optional<MeausreProImg> existingImgDes = meausreProImgRepository.findByIdx(image.getIdx());
+        if (existingImgDes.isPresent()) {
+            MeausreProImg updatedImgDes = existingImgDes.get();
+            updatedImgDes.setImgDes(image.getImgDes());
+            meausreProImgRepository.save(updatedImgDes);
+            return true;
+        }
+        return false;
+    }
 }
+
+
