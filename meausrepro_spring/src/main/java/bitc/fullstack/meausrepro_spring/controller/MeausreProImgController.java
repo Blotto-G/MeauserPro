@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/MeausrePro/Img")
@@ -32,5 +33,11 @@ public class MeausreProImgController {
         } else {
             return ResponseEntity.status(500).build();
         }
+    }
+
+    // 특정 구간 이미지 보기
+    @GetMapping("/section/{sectionId}")
+    public List<MeausreProImg> sectionImages(@PathVariable("sectionId") int sectionId) {
+        return meausreProImgService.sectionImages(sectionId);
     }
 }

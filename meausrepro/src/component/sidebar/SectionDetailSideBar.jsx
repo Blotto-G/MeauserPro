@@ -120,10 +120,14 @@ function SectionDetailSideBar(props) {
 
     const [selectedFiles, setSelectedFiles] = useState([]);
 
-    // 파일 선택 핸들러
     const handleFileSelect = (event) => {
         const files = Array.from(event.target.files);
         setSelectedFiles((prevFiles) => [...prevFiles, ...files]);
+
+        // 선택한 파일이 있으면 업로드 함수 호출
+        if (files.length > 0) {
+            handleSectionUpdateWithImage(files[0]); // 첫 번째 파일을 업로드
+        }
     };
 
     // 사진 추가 버튼 클릭 시 숨겨진 파일 input 요소 클릭을 트리거
@@ -142,6 +146,73 @@ function SectionDetailSideBar(props) {
         document.body.removeChild(a);
         URL.revokeObjectURL(url); // 메모리 해제
     };
+
+    const handleSectionUpdateWithImage = (file) => {
+        const formData = new FormData();
+
+        formData.append('file', file);
+
+        const sectionId = section.idx;
+
+        // 이미지 업로드
+        axios.post(`http://localhost:8080/MeausrePro/Img/upload/${sectionId}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+            .then(response => {
+                // 이미지 업로드 성공 후, 응답을 확인합니다.
+                console.log('Image uploaded:', response.data);
+
+                // // 이미지 업로드 후, 구간 수정 요청
+                // return axios.put(`http://localhost:8080/MeausrePro/Section/update`, {
+                //     idx: section.idx,
+                //     projectId: section.projectId,
+                //     sectionName: sectionName,
+                //     sectionSta: sectionSta,
+                //     wallStr: wallStr,
+                //     rearTarget: rearTarget,
+                //     underStr: underStr,
+                //     groundStr: groundStr,
+                //     repImg: response.data // 업로드된 이미지 정보
+                // });
+            })
+            // .then(res => {
+            //     console.log('Section updated:', res);
+            //     setIsUpdateBtn(!isUpdateBtn);
+            //     const updatedSection = {
+            //         ...section,
+            //         sectionName,
+            //         sectionSta,
+            //         wallStr,
+            //         groundStr,
+            //         rearTarget,
+            //         underStr
+            //     };
+            //     handleSectionUpdated(updatedSection);
+            // })
+            .catch(err => {
+                console.log(err);
+            });
+    };
+
+    const [imageList, setImageList] = useState([]);
+
+    const sectionImageList = () => {
+        if (section) {
+            axios.get(`http://localhost:8080/MeausrePro/Img/section/${section.idx}`)
+                .then((res) => {
+                    setImageList(res.data); // 구간 목록 업데이트
+                })
+                .catch(err => {
+                    console.error('구간 이미지 업데이트 중 오류 발생:', err);
+                });
+        }
+    }
+
+    useEffect(() => {
+        sectionImageList();
+    }, [section]); // section이 변경될 때마다 호출
 
     return (
         <div className={`sectionDetailSideBar ${isOpen ? 'open' : ''}`}>
@@ -380,75 +451,81 @@ function SectionDetailSideBar(props) {
                         <hr/>
                         <span className={'fw-bold sectionSideBarText mt-2'}>사진</span>
                         <ul className={'image-preview-section mt-2 list-unstyled'}>
-                            {selectedFiles.length === 0 ? (
+                            {imageList.length === 0 ? (
                                 <li>업로드된 이미지가 없습니다.</li>
                             ) : (
-                                selectedFiles.map((file, index) => {
+                                imageList.map((image, index) => {
                                     return (
-                                        // eslint-disable-next-line react/jsx-key
-                                        <a
-                                            onClick={() => handleDownload(file)} // 다운로드 핸들러 연결
-                                            className={'d-flex flex-column align-items-start w-100 text-center text-decoration-none text-dark ps-2 py-2 mb-2 rounded-3'}
-                                            style={{ cursor: 'pointer', background: '#f7f7f7' }} // 커서 스타일 추가
-                                        >
-                                            <li key={index} className={'image-preview d-flex align-items-start my-2'}>
-                                                <img
-                                                    id={`image-${index}`}
-                                                    src={URL.createObjectURL(file)}
-                                                    alt={file.name}
-                                                    className={'me-2'}
-                                                    style={{
-                                                        width: '50px',
-                                                        height: '35px',
-                                                        transition: 'transform 0.2s'
-                                                    }} // 미리보기 이미지 크기
-                                                />
-                                                <div className={'text-start'}>
-                                                    <span>{file.name}</span>
-                                                    <br/>
-                                                    <span>이미지 설명</span>
-                                                </div>
-                                            </li>
-                                        </a>
-                                    );
-                                    // const img = new Image();
-                                    // img.src = URL.createObjectURL(file);
-                                    // img.onload = () => {
-                                    //     const isPortrait = img.height > img.width; // 세로가 더 긴지 체크
-                                    //     if (isPortrait) {
-                                    //         document.getElementById(`image-${index}`).style.transform = 'rotate(90deg)'; // 회전 스타일 적용
-                                    //     }
-                                    // };
-                                    //
-                                    // return (
-                                    //     // eslint-disable-next-line react/jsx-key
-                                    //     <a
-                                    //         onClick={() => handleDownload(file)} // 다운로드 핸들러 연결
-                                    //         className={'d-flex flex-column align-items-center w-100 text-center text-decoration-none text-dark mb-2'}
-                                    //         style={{ cursor: 'pointer', background: '#f7f7f7' }} // 커서 스타일 추가
-                                    //     >
-                                    //         <li key={index} className={'image-preview d-flex align-items-center my-2'}>
-                                    //             <img
-                                    //                 id={`image-${index}`}
-                                    //                 src={URL.createObjectURL(file)}
-                                    //                 alt={file.name}
-                                    //                 className={'me-2'}
-                                    //                 style={{
-                                    //                     width: '50px',
-                                    //                     height: 'auto',
-                                    //                     transition: 'transform 0.2s'
-                                    //                 }} // 미리보기 이미지 크기
-                                    //             />
-                                    //             <div className={'text-start'}>
-                                    //                 <span>{file.name}</span>
-                                    //                 <br/>
-                                    //                 <span>이미지 설명</span>
-                                    //             </div>
-                                    //         </li>
-                                    //     </a>
-                                    // );
-                                })
-                            )}
+                                        <div key={image.idx}>
+                                            <span>{image.imgDes}</span>
+                                        </div>
+                                    )
+                                }))
+                                // selectedFiles.map((file, index) => {
+                                //     return (
+                                //         // eslint-disable-next-line react/jsx-key
+                                //         <a
+                                //             onClick={() => handleDownload(file)} // 다운로드 핸들러 연결
+                                //             className={'d-flex flex-column align-items-start w-100 text-center text-decoration-none text-dark ps-2 py-2 mb-2 rounded-3'}
+                                //             style={{ cursor: 'pointer', background: '#f7f7f7' }} // 커서 스타일 추가
+                                //         >
+                                //             <li key={index} className={'image-preview d-flex align-items-start my-2'}>
+                                //                 <img
+                                //                     id={`image-${index}`}
+                                //                     src={URL.createObjectURL(file)}
+                                //                     alt={file.name}
+                                //                     className={'me-2'}
+                                //                     style={{
+                                //                         width: '50px',
+                                //                         height: '35px',
+                                //                         transition: 'transform 0.2s'
+                                //                     }} // 미리보기 이미지 크기
+                                //                 />
+                                //                 <div className={'text-start'}>
+                                //                     <span>{file.name}</span>
+                                //                     <br/>
+                                //                     <span>이미지 설명</span>
+                                //                 </div>
+                                //             </li>
+                                //         </a>
+                                //     );
+                                // const img = new Image();
+                                // img.src = URL.createObjectURL(file);
+                                // img.onload = () => {
+                                //     const isPortrait = img.height > img.width; // 세로가 더 긴지 체크
+                                //     if (isPortrait) {
+                                //         document.getElementById(`image-${index}`).style.transform = 'rotate(90deg)'; // 회전 스타일 적용
+                                //     }
+                                // };
+                                //
+                                // return (
+                                //     // eslint-disable-next-line react/jsx-key
+                                //     <a
+                                //         onClick={() => handleDownload(file)} // 다운로드 핸들러 연결
+                                //         className={'d-flex flex-column align-items-center w-100 text-center text-decoration-none text-dark mb-2'}
+                                //         style={{ cursor: 'pointer', background: '#f7f7f7' }} // 커서 스타일 추가
+                                //     >
+                                //         <li key={index} className={'image-preview d-flex align-items-center my-2'}>
+                                //             <img
+                                //                 id={`image-${index}`}
+                                //                 src={URL.createObjectURL(file)}
+                                //                 alt={file.name}
+                                //                 className={'me-2'}
+                                //                 style={{
+                                //                     width: '50px',
+                                //                     height: 'auto',
+                                //                     transition: 'transform 0.2s'
+                                //                 }} // 미리보기 이미지 크기
+                                //             />
+                                //             <div className={'text-start'}>
+                                //                 <span>{file.name}</span>
+                                //                 <br/>
+                                //                 <span>이미지 설명</span>
+                                //             </div>
+                                //         </li>
+                                //     </a>
+                                // );
+                            }
                         </ul>
                     </div>
                 )}
