@@ -1,5 +1,6 @@
 package bitc.fullstack.meausrepro_spring.controller;
 
+import bitc.fullstack.meausrepro_spring.model.MeausreProCompany;
 import bitc.fullstack.meausrepro_spring.model.MeausreProUser;
 import bitc.fullstack.meausrepro_spring.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,11 @@ public class UserController {
         if (user.isPresent()) {
             if (Objects.equals(user.get().getRole(), "0")) {
                 if (user.get().getPass().equals(loginUser.getPass())) {
+                    // 작업그룹 상태 확인
+                    MeausreProCompany company = user.get().getCompanyIdx(); // 사용자의 소속 작업그룹 정보 가져오기
+                    if (company != null && company.getCompanyIng() == 'N') {
+                        throw new IllegalArgumentException("작업그룹이 비활성화된 상태입니다. 로그인할 수 없습니다.");
+                    }
                     return user.get();
                 }
                 else {

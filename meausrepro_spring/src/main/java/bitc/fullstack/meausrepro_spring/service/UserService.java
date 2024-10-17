@@ -1,5 +1,6 @@
 package bitc.fullstack.meausrepro_spring.service;
 
+import bitc.fullstack.meausrepro_spring.model.MeausreProSection;
 import bitc.fullstack.meausrepro_spring.model.MeausreProUser;
 import bitc.fullstack.meausrepro_spring.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +45,26 @@ public class UserService {
         return user != null && user.getPass().equals(password);
     }
 
+
+    // 특정 작업그룹 사용자 보기
+    public List<MeausreProUser> companyUsers(int companyIdx) {
+        return userRepository.findAllByCompanyIdx(companyIdx);
+    }
+
     // 회원정보 수정 시 필요
     public Optional<MeausreProUser> findByIdx(int idx) {
         return userRepository.findByIdx(idx);
     }
+
+    // 구간 삭제
+    public boolean deleteUser(int idx) {
+        Optional<MeausreProUser> user = userRepository.findById(String.valueOf(idx));
+        if (user.isPresent()) {
+            userRepository.deleteById(String.valueOf(idx));
+            return true;
+        }
+        return false;
+    }
 }
+
+

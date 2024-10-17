@@ -4,6 +4,8 @@ import {useNavigate} from "react-router";
 import axios from "axios";
 import CustomSidebar from "../component/sidebar/CustomSidebar.jsx";
 import CompanyModal from "../component/modal/CompanyModal.jsx";
+import CompanyUpdateModal from "../component/modal/CompanyUpdateModal.jsx";
+import Swal from "sweetalert2";
 
 function GroupManagement() {
     const { user } = useContext(UserContext);
@@ -42,6 +44,66 @@ function GroupManagement() {
             })
     }
 
+    // 작업그룹 수정 모달창
+    const [isCompanyUpdateModal, setIsCompanyUpdateModal] = useState(false);
+    const [companyToEdit, setCompanyToEdit] = useState(null); // 수정할 작업그룹 정보를 저장하는 상태
+
+    // 작업그룹 수정 모달창 열기
+    const openCompanyUpdateModal = (company) => {
+        setCompanyToEdit(company);
+        setIsCompanyUpdateModal(true);
+    };
+
+    // 작업그룹 수정 모달창 닫기
+    const closeCompanyUpdateModal = () => {
+        setIsCompanyUpdateModal(false);
+        setCompanyToEdit(null); // 닫을 때 선택된 사용자 정보 초기화
+    };
+
+    // 작업그룹 사용여부 토글
+    const toggleCompanyStatus = (index) => {
+        const updatedCompanyList = [...companyList];
+        updatedCompanyList[index].companyIng =
+            updatedCompanyList[index].companyIng === "Y" ? "N" : "Y";
+        setCompanyList(updatedCompanyList);
+
+        axios
+            .put(
+                `http://localhost:8080/MeausrePro/Company/update/${updatedCompanyList[index].idx}`,
+                updatedCompanyList[index]
+            )
+            .then((res) => {
+                console.log(res.data)
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+
+    // 작업그룹 삭제
+    const handleDelete = (idx) => {
+        Swal.fire({
+            title: '작업그룹 삭제',
+            text: "작업그룹을 삭제하시겠습니까?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: '삭제',
+            cancelButtonText: '취소'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.delete(`http://localhost:8080/MeausrePro/Company/delete/${idx}`)
+                    .then(() => {
+                        alert("작업그룹이 삭제되었습니다.");
+                        setCompanyList(companyList.filter((company) => company.idx !== idx));
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+            }
+        });
+    };
+
+
     return (
         <div className={'d-flex vh-100'}>
             <CustomSidebar topManager={user.topManager}/>
@@ -78,9 +140,14 @@ function GroupManagement() {
                                         <tr key={index}>
                                             <td>{item.company}</td>
                                             <td>{item.companyName}</td>
-                                            <td>{item.companyIng}</td>
+                                            <td className={'d-flex justify-content-center'}>
+                                                <div className={'form-check form-switch'}>
+                                                    <input type="checkbox" className={'form-check-input'} checked={item.companyIng === 'Y'} onChange={() => toggleCompanyStatus(index)}/>
+                                                </div>
+
+                                            </td>
                                             <td>
-                                                <button type={'button'} className={'projectUpdate sideBarBtn'}>
+                                                <button type={'button'} className={'projectUpdate sideBarBtn'} onClick={() => openCompanyUpdateModal(item)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                                          fill="currentColor" className="bi bi-pencil-square"
                                                          viewBox="0 0 16 16">
@@ -92,7 +159,7 @@ function GroupManagement() {
                                                 </button>
                                             </td>
                                             <td>
-                                                <button type={'button'} className={'sideBarBtn projectDelete'}>
+                                                <button type={'button'} className={'sideBarBtn projectDelete'} onClick={() => handleDelete(item.idx)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                                          fill="currentColor"
                                                          className="bi bi-trash3" viewBox="0 0 16 16">
@@ -111,7 +178,14 @@ function GroupManagement() {
                         <CompanyModal
                             isOpen={isCompanyModal}
                             closeModal={closeCompanyModal}
-                            selectCompany={selectCompany}/>
+                            selectCompany={selectCompany}
+                        />
+                        <CompanyUpdateModal
+                            isOpen={isCompanyUpdateModal}
+                            closeModal={closeCompanyUpdateModal}
+                            selectCompany={selectCompany}
+                            companyInfo={companyToEdit}
+                        />
                     </div>
                 </div>
             </div>

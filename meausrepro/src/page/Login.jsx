@@ -25,7 +25,7 @@ function Login() {
             return;
         }
 
-        axios.post(`http://localhost:8080/MeausrePro/User/login`, {
+        axios.post(`http://localhost:8080/MeausrePro/User/webLogin`, {
             idx: 1,
             id: id,
             pass: pass,
