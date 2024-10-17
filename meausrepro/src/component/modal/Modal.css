@@ -1,126 +1,147 @@
-/*!* modal-header *!*/
-/*.modal-header {*/
-/*    border: none;*/
-/*}*/
-/*.modal-title {*/
-/*    font-size: 1.4rem;*/
-/*    font-weight: bold;*/
-/*}*/
-/*.modal-info {*/
-/*    font-size: 1rem;*/
-/*    color: #797979;*/
-/*}*/
-/*.modal-header-text {*/
-/*    display: flex;*/
-/*    flex-direction: column;*/
-/*}*/
-/*!* modal-body *!*/
-/*.modal-body {*/
-/*    display: flex;*/
-/*    flex-direction: column;*/
-/*    gap: 0;*/
-/*}*/
-/*.modal-body-text {*/
-/*    display: flex;*/
-/*    align-items: center;*/
-/*    gap: 0.1rem;*/
-/*}*/
-/*.modal-body-text label {*/
-/*    color: #606060;*/
-/*    font-size: 0.94rem;*/
-/*}*/
-/*.modal-body-text span {*/
-/*    color: #fd5252;*/
-/*    font-size: 0.9rem;*/
-/*}*/
-/*.modal-body input,*/
-/*.modal-body select{*/
-/*    border-radius: 0.5rem;*/
-/*    border: 1px solid #b4b4b4;*/
-/*    padding: 0.5rem;*/
-/*    font-size: 0.95rem;*/
-/*    transition: border 0.4s ease;*/
-/*}*/
-/*.modal-body select {*/
-/*    padding-left: 0;*/
-/*    padding-right: 0;*/
-/*}*/
-/*.modal-body select:focus,*/
-/*.modal-body input:focus {*/
-/*    outline: none;*/
-/*    border: 1px solid #95c784;*/
-/*}*/
-/*.modal-body option {*/
-/*    background-color: #ffffff;*/
-/*    border: 1px solid #c4c4c4;*/
-/*    font-size: 0.95rem;*/
-/*    transition: all 0.5s ease;*/
-/*}*/
-/*.modal-body option:hover {*/
-/*    background-color: #aae0af;*/
-/*}*/
-/*.modal-body input:read-only {*/
-/*    background-color: rgb(246, 246, 246);*/
-/*    color: #6e6e6e;*/
-/*}*/
-/*input[type="checkbox"] {*/
-/*    display: none;*/
-/*}*/
-/*!* 체크박스를 대신할 사용자 정의 스타일 *!*/
-/*.custom-checkbox {*/
-/*    display: flex;*/
-/*    align-items: center;*/
-/*    cursor: pointer;*/
-/*}*/
-/*.custom-checkbox .checkbox {*/
-/*    width: 1rem;*/
-/*    height: 1rem;*/
-/*    border: 1px solid #c4c4c4;*/
-/*    border-radius: 0.2rem;*/
-/*    margin-right: 0.5rem;*/
-/*    position: relative;*/
-/*}*/
-/*.custom-checkbox input[type="checkbox"]:checked + .checkbox {*/
-/*    background-color: #95c784;*/
-/*}*/
+/* modal-header */
+.modal-header {
+    border: none;
+}
+.modal-title {
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+.modal-info {
+    font-size: 1rem;
+    color: #797979;
+}
+.modal-header-text {
+    display: flex;
+    flex-direction: column;
+}
+/* modal-body */
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+.modal-body-text {
+    display: flex;
+    align-items: center;
+    gap: 0.1rem;
+}
+.modal-body-text label {
+    color: #606060;
+    font-size: 0.94rem;
+}
+.modal-body-text span {
+    color: #fd5252;
+    font-size: 0.9rem;
+}
+.modal-body input,
+.modal-body select{
+    border-radius: 0.5rem;
+    border: 1px solid #b4b4b4;
+    padding: 0.5rem;
+    font-size: 0.95rem;
+    transition: border 0.4s ease;
+}
+.modal-body select {
+    padding-left: 0;
+    padding-right: 0;
+}
+.modal-body select:focus,
+.modal-body input:focus {
+    outline: none;
+    border: 1px solid #95c784;
+}
+.modal-body option {
+    background-color: #ffffff;
+    border: 1px solid #c4c4c4;
+    font-size: 0.95rem;
+    transition: all 0.5s ease;
+}
+.modal-body option:hover {
+    background-color: #aae0af;
+}
+.modal-body input:read-only {
+    background-color: rgb(246, 246, 246);
+    color: #6e6e6e;
+}
+input[type="checkbox"] {
+    display: none;
+}
+.loginGrid {
+    display: flex;
+    flex-direction: column;
+}
+.loginGrid .form-select,
+.loginGrid .form-control {
+    border-radius: 0.5rem;
+    border: 1px solid #b4b4b4;
+    padding: 0.5rem;
+    font-size: 0.95rem;
+}
+.loginGrid .form-select:focus,
+.loginGrid .form-control:focus {
+    outline: none;
+    border: 1px solid #95c784;
+    box-shadow: none;
+}
+.modal-login-error {
+    margin-left: 1rem;
+    font-size: 0.8rem;
+}
+/* 체크박스를 대신할 사용자 정의 스타일 */
+.custom-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+.custom-checkbox .checkbox {
+    width: 1rem;
+    height: 1rem;
+    border: 1px solid #c4c4c4;
+    border-radius: 0.2rem;
+    margin-right: 0.5rem;
+    position: relative;
+}
+.custom-checkbox input[type="checkbox"]:checked + .checkbox {
+    background-color: #95c784;
+}
 
-/*.custom-checkbox input[type="checkbox"]:checked + .checkbox::after {*/
-/*    content: '✓';*/
-/*    color: white;*/
-/*    position: absolute;*/
-/*    top: 50%;*/
-/*    left: 50%;*/
-/*    transform: translate(-50%, -50%);*/
-/*    font-size: 8px;*/
-/*}*/
-/*!* modal-footer *!*/
-/*.modal-footer {*/
-/*    border: none;*/
-/*    margin-top: 1rem;*/
-/*    display: flex;*/
-/*    align-items: center;*/
-/*    gap: 0.1rem;*/
-/*}*/
-/*button {*/
-/*    border: none;*/
-/*    outline: none;*/
-/*    background-color: transparent;*/
-/*    transition: all 0.5s ease;*/
-/*    font-size: 1rem;*/
-/*    padding: 0.5rem 1rem;*/
-/*    border-radius: 0.3rem;*/
-/*}*/
-/*.confirm-btn {*/
-/*    color: #262626;*/
-/*}*/
-/*.confirm-btn:hover {*/
-/*    background-color: rgba(166, 200, 170, 0.6);*/
-/*    color: #6a916e;*/
-/*}*/
-/*.close-btn {*/
-/*    color: #919191;*/
-/*}*/
-/*.close-btn:hover {*/
-/*    background-color: rgba(222, 222, 222, 0.6);*/
-/*    color: #7e7e7e;*/
-/*}*/
+.custom-checkbox input[type="checkbox"]:checked + .checkbox::after {
+    content: '✓';
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 8px;
+}
+/* modal-footer */
+.modal-footer {
+    border: none;
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.1rem;
+}
+.modal-content button {
+    border: none;
+    outline: none;
+    background-color: transparent;
+    transition: all 0.5s ease;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.3rem;
+}
+.confirm-btn {
+    color: #262626;
+}
+.confirm-btn:hover {
+    background-color: rgba(69, 153, 124, 0.71);
+    color: rgba(255, 255, 255, 0.68);
+}
+.close-btn {
+    color: #919191;
+}
+.close-btn:hover {
+    background-color: rgba(222, 222, 222, 0.6);
+    color: #7e7e7e;
+}

@@ -4,6 +4,8 @@ import Swal from "sweetalert2";
 import {QRCodeCanvas} from "qrcode.react";
 import printJS from "print-js";
 import {Link} from "react-router-dom";
+import './Sidebar.css'
+import {useNavigate} from "react-router";
 
 function SectionDetailSideBar(props) {
     const {section, handleSectionUpdated, handleClose, deleteSection} = props;
@@ -117,18 +119,24 @@ function SectionDetailSideBar(props) {
             }
         });
     };
+
+    // 종합 분석지 이동
+    const navigate = useNavigate()
+    const PageMove = () => {
+        navigate('/Report')
+    }
     return (
         <div className={`sectionDetailSideBar ${isOpen ? 'open' : ''}`}>
             <div className={'sideBarHeader'}>
-                <span className={'fw-bold sectionSideBarTitle'}>구간 기본정보</span>
-                <div className={'d-flex gap-2'}>
+                <span className={'projectInfoTitle'}>구간 기본정보</span>
+                <div className={'iconBtnSection'}>
                     <button
                         type={'button'}
                         onClick={handleUpdateBtnClick}
-                        className={'sideBarBtn projectUpdate'}
+                        className={'iconBtn iconBtnGreen'}
                     >
                         {isUpdateBtn ? (
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
                                  className="bi bi-floppy2-fill" viewBox="0 0 16 16">
                                 <path d="M12 2h-2v3h2z"/>
                                 <path
@@ -146,7 +154,7 @@ function SectionDetailSideBar(props) {
                         )}
                     </button>
                     <button
-                        className={'sideBarBtn projectDelete'}
+                        className={'iconBtn iconBtnRed'}
                         onClick={handleDeleteClick}
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -157,7 +165,7 @@ function SectionDetailSideBar(props) {
                         </svg>
                     </button>
                     <button
-                        className={'sideBarBtn'}
+                        className={'sideBarCloseBtn iconBtn'}
                         onClick={handleCloseClick}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor"
                              className="bi bi-x" viewBox="0 0 16 16">
@@ -167,109 +175,122 @@ function SectionDetailSideBar(props) {
                     </button>
                 </div>
             </div>
-            <div className={'d-flex flex-column gap-2'}>
-                {isUpdateBtn ? (
-                    <div className={'projectDetail'}>
-                        <div className={'row'}>
-                            <div className={'col-sm d-flex flex-column gap-1'}>
-                                <span className={'text-muted small'}>구간명</span>
-                                <input
-                                    type={'text'}
-                                    className={'form-control'}
-                                    value={sectionName}
-                                    onChange={(e) => setSectionName(e.target.value)}
-                                />
-                            </div>
-                            <div className={'col-sm d-flex flex-column gap-1'}>
-                                <span className={'text-muted small'}>구간위치(STA)</span>
-                                <input
-                                    type={'text'}
-                                    className={'form-control'}
-                                    value={sectionSta}
-                                    onChange={(e) => setSectionSta(e.target.value)}
-                                />
-                            </div>
+            {isUpdateBtn ? (
+                <div className={'projectInfoContent'}>
+                    <div className={'row'}>
+                        <div className={'col-sm d-flex flex-column gap-1'}>
+                            <span className={'text-muted small'}>구간명</span>
+                            <input
+                                type={'text'}
+                                className={'form-control'}
+                                value={sectionName}
+                                onChange={(e) => setSectionName(e.target.value)}
+                            />
                         </div>
-                        <div className={'row'}>
-                            <div className={'col-sm d-flex flex-column gap-1'}>
-                                <span className={'text-muted small'}>벽체공</span>
-                                <input
-                                    type={'text'}
-                                    className={'form-control'}
-                                    value={wallStr}
-                                    onChange={(e) => setWallStr(e.target.value)}
-                                />
-                            </div>
-                            <div className={'col-sm d-flex flex-column gap-1'}>
-                                <span className={'text-muted small'}>지지공</span>
-                                <input
-                                    type={'text'}
-                                    className={'form-control'}
-                                    value={groundStr}
-                                    onChange={(e) => setGroundStr(e.target.value)}
-                                />
-                            </div>
-                        </div>
-                        <div className={'row'}>
-                            <div className={'col-sm d-flex flex-column gap-1'}>
-                                <span className={'text-muted small'}>주요관리대상물배면</span>
-                                <input
-                                    type={'text'}
-                                    className={'form-control'}
-                                    value={rearTarget}
-                                    onChange={(e) => setRearTarget(e.target.value)}
-                                />
-                            </div>
-                        </div>
-                        <div className={'row'}>
-                            <div className={'col-sm d-flex flex-column gap-1'}>
-                                <span className={'text-muted small'}>주요관리대상물도로하부</span>
-                                <input
-                                    type={'text'}
-                                    className={'form-control'}
-                                    value={underStr}
-                                    onChange={(e) => setUnderStr(e.target.value)}
-                                />
-                            </div>
+                        <div className={'col-sm d-flex flex-column gap-1'}>
+                            <span className={'text-muted small'}>구간위치(STA)</span>
+                            <input
+                                type={'text'}
+                                className={'form-control'}
+                                value={sectionSta}
+                                onChange={(e) => setSectionSta(e.target.value)}
+                            />
                         </div>
                     </div>
-                ) : (
-                    <div className={'projectDetail'}>
-                        <span className={'fw-bold sectionSideBarText my-2'}>속성</span>
+                    <div className={'row mt-2'}>
+                        <div className={'col-sm d-flex flex-column gap-1'}>
+                            <span className={'text-muted small'}>벽체공</span>
+                            <input
+                                type={'text'}
+                                className={'form-control'}
+                                value={wallStr}
+                                onChange={(e) => setWallStr(e.target.value)}
+                            />
+                        </div>
+                        <div className={'col-sm d-flex flex-column gap-1'}>
+                            <span className={'text-muted small'}>지지공</span>
+                            <input
+                                type={'text'}
+                                className={'form-control'}
+                                value={groundStr}
+                                onChange={(e) => setGroundStr(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                    <div className={'row mt-2'}>
+                        <div className={'col-sm d-flex flex-column gap-1'}>
+                            <span className={'text-muted small'}>주요관리대상물배면</span>
+                            <input
+                                type={'text'}
+                                className={'form-control'}
+                                value={rearTarget}
+                                onChange={(e) => setRearTarget(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                    <div className={'row mt-2'}>
+                        <div className={'col-sm d-flex flex-column gap-1'}>
+                            <span className={'text-muted small'}>주요관리대상물도로하부</span>
+                            <input
+                                type={'text'}
+                                className={'form-control'}
+                                value={underStr}
+                                onChange={(e) => setUnderStr(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                <div className={'projectInfoSection'}>
+                    <div className={'projectInfoHeader'}>
+                        <span className={'projectInfoTitle'}>속성</span>
+                    </div>
+                    <div className={'projectInfoContent mt-3'}>
                         <div className={'row align-items-center'}>
                             <span className={'text-muted small col-sm-5'}>구간명</span>
-                            <span className={'col-sm'}>{section.sectionName}</span>
+                            <span className={'col-sm m-0 projectInfoContentTxt'}>
+                                {section.sectionName}
+                            </span>
                         </div>
-                        <div className={'row align-items-center'}>
+                        <div className={'row align-items-center mt-2'}>
                             <span className={'text-muted small col-sm-5'}>구간위치(STA)</span>
-                            <span className={'col-sm'}>{section.sectionSta}</span>
+                            <span className={'col-sm m-0 projectInfoContentTxt'}>
+                                {section.sectionSta}
+                            </span>
                         </div>
-                        <div className={'row align-items-center'}>
+                        <div className={'row align-items-center mt-2'}>
                             <span className={'text-muted small col-sm-5'}>벽체공</span>
-                            <span className={'col-sm'}>{section.wallStr}</span>
+                            <span className={'col-sm m-0 projectInfoContentTxt'}>
+                                {section.wallStr}
+                            </span>
                         </div>
-                        <div className={'row align-items-center'}>
+                        <div className={'row align-items-center mt-2'}>
                             <span className={'text-muted small col-sm-5'}>지지공</span>
-                            <span className={'col-sm'}>{section.groundStr}</span>
+                            <span className={'col-sm m-0 projectInfoContentTxt'}>
+                                {section.groundStr}
+                            </span>
                         </div>
-                        <div className={'row align-items-center'}>
+                        <div className={'row align-items-center mt-2'}>
                             <span className={'text-muted small col-sm-5'}>주요관리대상물배면</span>
-                            <span className={'col-sm'}>{section.rearTarget}</span>
+                            <span className={'col-sm m-0 projectInfoContentTxt'}>
+                                {section.rearTarget}
+                            </span>
                         </div>
-                        <div className={'row align-items-center'}>
+                        <div className={'row align-items-center mt-2'}>
                             <span className={'text-muted small col-sm-5'}>주요관리대상물도로하부</span>
-                            <span className={'col-sm'}>{section.underStr}</span>
+                            <span className={'col-sm m-0 projectInfoContentTxt'}>{section.underStr}</span>
                         </div>
-                        <hr/>
-                        <Link to={"/Report"}>
-                            <div>
-                                <button type={"button"} className={"btn rpBtn"}>종합분석지</button>
-                            </div>
-                        </Link>
-                        <hr/>
+                    </div>
+                    <div className={'projectInfoHeader'}>
+                        <span className={'projectInfoTitle mt-4'}>출력</span>
+                    </div>
+                    <div className={'projectInfoContent mt-3'}>
+                        <button type={'button'} onClick={PageMove} className={'whiteBtn'}>
+                            종합분석지
+                        </button>
                         <button
                             type={'button'}
-                            className={'btn qrBtn'}
+                            className={'whiteBtn mt-2'}
                             onClick={() => printJS({
                                 printable: 'printArea',
                                 type: 'html',
@@ -282,8 +303,8 @@ function SectionDetailSideBar(props) {
                             {isLoading ? "로딩 중..." : "QR코드 일괄출력"}
                         </button>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
             <div className={'printSection'}>
                 <table className={'printTable'} id={'printArea'}>
                     <colgroup>
@@ -295,7 +316,7 @@ function SectionDetailSideBar(props) {
                         index % 2 === 0 && (
                             <tr key={index} className={index % 4 === 0 && index !== 0 ? 'page-break' : ''}>
                                 <td>
-                                    <div className={'qrContainer'}>
+                                <div className={'qrContainer'}>
                                         <span className={'qrTitle'}>
                                                 {section.projectId.siteName}
                                         </span>

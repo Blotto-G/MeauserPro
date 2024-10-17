@@ -10,6 +10,13 @@
   font-weight: 400;
   font-style: normal;
 }
+@font-face {
+  font-family: 'HakgyoansimWoojuR';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2307-2@1.0/HakgyoansimWoojuR.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
 body {
   -webkit-user-select:none;
   -moz-user-select:none;
@@ -27,8 +34,8 @@ body {
 .signUpBtn,
 .greenBtn,
 .backGreenBtn:hover{
-  background-color: #96C885FF;
-  border: 1px solid #96C885FF;
+  background-color: #45997c;
+  border: 1px solid #45997c;
   color: white;
 }
 
@@ -36,8 +43,8 @@ body {
 .backGreenBtn,
 .greenBtn:hover {
   background-color: transparent;
-  border: 1px solid #96C885FF;
-  color: #96C885FF;
+  border: 1px solid #45997c;
+  color: #45997c;
 }
 /* header */
 .header {
@@ -118,50 +125,6 @@ body {
   padding: 0.7em;
   transition: all 0.3s ease;
 }
-/* customSideBar */
-.customSideBar {
-  background-color: white;
-  width: 230px;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  border-right: 1px solid #c4c4c4;
-  z-index: 2;
-}
-.customSideBarList {
-  display: flex;
-  flex-direction: column;
-  padding-top: 1em;
-}
-.customSideBarLink {
-  font-family: 'SUITE-Regular';
-  display: flex;
-  gap: 1em;
-  padding: 1em;
-  align-items: center;
-  text-decoration: none;
-  color: #88bf8c;
-  transition: all 0.4s ease;
-}
-.customSideBarLink.active {
-  background-color: #96C885FF;
-  color: white;
-}
-.customSideBarLink:hover {
-  background-color: #96C885FF;
-  color: white;
-}
-.customSideBarBtn {
-  border: 1px solid #96C885FF;
-  background-color: transparent;
-  color: #96C885FF;
-  transition: all 0.3s ease;
-}
-.customSideBarBtn:hover {
-  background-color: #96C885FF;
-  color: white;
-}
 /* 드롭다운 기본 상태: 최대 높이 0 */
 .dpContent {
   width: 100%;
@@ -177,134 +140,6 @@ body {
 }
 .dpContent .customSideBarLink.active {
   background-color: #d1e8cb;
-}
-/* mainSideBar */
-.sideBarWrapper {
-  display: flex;
-  position: relative;
-}
-.sideBar,
-.sectionDetailSideBar,
-.insDetailSideBar{
-  width: 280px;
-  padding: 1.5em 0em;
-  background-color: white;
-  border-right: 1px solid #c4c4c4;
-  transition: all 0.4s ease;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5em;
-}
-.sideBar {
-  height: 100vh;
-  position: relative;
-  z-index: 3;
-}
-.sectionDetailSideBar {
-  position: absolute;
-  padding: 2em 0em;
-  left: 100%;
-  top: 0;
-  bottom: 0;
-  transform: translateX(-100%);
-  opacity: 0;
-  z-index: 2;
-}
-.sectionDetailSideBar.open {
-  opacity: 1;
-  transform: translateX(0);
-}
-.sideBarHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.5em 1em;
-}
-.sideBarContent {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.sideBarProjectList {
-  list-style-type: none;
-  padding: 0em;
-}
-.projectItem {
-  border: none;
-  width: 100%;
-  text-align: left;
-  background-color: transparent;
-  color: #252525;
-  transition: all 0.4s ease;
-}
-.projectNameSection {
-  padding: 1em 1.5em;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.projectItem.selected,
-.projectItem:hover,
-.projectBtn{
-  background-color: #96C885FF;
-  color: white;
-}
-.projectItem .insCreateBtn {
-  border-radius: 1.2em;
-  border: 1px solid #72ac5a;
-  background-color: #72ac5a;
-  color: #ffffff;
-  font-size: 0.7em;
-  transition: all 0.5s ease;
-  padding: 0.5em 0.8em;
-}
-.projectItem:hover .insCreateBtn:hover,
-.projectItem.selected .insCreateBtn:hover{
-  border: 1px solid #6a915e;
-  background-color: #6a915e;
-  font-size: 0.7em;
-}
-.projectItem button,
-.sideBarBtn {
-  border: none;
-  color: inherit;
-  background-color: transparent;
-}
-.sideBarBtn {
-  transition: all 0.3s ease;
-}
-.sideBarBtn:hover {
-  color: #428866;
-}
-.projectBtn {
-  border: 1px solid #96C885FF;
-  transition: all 0.3s ease;
-}
-.projectBtn:hover {
-  border: 1px solid #6a915e;
-  background-color: #79a369;
-}
-.projectDetail {
-  display: flex;
-  flex-direction: column;
-  padding: 0em 1em;
-  gap: 0.5em;
-}
-.projectUpdate {
-  color: #a5d595;
-}
-.projectUpdate:hover {
-  color: #83bb6f;
-}
-.projectDelete {
-  color: #f6a6a6;
-}
-.projectDelete:hover {
-  color: #ff6f6f;
-}
-.sectionSideBarTitle {
-  font-size: 1.15rem;
 }
 /* main */
 .mainSection {
@@ -380,36 +215,7 @@ body {
   color: white;
   background-color: #6a915e;
 }
-.instrument-list {
-  display: none;
-  padding: 0.5em 1em 0.5em 1em;
-  background-color: #f3f3f3;
-  color: #49524c;
-  list-style: none;
-  transition: all 0.5s ease;
-}
-.instrument-list.open {
-  display: block;
-}
-.instrument-item {
-  padding: 0.5em;
-  font-size: 0.9em;
-  cursor: pointer;
-}
-.InsDetail {
-  max-height: 500px;
-  overflow: auto;
-  border-bottom: #98b298 1px solid;
-  display: flex;
-  flex-direction: column;
-  padding: 0em 1em;
-  gap: 0.5em;
-}
-.InsDetail2 {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5em;
-}
+
 
 .rpBtn {
   border: 1px solid #96C885FF;
@@ -433,4 +239,26 @@ body {
   border: 1px solid #96C885FF;
   color: white;
   background-color: #96C885FF;
+}
+
+/* insPage */
+.insMainLayout {
+  max-height: 100vh;
+  width: 100%;
+  overflow: auto;
+  flex-grow: 1;
+  box-sizing: border-box;
+  padding: 2rem 2.5rem;
+}
+.insSection {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.insTitleSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
 }

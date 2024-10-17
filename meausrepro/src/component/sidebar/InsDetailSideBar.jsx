@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import {Link, useLocation} from "react-router-dom";
 import printJS from "print-js";
 import {QRCodeCanvas} from "qrcode.react";
+import './Sidebar.css'
 
 function InsDetailSideBar(props) {
     const {instrument, handleClose, deleteInstrument, handleInstrumentUpdated, siteName, sectionName} = props;
@@ -178,20 +179,18 @@ function InsDetailSideBar(props) {
             }
         });
     };
-
-
     return (
         <div className={`sectionDetailSideBar ${isOpen ? 'open' : ''}`}>
             <div className={'sideBarHeader'}>
-                <span className={'fw-bold sectionSideBarTitle'}>계측기 상세 정보</span>
-                <div className={'d-flex gap-2'}>
+                <span className={'projectInfoTitle'}>계측기 상세 정보</span>
+                <div className={'iconBtnSection gap-1'}>
                     <Link
                         to={`/InsPage/${instrument.idx}`}
                         className={'text-decoration-none'}>
                         <button
                             type={'button'}
-                            className={`sideBarBtn ${location.pathname === `/InsPage/${instrument.idx}` ? 'active' : ''}`}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="gold"
+                            className={`iconBtn iconBtnBlue ${location.pathname === `/InsPage/${instrument.idx}` ? 'active' : ''}`}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
                                  className="bi bi-clipboard-data" viewBox="0 0 16 16">
                                 <path
                                     d="M4 11a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0zm6-4a1 1 0 1 1 2 0v5a1 1 0 1 1-2 0zM7 9a1 1 0 0 1 2 0v3a1 1 0 1 1-2 0z"/>
@@ -205,7 +204,7 @@ function InsDetailSideBar(props) {
                     <button
                         type={'button'}
                         onClick={isEditing ? saveChanges : toggleEdit}  // 저장 및 수정 모드 전환
-                        className={'sideBarBtn projectUpdate'}
+                        className={'iconBtn iconBtnGreen'}
                     >
                         {isEditing ? (
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -226,7 +225,7 @@ function InsDetailSideBar(props) {
                         )}
                     </button>
                     <button
-                        className={'sideBarBtn projectDelete'}
+                        className={'iconBtn iconBtnRed'}
                         onClick={handleDelete}
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -236,7 +235,7 @@ function InsDetailSideBar(props) {
                         </svg>
                     </button>
                     <button
-                        className={'sideBarBtn'}
+                        className={'sideBarCloseBtn'}
                         onClick={handleCloseClick}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor"
                              className="bi bi-x" viewBox="0 0 16 16">
@@ -246,368 +245,396 @@ function InsDetailSideBar(props) {
                     </button>
                 </div>
             </div>
-            <div className={'d-flex flex-column gap-2'}>
-                {isEditing ? (
-                    <div className={'InsDetail'}>
-                        <div className={'row'}>
-                            <div className={'col-sm d-flex flex-column gap-1'}>
-                                <span className={'text-muted small'}>계측기명</span>
-                                <input
-                                    type={'text'}
-                                    name="insName"
-                                    className={'form-control'}
-                                    value={insData.insName}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-                            <div className={'col-sm d-flex flex-column gap-1'}>
-                                <span className={'text-muted small'}>계측기 관리번호</span>
-                                <input
-                                    type={'text'}
-                                    name="insNum"
-                                    className={'form-control'}
-                                    value={insData.insNum}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-                        </div>
-                        <div className={'d-flex flex-column gap-1'}>
-                            <span className={'text-muted small'}>시리얼 NO</span>
+            {isEditing ? (
+                <div className={'InsDetail projectInfoContent'}>
+                    <div className={'row'}>
+                        <div className={'col-sm d-flex flex-column gap-1'}>
+                            <span className={'text-muted small'}>계측기명</span>
                             <input
                                 type={'text'}
-                                name="insNo"
+                                name="insName"
                                 className={'form-control'}
-                                value={insData.insNo}
+                                value={insData.insName}
                                 onChange={handleInputChange}
                             />
                         </div>
-                        <div className={'d-flex flex-column gap-1'}>
-                            <span className={'text-muted small'}>계측기 종류</span>
+                        <div className={'col-sm d-flex flex-column gap-1'}>
+                            <span className={'text-muted small'}>계측기 관리번호</span>
                             <input
                                 type={'text'}
+                                name="insNum"
                                 className={'form-control'}
-                                value={insData.insTypeName}
-                                readOnly
-                            />
-                        </div>
-                        <div className={'d-flex flex-column gap-1'}>
-                            <span className={'text-muted small'}>설치 위치</span>
-                            <input
-                                type={'text'}
-                                name="insLocation"
-                                className={'form-control'}
-                                value={insData.insLocation}
+                                value={insData.insNum}
                                 onChange={handleInputChange}
                             />
                         </div>
-                        <div className={'d-flex flex-column gap-1'}>
-                            <span className={'text-muted small'}>설치일자</span>
-                            <input
-                                type={'date'}
-                                name="createDate"
-                                className={'form-control'}
-                                value={insData.createDate}
-                                onChange={handleInputChange}
-                            />
-                        </div>
-                        <div className={'d-flex flex-column gap-1'}>
-                            <span className={'text-muted small'}>지오메트리 정보</span>
-                            <input
-                                type={'text'}
-                                className={'form-control'}
-                                value={parseGeometryData(instrument?.insGeometry)}
-                                readOnly
-                            />
-                        </div>
-                        <div className={'row'}>
-                            <div className={'col-sm d-flex flex-column gap-1'}>
-                                <span className={'text-muted small'}>관리기준치1차</span>
-                                <input
-                                    type={'number'}
-                                    name="measurement1"
-                                    className={'form-control'}
-                                    value={insData.measurement1}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-                            <div className={'col-sm d-flex flex-column gap-1'}>
-                                <span className={'text-muted small'}>관리기준치2차</span>
-                                <input
-                                    type={'number'}
-                                    name="measurement2"
-                                    className={'form-control'}
-                                    value={insData.measurement2}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-                        </div>
-                        <div className={'d-flex flex-column gap-1'}>
-                            <span className={'text-muted small'}>관리기준치3차</span>
+                    </div>
+                    <div className={'d-flex flex-column gap-1'}>
+                        <span className={'text-muted small'}>시리얼 NO</span>
+                        <input
+                            type={'text'}
+                            name="insNo"
+                            className={'form-control'}
+                            value={insData.insNo}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+                    <div className={'d-flex flex-column gap-1'}>
+                        <span className={'text-muted small'}>계측기 종류</span>
+                        <input
+                            type={'text'}
+                            className={'form-control'}
+                            value={insData.insTypeName}
+                            readOnly
+                        />
+                    </div>
+                    <div className={'d-flex flex-column gap-1'}>
+                        <span className={'text-muted small'}>설치 위치</span>
+                        <input
+                            type={'text'}
+                            name="insLocation"
+                            className={'form-control'}
+                            value={insData.insLocation}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+                    <div className={'d-flex flex-column gap-1'}>
+                        <span className={'text-muted small'}>설치일자</span>
+                        <input
+                            type={'date'}
+                            name="createDate"
+                            className={'form-control'}
+                            value={insData.createDate}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+                    <div className={'d-flex flex-column gap-1'}>
+                        <span className={'text-muted small'}>지오메트리 정보</span>
+                        <input
+                            type={'text'}
+                            className={'form-control'}
+                            value={parseGeometryData(instrument?.insGeometry)}
+                            readOnly
+                        />
+                    </div>
+                    <div className={'row'}>
+                        <div className={'col-sm d-flex flex-column gap-1'}>
+                            <span className={'text-muted small'}>관리기준치1차</span>
                             <input
                                 type={'number'}
-                                name="measurement3"
+                                name="measurement1"
                                 className={'form-control'}
-                                value={insData.measurement3}
+                                value={insData.measurement1}
                                 onChange={handleInputChange}
                             />
                         </div>
+                        <div className={'col-sm d-flex flex-column gap-1'}>
+                            <span className={'text-muted small'}>관리기준치2차</span>
+                            <input
+                                type={'number'}
+                                name="measurement2"
+                                className={'form-control'}
+                                value={insData.measurement2}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                    </div>
+                    <div className={'d-flex flex-column gap-1'}>
+                        <span className={'text-muted small'}>관리기준치3차</span>
+                        <input
+                            type={'number'}
+                            name="measurement3"
+                            className={'form-control'}
+                            value={insData.measurement3}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+                    <div className={'row'}>
+                        <div className={'col-sm d-flex flex-column gap-1'}>
+                            <span className={'text-muted small'}>수직변위(+Y)</span>
+                            <input
+                                type={'number'}
+                                name="verticalPlus"
+                                className={'form-control'}
+                                value={insData.verticalPlus}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                        <div className={'col-sm d-flex flex-column gap-1'}>
+                            <span className={'text-muted small'}>수직변위(-Y)</span>
+                            <input
+                                type={'number'}
+                                name="verticalMinus"
+                                className={'form-control'}
+                                value={insData.verticalMinus}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                    </div>
+
+                    {/* 계측기 종류에 따른 추가 필드 */}
+                    {['A', 'B', 'C', 'D', 'E', 'F'].includes(insData.insType) && (
+                        <div className={'d-flex flex-column gap-1'}>
+                            <span className={'text-muted small'}>굴착고</span>
+                            <input
+                                type={'number'}
+                                name="depExcavation"
+                                className={'form-control'}
+                                value={insData.depExcavation}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                    )}
+
+                    {['A', 'B', 'C'].includes(insData.insType) && (
                         <div className={'row'}>
                             <div className={'col-sm d-flex flex-column gap-1'}>
-                                <span className={'text-muted small'}>수직변위(+Y)</span>
+                                <span className={'text-muted small'}>logger</span>
                                 <input
                                     type={'number'}
-                                    name="verticalPlus"
+                                    name="logger"
                                     className={'form-control'}
-                                    value={insData.verticalPlus}
+                                    value={insData.logger}
                                     onChange={handleInputChange}
                                 />
                             </div>
                             <div className={'col-sm d-flex flex-column gap-1'}>
-                                <span className={'text-muted small'}>수직변위(-Y)</span>
+                                <span className={'text-muted small'}>설계변위량</span>
                                 <input
                                     type={'number'}
-                                    name="verticalMinus"
+                                    name="displacement"
                                     className={'form-control'}
-                                    value={insData.verticalMinus}
+                                    value={insData.displacement}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                            <div className={'d-flex flex-column gap-1'}>
+                                <span className={'text-muted small'}>ZERO_READ</span>
+                                <input
+                                    type={'number'}
+                                    name="zeroRead"
+                                    className={'form-control'}
+                                    value={insData.zeroRead}
                                     onChange={handleInputChange}
                                 />
                             </div>
                         </div>
+                    )}
 
-                        {/* 계측기 종류에 따른 추가 필드 */}
-                        {['A', 'B', 'C', 'D', 'E', 'F'].includes(insData.insType) && (
-                            <div className={'d-flex flex-column gap-1'}>
-                                <span className={'text-muted small'}>굴착고</span>
-                                <input
-                                    type={'number'}
-                                    name="depExcavation"
-                                    className={'form-control'}
-                                    value={insData.depExcavation}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-                        )}
+                    {['A', 'B'].includes(insData.insType) && (
+                        <div className={'d-flex flex-column gap-1'}>
+                            <span className={'text-muted small'}>1KN_TONE</span>
+                            <input
+                                type={'number'}
+                                name="knTone"
+                                className={'form-control'}
+                                value={insData.knTone}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                    )}
 
-                        {['A', 'B', 'C'].includes(insData.insType) && (
-                            <div className={'row'}>
-                                <div className={'col-sm d-flex flex-column gap-1'}>
-                                    <span className={'text-muted small'}>logger</span>
-                                    <input
-                                        type={'number'}
-                                        name="logger"
-                                        className={'form-control'}
-                                        value={insData.logger}
-                                        onChange={handleInputChange}
-                                    />
-                                </div>
-                                <div className={'col-sm d-flex flex-column gap-1'}>
-                                    <span className={'text-muted small'}>설계변위량</span>
-                                    <input
-                                        type={'number'}
-                                        name="displacement"
-                                        className={'form-control'}
-                                        value={insData.displacement}
-                                        onChange={handleInputChange}
-                                    />
-                                </div>
-                                <div className={'d-flex flex-column gap-1'}>
-                                    <span className={'text-muted small'}>ZERO_READ</span>
-                                    <input
-                                        type={'number'}
-                                        name="zeroRead"
-                                        className={'form-control'}
-                                        value={insData.zeroRead}
-                                        onChange={handleInputChange}
-                                    />
-                                </div>
-                            </div>
-                        )}
+                    {insData.insType === 'B' && (
+                        <div className={'d-flex flex-column gap-1'}>
+                            <span className={'text-muted small'}>허용인장력</span>
+                            <input
+                                type={'number'}
+                                name="tenAllowable"
+                                className={'form-control'}
+                                value={insData.tenAllowable}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                    )}
 
-                        {['A', 'B'].includes(insData.insType) && (
-                            <div className={'d-flex flex-column gap-1'}>
-                                <span className={'text-muted small'}>1KN_TONE</span>
-                                <input
-                                    type={'number'}
-                                    name="knTone"
-                                    className={'form-control'}
-                                    value={insData.knTone}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-                        )}
+                    {insData.insType === 'C' && (
+                        <div className={'d-flex flex-column gap-1'}>
+                            <span className={'text-muted small'}>설계긴장력</span>
+                            <input
+                                type={'number'}
+                                name="tenDesign"
+                                className={'form-control'}
+                                value={insData.tenDesign}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                    )}
 
-                        {insData.insType === 'B' && (
-                            <div className={'d-flex flex-column gap-1'}>
-                                <span className={'text-muted small'}>허용인장력</span>
-                                <input
-                                    type={'number'}
-                                    name="tenAllowable"
-                                    className={'form-control'}
-                                    value={insData.tenAllowable}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-                        )}
-
-                        {insData.insType === 'C' && (
-                            <div className={'d-flex flex-column gap-1'}>
-                                <span className={'text-muted small'}>설계긴장력</span>
-                                <input
-                                    type={'number'}
-                                    name="tenDesign"
-                                    className={'form-control'}
-                                    value={insData.tenDesign}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-                        )}
-
-                        {insData.insType === 'E' && (
-                            <div className={'row'}>
-                                <div className={'col-sm d-flex flex-column gap-1'}>
-                                    <span className={'text-muted small'}>A(+)</span>
-                                    <input
-                                        type={'number'}
-                                        name="aPlus"
-                                        className={'form-control'}
-                                        value={insData.aPlus}
-                                        onChange={handleInputChange}
-                                    />
-                                </div>
-                                <div className={'col-sm d-flex flex-column gap-1'}>
-                                    <span className={'text-muted small'}>A(-)</span>
-                                    <input
-                                        type={'number'}
-                                        name="aMinus"
-                                        className={'form-control'}
-                                        value={insData.aMinus}
-                                        onChange={handleInputChange}
-                                    />
-                                </div>
-                                <div className={'d-flex flex-column gap-1'}>
-                                    <span className={'text-muted small'}>B(+)</span>
-                                    <input
-                                        type={'number'}
-                                        name="bPlus"
-                                        className={'form-control'}
-                                        value={insData.bPlus}
-                                        onChange={handleInputChange}
-                                    />
-                                </div>
-                                <div className={'d-flex flex-column gap-1'}>
-                                    <span className={'text-muted small'}>B(-)</span>
-                                    <input
-                                        type={'number'}
-                                        name="bMinus"
-                                        className={'form-control'}
-                                        value={insData.bMinus}
-                                        onChange={handleInputChange}
-                                    />
-                                </div>
-                            </div>
-                        )}
-
-                    </div>
-                ) : (
-                    <div className={'InsDetail'}>
-                        <span className={'text-muted small'}>계측기명</span>
-                        <span>{insData.insName}</span>
-                        <span className={'text-muted small'}>계측기 관리번호</span>
-                        <span>{insData.insNum}</span>
-                        <span className={'text-muted small'}>시리얼 NO</span>
-                        <span>{insData.insNo}</span>
-                        <span className={'text-muted small'}>계측기 종류</span>
-                        <span>{insData.insTypeName}</span>
-                        <span className={'text-muted small'}>설치 위치</span>
-                        <span>{insData.insLocation}</span>
-                        <span className={'text-muted small'}>설치일자</span>
-                        <span>{insData.createDate}</span>
-                        <span className={'text-muted small'}>지오메트리 정보</span>
-                        <span>{parseGeometryData(instrument?.insGeometry)}</span>
-                        <span className={'text-muted small'}>관리기준치1차</span>
-                        <span>{insData.measurement1}</span>
-                        <span className={'text-muted small'}>관리기준치2차</span>
-                        <span>{insData.measurement2}</span>
-                        <span className={'text-muted small'}>관리기준치3차</span>
-                        <span>{insData.measurement3}</span>
-                        <span className={'text-muted small'}>수직변위(+Y)</span>
-                        <span>{insData.verticalPlus}</span>
-                        <span className={'text-muted small'}>수직변위(-Y)</span>
-                        <span>{insData.verticalMinus}</span>
-
-                        {['A', 'B', 'C', 'D', 'E', 'F'].includes(insData.insType) && (
-                            <div className={'InsDetail2'}>
-                                <span className={'text-muted small'}>굴착고</span>
-                                <span>{insData.depExcavation}</span>
-                            </div>
-                        )}
-
-                        {['A', 'B', 'C'].includes(insData.insType) && (
-                            <div className={'InsDetail2'}>
-                                <span className={'text-muted small'}>logger</span>
-                                <span>{insData.logger}</span>
-                                <span className={'text-muted small'}>설계변위량</span>
-                                <span>{insData.displacement}</span>
-                                <span className={'text-muted small'}>ZERO_READ</span>
-                                <span>{insData.zeroRead}</span>
-                            </div>
-                        )}
-
-                        {['A', 'B'].includes(insData.insType) && (
-                            <div className={'InsDetail2'}>
-                                <span className={'text-muted small'}>1KN_TONE</span>
-                                <span>{insData.knTone}</span>
-                            </div>
-                        )}
-
-                        {insData.insType === 'B' && (
-                            <div className={'InsDetail2'}>
-                                <span className={'text-muted small'}>허용인장력</span>
-                                <span>{insData.tenAllowable}</span>
-                            </div>
-                        )}
-
-                        {insData.insType === 'C' && (
-                            <div className={'InsDetail2'}>
-                                <span className={'text-muted small'}>설계긴장력</span>
-                                <span>{insData.tenDesign}</span>
-                            </div>
-                        )}
-
-                        {insData.insType === 'E' && (
-                            <div className={'InsDetail2'}>
+                    {insData.insType === 'E' && (
+                        <div className={'row'}>
+                            <div className={'col-sm d-flex flex-column gap-1'}>
                                 <span className={'text-muted small'}>A(+)</span>
-                                <span>{insData.aPlus}</span>
-                                <span className={'text-muted small'}>A(-)</span>
-                                <span>{insData.aMinus}</span>
-                                <span className={'text-muted small'}>B(+)</span>
-                                <span>{insData.bPlus}</span>
-                                <span className={'text-muted small'}>B(-)</span>
-                                <span>{insData.bMinus}</span>
+                                <input
+                                    type={'number'}
+                                    name="aPlus"
+                                    className={'form-control'}
+                                    value={insData.aPlus}
+                                    onChange={handleInputChange}
+                                />
                             </div>
-                        )}
+                            <div className={'col-sm d-flex flex-column gap-1'}>
+                                <span className={'text-muted small'}>A(-)</span>
+                                <input
+                                    type={'number'}
+                                    name="aMinus"
+                                    className={'form-control'}
+                                    value={insData.aMinus}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                            <div className={'d-flex flex-column gap-1'}>
+                                <span className={'text-muted small'}>B(+)</span>
+                                <input
+                                    type={'number'}
+                                    name="bPlus"
+                                    className={'form-control'}
+                                    value={insData.bPlus}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                            <div className={'d-flex flex-column gap-1'}>
+                                <span className={'text-muted small'}>B(-)</span>
+                                <input
+                                    type={'number'}
+                                    name="bMinus"
+                                    className={'form-control'}
+                                    value={insData.bMinus}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                        </div>
+                    )}
+
+                </div>
+            ) : (
+                <div className={'projectInfoSection'}>
+                    <div className={'projectInfoHeader pt-0 pb-3'}>
+                        <span className={'projectInfoTitle'}>
+                            속성
+                        </span>
                     </div>
-                )}
-            </div>
-            <div className={'projectDetail mt-2'}>
-                <button
-                    type={'button'}
-                    className={'btn qrBtn'}
-                    onClick={() => printJS({
-                        printable: 'printArea',
-                        type: 'html',
-                        css: ['/print.css'],
-                        targetStyles: ['*'],
-                        scanStyles: false,
-                    })}
-                >
-                    QR코드 출력
-                </button>
-            </div>
+                    <div className={'sideBarContent'}>
+                        <div className={'projectInfoContent InsDetail'}>
+                            <span className={'text-muted small'}>계측기명</span>
+                            <span className={'projectInfoContentTxt'}>{insData.insName}</span>
+                            <span className={'text-muted small'}>계측기 관리번호</span>
+                            <span className={'projectInfoContentTxt'}>{insData.insNum}</span>
+                            <span className={'text-muted small'}>시리얼 NO</span>
+                            <span className={'projectInfoContentTxt'}>{insData.insNo}</span>
+                            <span className={'text-muted small'}>계측기 종류</span>
+                            <span className={'projectInfoContentTxt'}>{insData.insTypeName}</span>
+                            <span className={'text-muted small'}>설치 위치</span>
+                            <span className={'projectInfoContentTxt'}>{insData.insLocation}</span>
+                            <span className={'text-muted small'}>설치일자</span>
+                            <span className={'projectInfoContentTxt'}>{insData.createDate}</span>
+                            <span className={'text-muted small'}>지오메트리 정보</span>
+                            <span
+                                className={'projectInfoContentTxt'}>{parseGeometryData(instrument?.insGeometry)}</span>
+                            <div className={'row'}>
+                                <div className={'col-sm d-flex flex-column'}>
+                                    <span className={'text-muted small'}>관리기준치1차</span>
+                                    <span className={'projectInfoContentTxt'}>{insData.measurement1}</span>
+                                </div>
+                                <div className={'col-sm d-flex flex-column'}>
+                                    <span className={'text-muted small'}>관리기준치2차</span>
+                                    <span className={'projectInfoContentTxt'}>{insData.measurement2}</span>
+                                </div>
+                            </div>
+                            <span className={'text-muted small'}>관리기준치3차</span>
+                            <span className={'projectInfoContentTxt'}>{insData.measurement3}</span>
+                            <div className={'row'}>
+                                <div className={'col-sm d-flex flex-column gap-1'}>
+                                    <span className={'text-muted small'}>수직변위(+Y)</span>
+                                    <span className={'projectInfoContentTxt'}>{insData.verticalPlus}</span>
+                                </div>
+                                <div className={'col-sm d-flex flex-column gap-1'}>
+                                    <span className={'text-muted small'}>수직변위(-Y)</span>
+                                    <span className={'projectInfoContentTxt'}>{insData.verticalMinus}</span>
+                                </div>
+                            </div>
+                            {['A', 'B', 'C', 'D', 'E', 'F'].includes(insData.insType) && (
+                                <div className={'InsDetail2'}>
+                                    <span className={'text-muted small'}>굴착고</span>
+                                    <span className={'projectInfoContentTxt'}>{insData.depExcavation}</span>
+                                </div>
+                            )}
+
+                            {['A', 'B', 'C'].includes(insData.insType) && (
+                                <div className={'InsDetail2'}>
+                                    <div className={'row'}>
+                                        <div className={'col-sm InsDetail2'}>
+                                            <span className={'text-muted small'}>logger</span>
+                                            <span className={'projectInfoContentTxt'}>{insData.logger}</span>
+                                        </div>
+                                        <div className={'col-sm InsDetail2'}>
+                                            <span className={'text-muted small'}>설계변위량</span>
+                                            <span className={'projectInfoContentTxt'}>{insData.displacement}</span>
+                                        </div>
+                                    </div>
+                                    <span className={'text-muted small'}>ZERO_READ</span>
+                                    <span className={'projectInfoContentTxt'}>{insData.zeroRead}</span>
+                                </div>
+                            )}
+
+                            {['A', 'B'].includes(insData.insType) && (
+                                <div className={'InsDetail2'}>
+                                    <span className={'text-muted small'}>1KN_TONE</span>
+                                    <span className={'projectInfoContentTxt'}>{insData.knTone}</span>
+                                </div>
+                            )}
+
+                            {insData.insType === 'B' && (
+                                <div className={'InsDetail2'}>
+                                    <span className={'text-muted small'}>허용인장력</span>
+                                    <span className={'projectInfoContentTxt'}>{insData.tenAllowable}</span>
+                                </div>
+                            )}
+
+                            {insData.insType === 'C' && (
+                                <div className={'InsDetail2'}>
+                                    <span className={'text-muted small'}>설계긴장력</span>
+                                    <span>{insData.tenDesign}</span>
+                                </div>
+                            )}
+
+                            {insData.insType === 'E' && (
+                                <div className={'InsDetail2'}>
+                                    <span className={'text-muted small'}>A(+)</span>
+                                    <span>{insData.aPlus}</span>
+                                    <span className={'text-muted small'}>A(-)</span>
+                                    <span>{insData.aMinus}</span>
+                                    <span className={'text-muted small'}>B(+)</span>
+                                    <span>{insData.bPlus}</span>
+                                    <span className={'text-muted small'}>B(-)</span>
+                                    <span>{insData.bMinus}</span>
+                                </div>
+                            )}
+                        </div>
+                        <div className={'projectInfoHeader'}>
+                            <span className={'projectInfoTitle'}>출력</span>
+                        </div>
+                        <div className={'projectInfoContent mt-3'}>
+                            <button
+                                type={'button'}
+                                className={'whiteBtn'}
+                                onClick={() => printJS({
+                                    printable: 'printArea',
+                                    type: 'html',
+                                    css: ['/print.css'],
+                                    targetStyles: ['*'],
+                                    scanStyles: false,
+                                })}
+                            >
+                                QR코드 출력
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
             <div className={'printSection'}>
                 <table className={'printTable'} id={'printArea'}>
                     <colgroup>
-                        <col width={'50%'}/>
+                    <col width={'50%'}/>
                         <col width={'50%'}/>
                     </colgroup>
                     <tbody>

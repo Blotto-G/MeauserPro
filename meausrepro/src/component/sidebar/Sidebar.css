@@ -1,0 +1,345 @@
+/* customSideBar */
+.customSideBar {
+    background-color: #45997c;
+    width: 230px;
+    height: 100vh;
+    display: flex;
+    padding: 1.5rem 0;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 0;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    z-index: 2;
+}
+.customSideBarList {
+    display: flex;
+    flex-direction: column;
+}
+.customSideBarTitle {
+    font-size: 2rem;
+    font-family: 'HakgyoansimWoojuR';
+    color: white;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+.customSideBarLink {
+    font-family: 'SUITE-Regular';
+    display: flex;
+    gap: 1em;
+    padding: 1em;
+    align-items: center;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.61);
+    transition: all 0.4s ease;
+}
+.customSideBarLink.active {
+    border-left: 3px solid white;
+    background-color: #56a389;
+    color: white;
+}
+.customSideBarLink:hover:not(.active) {
+    background-color: #4fa185;
+    color: rgba(255, 255, 255, 0.7);
+}
+.customSideBarBtn {
+    border: none;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: rgba(255, 255, 255, 0.61);
+    transition: all 0.4s ease;
+}
+.customSideBarBtn span {
+    font-family: 'SUITE-Regular';
+}
+.customSideBarBtn:hover {
+    color: rgba(255, 255, 255, 0.82);
+}
+/* 아이콘 색상 */
+.greenIcon {
+    color: #45987b;
+}
+/* 아이콘 버튼 */
+.iconBtn {
+    border: none;
+    color: inherit;
+    background-color: transparent;
+    padding: 0;
+}
+.iconBtnGreen {
+    color: rgba(84, 176, 145, 0.85);
+}
+.iconBtnGreen:hover {
+    color: #45997c;
+}
+.iconBtnRed {
+    color: rgba(255, 118, 118, 0.87);
+}
+.iconBtnRed:hover {
+    color: #fd5656;
+}
+.iconBtnBlue {
+    color: #7782b5;
+}
+.iconBtnBlue:hover {
+    color: #555f8c;
+}
+.iconBtnSection {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+/* 버튼 기본 설정 */
+.sideBarWrapper button {
+    transition: all 0.4s ease;
+}
+/* mainSideBar, 현장리스트 */
+.sideBarWrapper {
+    display: flex;
+    position: relative;
+}
+.sideBar,
+.sectionDetailSideBar,
+.insDetailSideBar{
+    width: 280px;
+    padding: 2em 0em;
+    background-color: white;
+    border-right: 1px solid #c4c4c4;
+    transition: all 0.5s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+.sideBar {
+    height: 100vh;
+    position: relative;
+    z-index: 3;
+}
+.sideBarHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1em 0.5em 1em;
+}
+.sideBarTitle {
+    font-size: 1.5rem;
+}
+.sideBarContent {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.sideBarProjectList {
+    list-style-type: none;
+    padding: 0;
+}
+.projectItem {
+    font-family: 'SUITE-Regular';
+    border: none;
+    width: 100%;
+    padding: 0.9rem;
+    text-align: left;
+    color: black;
+    border-bottom: 1px solid rgba(107, 176, 151, 0.32);
+    transition: all 0.4s ease;
+}
+.projectItem.selected,
+.projectItem:hover {
+    cursor: pointer;
+    background-color: #80c9ae;
+    color: white;
+}
+.projectBtn{
+    font-family: 'SUITE-Regular';
+    padding: 0.5rem 0;
+    margin: 0 1rem 0 1rem;
+    border: none;
+    background-color: rgba(128, 201, 174, 0.8);
+    color: white;
+    border-radius: 0.5rem;
+}
+.projectBtn:hover {
+    background-color: #80c9ae;
+}
+/* mainSidebar, 프로젝트 상세 정보 */
+.sideBarCloseBtn {
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    color: #6e6e6e;
+}
+.sideBarCloseBtn:hover {
+    color: #3f3f3f;
+}
+.projectInfoSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.projectInfoHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 1em 1em 0 1em;
+}
+.projectInfoTitle {
+    font-size: 1.05rem;
+    font-weight: bold;
+}
+.projectInfoContent {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    width: 100%;
+    padding: 0 0.9rem 0 0.9rem;
+    font-family: 'SUITE-Regular';
+}
+.projectInfoContentTxt {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+}
+/* mainSideBar, 구간 정보 */
+.sectionItem {
+    font-family: 'SUITE-Regular';
+    border: none;
+    width: 100%;
+    padding: 0;
+    text-align: left;
+    color: black;
+    border-bottom: 1px solid rgba(107, 176, 151, 0.32);
+    transition: all 0.4s ease;
+}
+.secSelectBtn {
+    display: flex;
+    align-items: center;
+    border: none;
+    gap: 0.5rem;
+    color: #4f4f4f;
+}
+.secSelectBtn svg {
+    color: #45987b;
+}
+.sectionItem .projectInfoHeader:hover:not(.selected) {
+    cursor: pointer;
+    background-color: rgba(128, 201, 174, 0.84);
+}
+.sectionItem .projectInfoHeader:hover:not(.selected) .secSelectBtn {
+    color: rgba(255, 255, 255, 0.88);
+}
+.sectionItem .projectInfoHeader.selected{
+    background-color: #80c9ae;
+}
+.sectionItem .projectInfoHeader.selected .secSelectBtn {
+    color: white;
+}
+.sectionItem .projectInfoHeader {
+    padding: 0.9rem;
+}
+.insCreateBtn {
+    border-radius: 1.2em;
+    border: none;
+    background-color: rgba(75, 147, 122, 0.59);
+    color: rgba(255, 255, 255, 0.89);
+    font-size: 0.7em;
+    transition: all 0.4s ease;
+    padding: 0.5em 0.8em;
+}
+.insCreateBtn:hover {
+    background-color: rgb(75, 147, 122);
+    color: rgb(255, 255, 255);
+}
+/* mainSideBar 구간 정보 계측기 리스트 */
+.instrumentList {
+    padding: 0;
+    color: rgba(255, 255, 255, 0.74);
+    list-style: none;
+    transition: all 0.5s ease;
+}
+.instrumentList.open {
+    max-height: 100%;
+}
+.instrumentItem {
+    font-family: 'SUITE-Regular';
+    background-color: white;
+    color: #3f3f3f;
+    padding: 1em;
+    font-size: 0.95em;
+    cursor: pointer;
+    transition: all 0.5s ease;
+}
+.instrumentItem.active {
+    background-color: rgb(245, 245, 245);
+    color: #545454;
+}
+.instrumentItem:hover:not(.active) {
+    background-color: rgb(225, 225, 225);
+    color: #545454;
+}
+/* sectionDetailSideBar */
+.whiteBtn {
+    border: 1px solid #d5d5d5;
+    padding: 0.5rem 0;
+    border-radius: 0.5rem;
+    background-color: white;
+}
+.whiteBtn:hover {
+    border: 1px solid #d5d5d5;
+    background-color: #f5f5f5;
+}
+/* insDetailSideBar */
+.InsDetail {
+    max-height: 75vh;
+    overflow: auto;
+}
+.InsDetail2 {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+}
+.sideBarWrapper input,
+.sectionDetailSideBar input,
+.sideBarWrapper select,
+.sectionDetailSideBar select{
+    border-radius: 0.5rem;
+    border: 1px solid #b4b4b4;
+    padding: 0.5rem;
+    font-size: 0.95rem;
+    transition: border 0.4s ease;
+}
+.sideBarWrapper select,
+.sectionDetailSideBar select {
+    padding-left: 0;
+    padding-right: 0;
+}
+.sideBarWrapper select:focus,
+.sectionDetailSideBar select:focus,
+.sideBarWrapper input:focus,
+.sectionDetailSideBar input:focus {
+    outline: none;
+    border: 1px solid #95c784;
+}
+.sideBarWrapper input:read-only,
+.sectionDetailSideBar input:read-only{
+    background-color: rgb(246, 246, 246);
+    color: #6e6e6e;
+}
+/* sideBar 열고 닫을 때 필요 */
+.sectionDetailSideBar {
+    position: absolute;
+    padding: 2em 0em;
+    left: 100%;
+    top: 0;
+    bottom: 0;
+    transform: translateX(-100%);
+    opacity: 0;
+    z-index: 2;
+}
+.sectionDetailSideBar.open {
+    opacity: 1;
+    transform: translateX(0);
+}
