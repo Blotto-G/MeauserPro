@@ -1,9 +1,12 @@
 package bitc.fullstack.meausrepro_spring.service;
 
+import bitc.fullstack.meausrepro_spring.model.MeausreProCompany;
 import bitc.fullstack.meausrepro_spring.model.MeausreProSection;
 import bitc.fullstack.meausrepro_spring.model.MeausreProUser;
 import bitc.fullstack.meausrepro_spring.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -56,14 +59,16 @@ public class UserService {
         return userRepository.findByIdx(idx);
     }
 
-    // 구간 삭제
-    public boolean deleteUser(int idx) {
-        Optional<MeausreProUser> user = userRepository.findById(String.valueOf(idx));
-        if (user.isPresent()) {
-            userRepository.deleteById(String.valueOf(idx));
-            return true;
+    // 회원정보 삭제
+    public ResponseEntity<String> deleteUser(int idx) {
+        Optional<MeausreProUser> UserOptional = userRepository.findByIdx(idx);
+        if (UserOptional.isPresent()) {
+            MeausreProUser user = UserOptional.get();
+            userRepository.delete(user);
+            return ResponseEntity.ok("회원정보 삭제 성공");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("회원정보를 찾을 수 없습니다.");
         }
-        return false;
     }
 }
 

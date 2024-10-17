@@ -120,4 +120,10 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("회원정보 수정에 실패하였습니다.");
         }
     }
+
+    // 회원정보 삭제
+    @DeleteMapping("/delete/{idx}")
+    public ResponseEntity<String> deleteUser(@PathVariable("idx") int idx) {
+        return userService.deleteUser(idx);
+    }
 }

@@ -93,7 +93,6 @@ function GroupManagement() {
             if (result.isConfirmed) {
                 axios.delete(`http://localhost:8080/MeausrePro/Company/delete/${idx}`)
                     .then(() => {
-                        alert("작업그룹이 삭제되었습니다.");
                         setCompanyList(companyList.filter((company) => company.idx !== idx));
                     })
                     .catch((err) => {

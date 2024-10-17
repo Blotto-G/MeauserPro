@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import UserSignUpModal from "../component/modal/UserSignUpModal.jsx";
 import UserUpdateModal from "../component/modal/UserUpdateModal.jsx";
+import Swal from "sweetalert2";
 
 function UserManagement() {
     const { user } = useContext(UserContext);
@@ -51,6 +52,28 @@ function UserManagement() {
             .catch(err => {
                 console.log(err);
             });
+    };
+
+    // 회원정보 삭제
+    const handleDelete = (idx) => {
+        Swal.fire({
+            title: '회원정보 삭제',
+            text: "회원정보를 삭제하시겠습니까?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: '삭제',
+            cancelButtonText: '취소'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.delete(`http://localhost:8080/MeausrePro/User/delete/${idx}`)
+                    .then(() => {
+                        setUserList(userList.filter((user) => user.idx !== idx));
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+            }
+        });
     };
 
     return (
@@ -110,7 +133,7 @@ function UserManagement() {
                                                 </button>
                                             </td>
                                             <td>
-                                                <button type={'button'} className={'sideBarBtn projectDelete'}>
+                                                <button type={'button'} className={'sideBarBtn projectDelete'} onClick={() => handleDelete(item.idx)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                                          fill="currentColor"
                                                          className="bi bi-trash3" viewBox="0 0 16 16">
