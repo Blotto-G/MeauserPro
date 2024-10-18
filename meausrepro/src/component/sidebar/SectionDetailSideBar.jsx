@@ -216,7 +216,7 @@ function SectionDetailSideBar(props) {
             });
     };
 
-    // // 미리보기를 업데이트하는 함수
+    // 미리보기를 업데이트하는 함수
     // const updateImagePreview = (imageUrl) => {
     //     const imgElement = document.getElementById('imagePreview');
     //     imgElement.src = imageUrl;  // 이미지 URL로 미리보기 표시
