@@ -72,12 +72,12 @@ function SectionDetailSideBar(props) {
             .then(res => {
                 console.log("Section updated:", res.data);
 
-                // 이미지 설명 수정 요청
-                const imageUpdatePromises = imageList.map(image =>
-                    updateImageDescription(image.imgDes, image.idx)
-                );
-
-                return Promise.all(imageUpdatePromises);
+                // // 이미지 설명 수정 요청
+                // const imageUpdatePromises = imageList.map(image =>
+                //     updateImageDescription(image.imgDes, image.idx)
+                // );
+                //
+                // return Promise.all(imageUpdatePromises);
             })
             .then(res => {
                 console.log(res);
@@ -89,8 +89,8 @@ function SectionDetailSideBar(props) {
                     wallStr,
                     groundStr,
                     rearTarget,
-                    underStr,
-                    imgDes: imageDes // 이미지 설명 업데이트
+                    underStr
+                    // imgDes: imageDes // 이미지 설명 업데이트
                 };
                 handleSectionUpdated(updatedSection);
             })
@@ -251,6 +251,30 @@ function SectionDetailSideBar(props) {
         });
     };
 
+    // input에서 입력한 설명을 관리하는 함수
+    const handleImageDescriptionChange = (e, imgIdx) => {
+        const { value } = e.target;
+
+        setImageList((prevList) =>
+            prevList.map((image) =>
+                image.idx === imgIdx
+                    ? { ...image, imgDes: value } // 해당 이미지의 설명 업데이트
+                    : image
+            )
+        );
+    };
+
+// 설명 업데이트를 서버로 전송하는 함수 (onBlur 이벤트로 호출)
+    const handleDescriptionBlur = (imgDes, imgIdx) => {
+        updateImageDescription(imgDes, imgIdx)
+            .then((response) => {
+                console.log('설명 업데이트 성공:', response);
+            })
+            .catch((error) => {
+                console.error('설명 업데이트 중 오류가 발생했습니다:', error);
+            });
+    };
+
     return (
         <div className={`sectionDetailSideBar ${isOpen ? 'open' : ''}`}>
             <div className={'sideBarHeader'}>
@@ -393,77 +417,56 @@ function SectionDetailSideBar(props) {
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {(imageList.length === 0 && selectedFiles.length === 0) ? (
+                                    {imageList.length === 0 ? (
                                         <tr>
                                             <td colSpan={2}>출력할 내용이 없습니다.</td>
                                         </tr>
                                     ) : (
-                                        [...imageList, ...selectedFiles].map((image, index) => (
-                                            <tr key={index}>
-                                                <td>
-                                                    <input
-                                                        type="text"
-                                                        className="form-control"
-                                                        value={image.fileName || getFileNameFromUrl(image.imgSrc)}
-                                                        disabled
-                                                    />
-                                                </td>
-                                                <td className={'d-flex'}>
-                                                    <input
-                                                        type="text"
-                                                        className="form-control"
-                                                        value={image.imgDes || ""}
-                                                        onChange={async (e) => {
-                                                            const newDes = e.target.value;
-                                                            const updatedList = [...imageList, ...selectedFiles];
-
-                                                            if (image.imgSrc) {
-                                                                // 기존 이미지일 경우
-                                                                const imgIndex = updatedList.findIndex(i => i.imgSrc === image.imgSrc);
-                                                                updatedList[imgIndex].imgDes = newDes;
-
-                                                                // 서버에 이미지 설명 업데이트 요청
-                                                                try {
-                                                                    await updateImageDescription(newDes, updatedList[imgIndex].idx);
-                                                                    setImageList(updatedList.slice(0, imageList.length));
-                                                                } catch (error) {
-                                                                    console.error("서버 업데이트 중 오류 발생:", error);
+                                        imageList.map((image, index) => {
+                                            return (
+                                                <tr key={index}>
+                                                    <td>
+                                                        <input
+                                                            type="text"
+                                                            className="form-control"
+                                                            value={getFileNameFromUrl(image.imgSrc)}
+                                                            disabled
+                                                        />
+                                                    </td>
+                                                    <td className={'d-flex'}>
+                                                        <input
+                                                            type="text"
+                                                            className="form-control"
+                                                            value={image.imgDes}
+                                                            onChange={(e) => handleImageDescriptionChange(e, image.idx)} // 입력 값 변경 시 상태 업데이트
+                                                            onBlur={() => handleDescriptionBlur(image.imgDes, image.idx)}
+                                                            placeholder={'이미지를 설명하세요'}
+                                                        />
+                                                        <button
+                                                            className={'sideBarBtn projectDelete ms-2'}
+                                                            onClick={() => {
+                                                                if (image.imgSrc) {
+                                                                    // 기존 이미지 삭제 로직
+                                                                    setImageList(imageList.filter((_, i) => i !== index));
+                                                                } else {
+                                                                    // 선택된 파일 삭제 로직
+                                                                    setSelectedFiles(selectedFiles.filter(f => f.fileName !== image.fileName));
                                                                 }
-                                                            } else {
-                                                                // 선택된 파일일 경우
-                                                                const fileIndex = selectedFiles.findIndex(f => f.fileName === image.fileName);
-                                                                if (fileIndex !== -1) {
-                                                                    const updatedSelectedFiles = [...selectedFiles];
-                                                                    updatedSelectedFiles[fileIndex].imgDes = newDes; // 선택된 파일 설명 업데이트
-                                                                    setSelectedFiles(updatedSelectedFiles);
-                                                                }
-                                                            }
-                                                        }}
-                                                        placeholder={'이미지를 설명하세요'}
-                                                    />
-                                                    <button
-                                                        className={'sideBarBtn projectDelete ms-2'}
-                                                        onClick={() => {
-                                                            if (image.imgSrc) {
-                                                                // 기존 이미지 삭제 로직
-                                                                setImageList(imageList.filter((_, i) => i !== index));
-                                                            } else {
-                                                                // 선택된 파일 삭제 로직
-                                                                setSelectedFiles(selectedFiles.filter(f => f.fileName !== image.fileName));
-                                                            }
-                                                        }}
-                                                    >
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                             fill="currentColor" className="bi bi-trash3"
-                                                             viewBox="0 0 16 16">
-                                                            <path
-                                                                d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
-                                                        </svg>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        ))
-                                    )}
+                                                            }}
+                                                        >
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                                 height="16"
+                                                                 fill="currentColor" className="bi bi-trash3"
+                                                                 viewBox="0 0 16 16">
+                                                                <path
+                                                                    d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
+                                                            </svg>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            )
+                                        }))
+                                    }
                                     </tbody>
                                 </table>
                             </div>
