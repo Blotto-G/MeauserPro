@@ -26,7 +26,7 @@ public class MeausreProImgController {
     @Autowired
     private MeausreProImgService meausreProImgService;
 
-//    이미지 업로드
+    //    이미지 업로드
     @PostMapping("/upload/{sectionId}")
     public ResponseEntity<MeausreProImg> upload(
             @RequestParam("file") MultipartFile file,
@@ -53,7 +53,7 @@ public class MeausreProImgController {
     public ResponseEntity<Resource> downloadImage(@PathVariable String fileName) throws MalformedURLException {
         try {
             // 파일 경로 설정 (uploads 디렉토리 또는 다른 경로)
-            Path filePath = Paths.get("uploads/" + fileName);
+            Path filePath = Paths.get(System.getProperty("user.home") + "/Downloads/" + fileName);
             Resource resource = new UrlResource(filePath.toUri());
 
             if (resource.exists() || resource.isReadable()) {
@@ -81,6 +81,17 @@ public class MeausreProImgController {
             return ResponseEntity.ok("Update");
         } else {
             return ResponseEntity.badRequest().body("수정에 실패했습니다.");
+        }
+    }
+
+    // 이미지 삭제
+    @DeleteMapping("/delete/{idx}")
+    public ResponseEntity<String> deleteImage(@PathVariable int idx) {
+        boolean isDeleted = meausreProImgService.deleteImage(idx);
+        if (isDeleted) {
+            return ResponseEntity.ok("이미지가 삭제되었습니다.");
+        } else {
+            return ResponseEntity.badRequest().body("이미지 삭제에 실패했습니다.");
         }
     }
 }
