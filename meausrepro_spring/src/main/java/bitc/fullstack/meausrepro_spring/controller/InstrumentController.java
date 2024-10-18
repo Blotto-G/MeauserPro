@@ -23,6 +23,9 @@ public class InstrumentController {
     @Autowired
     private InstrumentTypeService instrumentTypeService;
 
+    @Autowired
+    private UserService userService;
+
     @PostMapping("/save")
     public ResponseEntity<MeausreProInstrument> save(@RequestBody InsGeometryDto request) {
         MeausreProInstrument instrument = request.getInstrument();
@@ -160,5 +163,42 @@ public class InstrumentController {
         } else {
             return Optional.empty();
         }
+    }
+
+    // 사용자가 해당 계측기 접근 가능한지
+    @GetMapping("/access/{idx}/{userId}")
+    public Boolean accessInstrument(@PathVariable("idx") int idx, @PathVariable("userId") String userId) {
+        Optional<MeausreProUser> user = userService.findById(userId);
+        Optional<MeausreProInstrument> instrument = instrumentService.findById(idx);
+
+        // 사용자 정보 확인
+        if (user.isEmpty()) {
+            return false;
+        }
+        // 계측기 정보 확인
+        if (instrument.isEmpty()) {
+            return false;
+        }
+
+        MeausreProSection section = instrument.get().getSectionId();
+        MeausreProProject project = section.getProjectId();
+        MeausreProUser currentUser = user.get();
+
+        // 상위 관리자 여부 확인
+        if (Objects.equals(currentUser.getTopManager(), "1")) {
+            return true;
+        }
+
+        // 회사 사용 여부 확인
+        if (currentUser.getCompanyIdx().getCompanyIng() == 'N') {
+            return false;
+        }
+
+        // 회사 일치 여부 확인
+        if (currentUser.getCompanyIdx().getIdx() == project.getCompanyIdx().getIdx()) {
+            return true;
+        }
+
+        return false;
     }
 }
