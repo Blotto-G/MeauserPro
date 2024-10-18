@@ -2,11 +2,14 @@ package bitc.fullstack.meausrepro_spring.service;
 
 import bitc.fullstack.meausrepro_spring.model.MeausreProImg;
 import bitc.fullstack.meausrepro_spring.model.MeausreProInstrument;
+import bitc.fullstack.meausrepro_spring.model.MeausreProProject;
 import bitc.fullstack.meausrepro_spring.model.MeausreProSection;
 import bitc.fullstack.meausrepro_spring.repository.MeausreProImgRepository;
 import bitc.fullstack.meausrepro_spring.repository.SectionRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -78,9 +81,10 @@ public class MeausreProImgService {
         return false;
     }
 
+    // 이미지 삭제
     @Transactional
-    public boolean deleteImage(int imageId) {
-        Optional<MeausreProImg> imgOptional = meausreProImgRepository.findByIdx(imageId);
+    public boolean deleteImage(int idx) {
+        Optional<MeausreProImg> imgOptional = meausreProImgRepository.findByIdx(idx);
 
         if (imgOptional.isPresent()) {
             MeausreProImg img = imgOptional.get();

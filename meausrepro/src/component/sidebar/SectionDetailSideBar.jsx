@@ -121,8 +121,6 @@ function SectionDetailSideBar(props) {
         });
     };
 
-
-
     const [selectedFiles, setSelectedFiles] = useState([]);
     // const [imageDes, setImageDes] = useState(null);
     const [imageList, setImageList] = useState([]);
@@ -170,19 +168,23 @@ function SectionDetailSideBar(props) {
                 responseType: 'blob', // 응답 타입을 blob으로 설정
             });
 
+            // URL.createObjectURL로 blob 객체 URL 생성
             const url = window.URL.createObjectURL(new Blob([response.data]));
+
+            // 다운로드를 위한 링크 생성
             const a = document.createElement('a');
             a.href = url;
-            a.download = fileName;
+            a.download = fileName; // 다운로드할 파일 이름으로 imgSrc에서 추출한 파일 이름 사용
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
+
+            // 생성한 객체 URL 해제
             window.URL.revokeObjectURL(url);
         } catch (error) {
             console.error("파일 다운로드 중 오류가 발생했습니다:", error);
         }
     };
-
 
     const handleSectionUpdateWithImage = (file) => {
         const formData = new FormData();
@@ -216,7 +218,7 @@ function SectionDetailSideBar(props) {
             });
     };
 
-    // 미리보기를 업데이트하는 함수
+    // // 미리보기를 업데이트하는 함수
     // const updateImagePreview = (imageUrl) => {
     //     const imgElement = document.getElementById('imagePreview');
     //     imgElement.src = imageUrl;  // 이미지 URL로 미리보기 표시
@@ -474,7 +476,7 @@ function SectionDetailSideBar(props) {
                                                         />
                                                         <button
                                                             className={'sideBarBtn projectDelete ms-2'}
-                                                            onClick={handleImgDelete}
+                                                            onClick={() => handleImgDelete(image.idx)}
                                                         >
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16"
                                                                  height="16"
@@ -575,7 +577,6 @@ function SectionDetailSideBar(props) {
                                 }))
                             }
                         </ul>
-
                     </div>
                 )}
             </div>

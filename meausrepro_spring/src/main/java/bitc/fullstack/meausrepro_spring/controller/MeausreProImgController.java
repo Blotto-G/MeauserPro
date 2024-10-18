@@ -29,7 +29,7 @@ public class MeausreProImgController {
     @Autowired
     private MeausreProImgService meausreProImgService;
 
-//    이미지 업로드
+    //    이미지 업로드
     @PostMapping("/upload/{sectionId}")
     public ResponseEntity<MeausreProImg> upload(
             @RequestParam("file") MultipartFile file,
@@ -89,13 +89,14 @@ public class MeausreProImgController {
         }
     }
 
-    @DeleteMapping("/{imageId}")
-    public ResponseEntity<String> deleteImage(@PathVariable int imageId) {
-        boolean isDeleted = meausreProImgService.deleteImage(imageId);
+    // 이미지 삭제
+    @DeleteMapping("/delete/{idx}")
+    public ResponseEntity<String> deleteImage(@PathVariable int idx) {
+        boolean isDeleted = meausreProImgService.deleteImage(idx);
         if (isDeleted) {
             return ResponseEntity.ok("이미지가 삭제되었습니다.");
         } else {
-            return ResponseEntity.badRequest().body("이미지 삭제 실패했습니다.");
+            return ResponseEntity.badRequest().body("이미지 삭제에 실패했습니다.");
         }
     }
 }
