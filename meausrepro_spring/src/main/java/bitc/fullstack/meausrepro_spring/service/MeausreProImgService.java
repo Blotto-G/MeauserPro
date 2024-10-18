@@ -23,7 +23,7 @@ public class MeausreProImgService {
     @Autowired
     private MeausreProImgRepository meausreProImgRepository;
 
-    private String uploadDir = System.getProperty("user.home") + "/Downloads/"; // 수정 필요
+//    private String uploadDir = System.getProperty("user.home") + "/Downloads/";
 
     @Autowired
     private SectionRepository sectionRepository;
@@ -31,12 +31,20 @@ public class MeausreProImgService {
     @Transactional
     public MeausreProImg uploadImage(MultipartFile file, int sectionId) {
         String fileName = file.getOriginalFilename();
+        File uploadDir = new File(System.getProperty("user.home") + "/Downloads/");
+
+        if (!uploadDir.exists()) {
+            uploadDir.mkdirs();
+        }
+
         File uploadFile = new File(uploadDir + fileName);
 
         MeausreProSection section = sectionRepository.findByIdx(sectionId).get();
 
         try {
             file.transferTo(uploadFile);
+
+            uploadFile.setReadable(true, false);
 
             // 서버 URL 생성 (정적 경로를 통해 접근할 수 있는 URL)
             String fileUrl = "http://localhost:8080/uploads/" + fileName;
@@ -65,6 +73,26 @@ public class MeausreProImgService {
             MeausreProImg updatedImgDes = existingImgDes.get();
             updatedImgDes.setImgDes(image.getImgDes());
             meausreProImgRepository.save(updatedImgDes);
+            return true;
+        }
+        return false;
+    }
+
+    @Transactional
+    public boolean deleteImage(int imageId) {
+        Optional<MeausreProImg> imgOptional = meausreProImgRepository.findByIdx(imageId);
+
+        if (imgOptional.isPresent()) {
+            MeausreProImg img = imgOptional.get();
+            File fileToDelete = new File(System.getProperty("user.home") + "/Downloads/" + img.getImgSrc().substring(img.getImgSrc().lastIndexOf("/") + 1));
+
+            if (fileToDelete.exists()) {
+                boolean deleted = fileToDelete.delete();
+                if (!deleted) {
+                    System.out.println("파일 삭제 실패: " + fileToDelete.getAbsolutePath());
+                }
+            }
+            meausreProImgRepository.delete(img);
             return true;
         }
         return false;

@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -50,16 +53,18 @@ public class MeausreProImgController {
 
     // 이미지 다운로드
     @GetMapping("/download/{fileName:.+}")
-    public ResponseEntity<Resource> downloadImage(@PathVariable String fileName) throws MalformedURLException {
+    public ResponseEntity<Resource> downloadImage(@PathVariable String fileName) {
         try {
             // 파일 경로 설정 (uploads 디렉토리 또는 다른 경로)
-            Path filePath = Paths.get("uploads/" + fileName);
+            Path filePath = Paths.get(System.getProperty("user.home") + "/Downloads/uploads/" + fileName);
             Resource resource = new UrlResource(filePath.toUri());
 
-            if (resource.exists() || resource.isReadable()) {
+            if (resource.exists() && resource.isReadable()) {
+                String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString());
+
                 // Content-Disposition 헤더 설정
                 HttpHeaders headers = new HttpHeaders();
-                headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"");
+                headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + encodedFileName + "\"");
 
                 return ResponseEntity.ok()
                         .headers(headers)
@@ -67,7 +72,7 @@ public class MeausreProImgController {
             } else {
                 return ResponseEntity.notFound().build();
             }
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | UnsupportedEncodingException e) {
             return ResponseEntity.badRequest().build();
         }
     }
@@ -81,6 +86,16 @@ public class MeausreProImgController {
             return ResponseEntity.ok("Update");
         } else {
             return ResponseEntity.badRequest().body("수정에 실패했습니다.");
+        }
+    }
+
+    @DeleteMapping("/{imageId}")
+    public ResponseEntity<String> deleteImage(@PathVariable int imageId) {
+        boolean isDeleted = meausreProImgService.deleteImage(imageId);
+        if (isDeleted) {
+            return ResponseEntity.ok("이미지가 삭제되었습니다.");
+        } else {
+            return ResponseEntity.badRequest().body("이미지 삭제 실패했습니다.");
         }
     }
 }

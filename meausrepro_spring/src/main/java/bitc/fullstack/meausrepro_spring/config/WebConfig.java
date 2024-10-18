@@ -16,6 +16,12 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowCredentials(true);
     }
 
+    //    @Override
+//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//        // "uploads/" 경로를 외부 URL로 매핑
+//        registry.addResourceHandler("/uploads/**")
+//                .addResourceLocations("file:" + System.getProperty("user.home") + "/Downloads/");
+//    }
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // "uploads/" 경로를 외부 URL로 매핑

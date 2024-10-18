@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import {QRCodeCanvas} from "qrcode.react";
@@ -71,13 +71,6 @@ function SectionDetailSideBar(props) {
         })
             .then(res => {
                 console.log("Section updated:", res.data);
-
-                // // 이미지 설명 수정 요청
-                // const imageUpdatePromises = imageList.map(image =>
-                //     updateImageDescription(image.imgDes, image.idx)
-                // );
-                //
-                // return Promise.all(imageUpdatePromises);
             })
             .then(res => {
                 console.log(res);
@@ -90,7 +83,6 @@ function SectionDetailSideBar(props) {
                     groundStr,
                     rearTarget,
                     underStr
-                    // imgDes: imageDes // 이미지 설명 업데이트
                 };
                 handleSectionUpdated(updatedSection);
             })
@@ -129,9 +121,12 @@ function SectionDetailSideBar(props) {
         });
     };
 
+
+
     const [selectedFiles, setSelectedFiles] = useState([]);
-    const [imageDes, setImageDes] = useState(null);
+    // const [imageDes, setImageDes] = useState(null);
     const [imageList, setImageList] = useState([]);
+    const descriptionInputRefs = useRef({});
 
     const handleFileSelect = (event) => {
         const files = Array.from(event.target.files);
@@ -140,7 +135,7 @@ function SectionDetailSideBar(props) {
         const fileObjects = files.map(file => ({
             file,
             fileName: file.name, // 파일 이름
-            imgDes: '' // 이미지 설명 초기화
+            imgDes: null // 이미지 설명 초기화
         }));
 
         setSelectedFiles((prevFiles) => [...prevFiles, ...fileObjects]);
@@ -166,30 +161,26 @@ function SectionDetailSideBar(props) {
 
         // imgSrc에서 파일 이름 추출
         const fileName = image.imgSrc.substring(image.imgSrc.lastIndexOf('/') + 1);
-        const fileUrl = image.imgSrc; // 직접 imgSrc를 사용하여 다운로드 URL 설정
+        const downloadUrl = `http://localhost:8080/MeausrePro/Img/download/${encodeURIComponent(fileName)}`;
 
         try {
-            const response = await axios.get(fileUrl, {
+            const response = await axios.get(downloadUrl, {
                 responseType: 'blob', // 응답 타입을 blob으로 설정
             });
 
-            // URL.createObjectURL로 blob 객체 URL 생성
             const url = window.URL.createObjectURL(new Blob([response.data]));
-
-            // 다운로드를 위한 링크 생성
             const a = document.createElement('a');
             a.href = url;
-            a.download = fileName; // 다운로드할 파일 이름으로 imgSrc에서 추출한 파일 이름 사용
+            a.download = fileName;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-
-            // 생성한 객체 URL 해제
             window.URL.revokeObjectURL(url);
         } catch (error) {
             console.error("파일 다운로드 중 오류가 발생했습니다:", error);
         }
     };
+
 
     const handleSectionUpdateWithImage = (file) => {
         const formData = new FormData();
@@ -208,20 +199,27 @@ function SectionDetailSideBar(props) {
                 const uploadedImageUrl = response.data.imgSrc;
                 console.log('Image uploaded:', uploadedImageUrl);
 
-                // 미리보기 업데이트
-                updateImagePreview(uploadedImageUrl);
+                // 이미지 목록에 새로 업로드된 이미지 추가
+                setImageList((prevImageList) => [
+                    ...prevImageList,
+                    { imgSrc: uploadedImageUrl, imgDes: '', idx: response.data.idx  } // 새 이미지 추가
+                ]);
+
+                setTimeout(() => {
+                    descriptionInputRefs.current[response.data.idx]?.focus();
+                }, 100);
             })
             .catch(err => {
                 console.log(err);
             });
     };
 
-    // 미리보기를 업데이트하는 함수
-    const updateImagePreview = (imageUrl) => {
-        const imgElement = document.getElementById('imagePreview');
-        imgElement.src = imageUrl;  // 이미지 URL로 미리보기 표시
-        imgElement.style.display = 'block';  // 미리보기 보이기
-    };
+    // // 미리보기를 업데이트하는 함수
+    // const updateImagePreview = (imageUrl) => {
+    //     const imgElement = document.getElementById('imagePreview');
+    //     imgElement.src = imageUrl;  // 이미지 URL로 미리보기 표시
+    //     imgElement.style.display = 'block';  // 미리보기 보이기
+    // };
 
     const sectionImageList = () => {
         if (section) {
@@ -264,7 +262,7 @@ function SectionDetailSideBar(props) {
         );
     };
 
-// 설명 업데이트를 서버로 전송하는 함수 (onBlur 이벤트로 호출)
+    // 설명 업데이트를 서버로 전송하는 함수 (onBlur 이벤트로 호출)
     const handleDescriptionBlur = (imgDes, imgIdx) => {
         updateImageDescription(imgDes, imgIdx)
             .then((response) => {
@@ -273,6 +271,35 @@ function SectionDetailSideBar(props) {
             .catch((error) => {
                 console.error('설명 업데이트 중 오류가 발생했습니다:', error);
             });
+    };
+
+    useEffect(() => {
+        if (imageList.length > 0) {
+            const lastImage = imageList[imageList.length - 1];
+            descriptionInputRefs.current[lastImage.idx]?.focus();
+        }
+    }, [imageList]);
+
+    // 이미지 삭제 처리
+    const handleImgDelete = (imgIdx) => {
+        Swal.fire({
+            title: '이미지 삭제',
+            text: "이 이미지를 삭제하시겠습니까?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: '삭제',
+            cancelButtonText: '취소'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.delete(`http://localhost:8080/MeausrePro/Img/delete/${imgIdx}`)
+                    .then(() => {
+                        setImageList(prevList => prevList.filter(image => image.idx !== imgIdx));
+                    })
+                    .catch(err => {
+                        console.error("구간 삭제 중 오류 발생:", err);
+                    });
+            }
+        });
     };
 
     return (
@@ -435,6 +462,7 @@ function SectionDetailSideBar(props) {
                                                     </td>
                                                     <td className={'d-flex'}>
                                                         <input
+                                                            ref={(el) => (descriptionInputRefs.current[image.idx] = el)}
                                                             type="text"
                                                             className="form-control"
                                                             value={image.imgDes}
@@ -444,15 +472,7 @@ function SectionDetailSideBar(props) {
                                                         />
                                                         <button
                                                             className={'sideBarBtn projectDelete ms-2'}
-                                                            onClick={() => {
-                                                                if (image.imgSrc) {
-                                                                    // 기존 이미지 삭제 로직
-                                                                    setImageList(imageList.filter((_, i) => i !== index));
-                                                                } else {
-                                                                    // 선택된 파일 삭제 로직
-                                                                    setSelectedFiles(selectedFiles.filter(f => f.fileName !== image.fileName));
-                                                                }
-                                                            }}
+                                                            onClick={handleImgDelete}
                                                         >
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16"
                                                                  height="16"
@@ -518,7 +538,7 @@ function SectionDetailSideBar(props) {
                             })}
                             disabled={isLoading} // 로딩 중이면 버튼 비활성화
                         >
-                        {isLoading ? "로딩 중..." : "QR코드 일괄출력"}
+                            {isLoading ? "로딩 중..." : "QR코드 일괄출력"}
                         </button>
                         <hr/>
                         <span className={'fw-bold sectionSideBarText mt-2'}>사진</span>
@@ -528,35 +548,32 @@ function SectionDetailSideBar(props) {
                             ) : (
                                 imageList.map((image) => {
                                     return (
-                                        <a
-                                            key={image.idx}
-                                            onClick={() => handleDownload(image)} // 다운로드 핸들러 연결
-                                            href="#"
-                                            className={'d-flex flex-column align-items-start w-100 text-center text-decoration-none text-dark ps-2 py-2 mb-2 rounded-3'}
-                                            style={{cursor: 'pointer', background: '#f7f7f7'}} // 커서 스타일 추가
-                                        >
-                                            <li className={'image-preview d-flex align-items-start my-2'}>
-                                                <img
-                                                    src={image.imgSrc}
-                                                    alt={image.name} // 이미지의 이름을 표시
-                                                    className={'me-2'}
-                                                    style={{
-                                                        width: '50px',
-                                                        height: '35px',
-                                                        transition: 'transform 0.2s'
-                                                    }} // 미리보기 이미지 크기
-                                                />
-                                                <div className={'text-start'}>
-                                                    <span className={'text-muted small col-sm-5'}>{getFileNameFromUrl(image.imgSrc)}</span>
-                                                    <br/>
-                                                    <span className={'text-muted small col-sm-5'}>{image.imgDes}</span>
-                                                </div>
-                                            </li>
-                                        </a>
+                                        <li key={image.idx}
+                                            className={'d-flex flex-column align-items-start w-100 text-center text-dark ps-2 py-2 mb-2 rounded-3'}
+                                            style={{cursor: 'pointer', background: '#f7f7f7'}}
+                                            onClick={() => handleDownload(image)}>
+                                            <img
+                                                src={image.imgSrc}
+                                                alt={image.name} // 이미지의 설명 표시
+                                                className={'me-2'}
+                                                style={{
+                                                    width: '50px',
+                                                    height: '35px',
+                                                    transition: 'transform 0.2s'
+                                                }} // 미리보기 이미지 크기
+                                            />
+                                            <div className={'text-start'}>
+                                                <span
+                                                    className={'text-muted small col-sm-5'}>{getFileNameFromUrl(image.imgSrc)}</span>
+                                                <br/>
+                                                <span className={'text-muted small col-sm-5'}>{image.imgDes}</span>
+                                            </div>
+                                        </li>
                                     )
                                 }))
                             }
                         </ul>
+
                     </div>
                 )}
             </div>
