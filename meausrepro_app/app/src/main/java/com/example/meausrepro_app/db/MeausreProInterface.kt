@@ -17,7 +17,7 @@ interface MeausreProInterface {
     fun getProject(@Path("id") id:String):Call<List<MeausreProProject>>
 
     // 프로젝트 구간 보기
-    @GET("MeausrePro/권한Section/{projectId}")
+    @GET("MeausrePro/Section/{projectId}")
     fun getSection(@Path("projectId") projectId:Int):Call<List<MeausreProSection>>
 
     // 구간 별 계측기 보기

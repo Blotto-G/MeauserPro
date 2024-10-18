@@ -91,10 +91,5 @@
             android:background="@drawable/dialog_confirm_btn"
             android:textColor="@color/white"
             android:text="플래시"/>
-        <TextView
-            android:id="@+id/qrText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="읽은 값" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
