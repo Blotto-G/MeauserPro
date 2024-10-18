@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
+    android:orientation="vertical"
+    android:gravity="center_vertical"
+    android:background="@drawable/box_round_square">
+    <TextView
+        android:id="@+id/projectTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textSize="20sp"
+        android:text="project"/>
+    <TextView
+        android:id="@+id/projectDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:textSize="15sp"
+        android:textColor="@color/gray"
+        android:text="2000-00-00 ~ 2000-00-00"/>
+</LinearLayout>

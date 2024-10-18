@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.meausrepro_app.MainActivity">
+    <ImageView
+        android:id="@+id/backgroundImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/alpha_white"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/box_border_alpha">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:text="MeausrePro"
+                android:textSize="30sp"
+                android:fontFamily="@font/suitebold"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:textSize="18sp"
+                android:text="보다 정확한, 계측관리 시스템"/>
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:hint="아이디"
+                app:boxStrokeColor="@color/green"
+                app:cursorColor="@android:color/transparent"
+                app:hintTextColor="@color/green">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtId"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColorLink="@color/green"
+                    android:fontFamily="@font/suitemedium"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="비밀번호"
+                app:boxStrokeColor="@color/green"
+                app:cursorColor="@android:color/transparent"
+                app:hintTextColor="@color/green">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtPass"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColorLink="@color/green"
+                    android:fontFamily="@font/suitemedium"
+                    android:inputType="textPassword"/>
+            </com.google.android.material.textfield.TextInputLayout>
+            <android.widget.Button
+                android:id="@+id/btnLogin"
+                android:layout_marginTop="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/box_round_square"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="19sp"
+                android:backgroundTint="@color/green"
+                android:fontFamily="@font/suitemedium"
+                android:text="Login" />
+            <android.widget.Button
+                android:id="@+id/btnTest"
+                android:layout_marginTop="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/box_round_square"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:fontFamily="@font/suitemedium"
+                android:backgroundTint="@color/green"
+                android:textSize="19sp"
+                android:text="Test" />
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
