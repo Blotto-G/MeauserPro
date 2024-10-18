@@ -37,6 +37,7 @@ class QRFragment : Fragment() {
     private var id: String? = null
     lateinit var binding: FragmentQRBinding
 
+    private val CAMERA_REQUEST_CODE = 100
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -56,6 +57,14 @@ class QRFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // 카메라 권한 확인
+        if (requireContext().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            // 권한이 없으면 요청
+            requestPermissions(arrayOf(Manifest.permission.CAMERA), CAMERA_REQUEST_CODE)
+        } else {
+            // 권한이 있으면 QR 스캐너 시작
+            startQRScanner()
+        }
         // 플래시 버튼 클릭
         binding.btnFlash.setOnClickListener {
 
@@ -66,18 +75,34 @@ class QRFragment : Fragment() {
             showCustomDialog("로그아웃 하시겠습니까?", "logout")
         }
 
-        // 프래그먼트 시작과 동시에 바코드 스캐너 실행
-        binding.qrScanner.apply {
-            setStatusText("QR코드를 사각형 안에 비춰주세요.")
-            decodeContinuous { result ->
-                Log.d("QRTag", result.text);
-
-                val instrIdx = result.text.toInt()
-                fetchInstrumentInfo(instrIdx)
+//        // 프래그먼트 시작과 동시에 바코드 스캐너 실행
+//        binding.qrScanner.apply {
+//            setStatusText("QR코드를 사각형 안에 비춰주세요.")
+//            decodeContinuous { result ->
+//                Log.d("QRTag", result.text);
+//
+//                val instrIdx = result.text.toInt()
+//                fetchInstrumentInfo(instrIdx)
+//            }
+//        }
+    }
+    // 권한 요청 결과 처리
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == CAMERA_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // 권한이 허용되면 QR 스캐너 시작
+                startQRScanner()
+            } else {
+                // 권한이 거부된 경우 메시지 표시
+                Toast.makeText(context, "카메라 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
             }
         }
     }
-
     override fun onResume() {
         super.onResume()
         binding.qrScanner.resume()
@@ -95,6 +120,18 @@ class QRFragment : Fragment() {
                     putString("id", id)
                 }
             }
+    }
+
+    // QR 스캐너 시작
+    private fun startQRScanner() {
+        binding.qrScanner.apply {
+            setStatusText("QR코드를 사각형 안에 비춰주세요.")
+            decodeContinuous { result ->
+                Log.d("QRTag", result.text)
+                val instrIdx = result.text.toInt()
+                fetchInstrumentInfo(instrIdx)
+            }
+        }
     }
 
     // 읽은 값 조회
