@@ -161,7 +161,9 @@ function SectionDetailSideBar(props) {
 
         // imgSrc에서 파일 이름 추출
         const fileName = image.imgSrc.substring(image.imgSrc.lastIndexOf('/') + 1);
-        const downloadUrl = `http://localhost:8080/MeausrePro/Img/download/${encodeURIComponent(fileName)}`;
+
+        const downloadUrl = image.imgSrc.toString();
+        // const downloadUrl = `http://localhost:8080/MeausrePro/Img/download/${encodeURIComponent(fileName)}`;
 
         try {
             const response = await axios.get(downloadUrl, {
