@@ -127,6 +127,7 @@ function SectionDetailSideBar(props) {
     // const [imageDes, setImageDes] = useState(null);
     const [imageList, setImageList] = useState([]);
     const descriptionInputRefs = useRef({});
+    const [focusedImageIdx, setFocusedImageIdx] = useState(null);
 
     const handleFileSelect = (event) => {
         const files = Array.from(event.target.files);
@@ -264,6 +265,8 @@ function SectionDetailSideBar(props) {
                     : image
             )
         );
+
+        setFocusedImageIdx(imgIdx); // 현재 포커스가 있는 이미지 인덱스 업데이트
     };
 
     // 설명 업데이트를 서버로 전송하는 함수 (onBlur 이벤트로 호출)
@@ -278,11 +281,10 @@ function SectionDetailSideBar(props) {
     };
 
     useEffect(() => {
-        if (imageList.length > 0) {
-            const lastImage = imageList[imageList.length - 1];
-            descriptionInputRefs.current[lastImage.idx]?.focus();
+        if (focusedImageIdx !== null) {
+            descriptionInputRefs.current[focusedImageIdx]?.focus(); // 현재 포커스가 있는 이미지에만 포커스
         }
-    }, [imageList]);
+    }, [imageList, focusedImageIdx]);
 
     // 이미지 삭제 처리
     const handleImgDelete = (imgIdx) => {
