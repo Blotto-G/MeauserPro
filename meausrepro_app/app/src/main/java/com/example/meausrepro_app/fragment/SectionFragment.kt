@@ -163,11 +163,9 @@ class SectionFragment : Fragment() {
             ) {
                 if (response.isSuccessful) {
                     val instrumentList = response.body() ?: mutableListOf()
-                    if (instrumentList.size > 0) {
-                        instrumentAdapter.instrumentList.clear()
-                        instrumentAdapter.instrumentList.addAll(instrumentList)
-                        instrumentAdapter.notifyDataSetChanged()
-                    }
+                    instrumentAdapter.instrumentList.clear()
+                    instrumentAdapter.instrumentList.addAll(instrumentList)
+                    instrumentAdapter.notifyDataSetChanged()
                 }
                 else {
                     Log.d("MeausreProLog Ins", response.code().toString())

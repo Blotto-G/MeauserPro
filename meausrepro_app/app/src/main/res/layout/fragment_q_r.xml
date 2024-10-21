@@ -39,9 +39,9 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="MeausrePro"
+            android:fontFamily="@font/suitebold"
             android:textColor="@color/white"
-            android:textSize="22sp" />
-
+            android:textSize="23sp" />
         <ImageButton
             android:id="@+id/btnLogout"
             android:layout_width="25dp"

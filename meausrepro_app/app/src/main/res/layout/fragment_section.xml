@@ -38,9 +38,9 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="MeausrePro"
+            android:fontFamily="@font/suitebold"
             android:textColor="@color/white"
-            android:textSize="22sp" />
-
+            android:textSize="23sp" />
         <ImageButton
             android:id="@+id/btnReset"
             android:layout_width="25dp"
@@ -112,7 +112,6 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/insList"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="16dp" />
+            android:layout_height="match_parent" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
