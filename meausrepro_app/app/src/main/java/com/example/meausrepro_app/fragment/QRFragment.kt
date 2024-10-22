@@ -67,6 +67,11 @@ class QRFragment : Fragment(), DecoratedBarcodeView.TorchListener {
         binding.btnFlash.setOnClickListener {
             toggleFlash()
         }
+
+        // 로그아웃 버튼 클릭 시 다이얼로그 표시
+        binding.btnLogout.setOnClickListener {
+            showCustomDialog("로그아웃 하시겠습니까?", "logout")
+        }
     }
 
     private fun toggleFlash() {
