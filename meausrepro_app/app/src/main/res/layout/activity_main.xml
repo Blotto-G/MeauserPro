@@ -91,18 +91,6 @@
                 android:backgroundTint="@color/green"
                 android:fontFamily="@font/suitemedium"
                 android:text="Login" />
-            <android.widget.Button
-                android:id="@+id/btnTest"
-                android:layout_marginTop="12dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/box_round_square"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:fontFamily="@font/suitemedium"
-                android:backgroundTint="@color/green"
-                android:textSize="19sp"
-                android:text="Test" />
         </LinearLayout>
     </LinearLayout>
 

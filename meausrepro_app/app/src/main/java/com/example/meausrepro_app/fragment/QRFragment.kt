@@ -1,11 +1,12 @@
 package com.example.meausrepro_app.fragment
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.hardware.camera2.CameraManager
 import android.os.Bundle
 import android.util.Log
-import android.util.Size
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,31 +14,25 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.Fragment
-import com.example.meausrepro_app.MainActivity
 import com.example.meausrepro_android.R
 import com.example.meausrepro_android.databinding.FragmentQRBinding
+import com.example.meausrepro_app.MainActivity
 import com.example.meausrepro_app.db.MeausreProClient
-import com.example.meausrepro_app.db.MeausreProInstrument
-import com.google.zxing.BinaryBitmap
-import com.google.zxing.MultiFormatReader
-import com.google.zxing.NotFoundException
-import com.google.zxing.PlanarYUVLuminanceSource
-import com.google.zxing.common.HybridBinarizer
-import com.google.zxing.integration.android.IntentIntegrator
+import com.journeyapps.barcodescanner.DecoratedBarcodeView
 import retrofit2.Call
-import retrofit2.Callback
 import retrofit2.Response
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
 @androidx.camera.core.ExperimentalGetImage
-class QRFragment : Fragment() {
-    // TODO: Rename and change types of parameters
+class QRFragment : Fragment(), DecoratedBarcodeView.TorchListener {
     private var id: String? = null
     lateinit var binding: FragmentQRBinding
 
     private val CAMERA_REQUEST_CODE = 100
+    private lateinit var cameraManager: CameraManager
+    private var isFlashOn: Boolean = false // 플래시 상태 변수
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -49,7 +44,6 @@ class QRFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         binding = FragmentQRBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -59,33 +53,50 @@ class QRFragment : Fragment() {
 
         // 카메라 권한 확인
         if (requireContext().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            // 권한이 없으면 요청
             requestPermissions(arrayOf(Manifest.permission.CAMERA), CAMERA_REQUEST_CODE)
         } else {
-            // 권한이 있으면 QR 스캐너 시작
             startQRScanner()
         }
-        // 플래시 버튼 클릭
-        binding.btnFlash.setOnClickListener {
 
+        cameraManager = requireContext().getSystemService(Context.CAMERA_SERVICE) as CameraManager
+
+        // QR 스캐너에 TorchListener 설정
+        binding.qrScanner.setTorchListener(this)
+
+        // 플래시 버튼 클릭 시 플래시 토글
+        binding.btnFlash.setOnClickListener {
+            toggleFlash()
         }
 
-        // 로그아웃
+        // 로그아웃 버튼 클릭 시 다이얼로그 표시
         binding.btnLogout.setOnClickListener {
             showCustomDialog("로그아웃 하시겠습니까?", "logout")
         }
-
-//        // 프래그먼트 시작과 동시에 바코드 스캐너 실행
-//        binding.qrScanner.apply {
-//            setStatusText("QR코드를 사각형 안에 비춰주세요.")
-//            decodeContinuous { result ->
-//                Log.d("QRTag", result.text);
-//
-//                val instrIdx = result.text.toInt()
-//                fetchInstrumentInfo(instrIdx)
-//            }
-//        }
     }
+
+    private fun toggleFlash() {
+        try {
+            isFlashOn = !isFlashOn
+            if (isFlashOn) {
+                binding.qrScanner.setTorchOn()  // QR 스캐너의 플래시 켜기
+            } else {
+                binding.qrScanner.setTorchOff() // QR 스캐너의 플래시 끄기
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    override fun onTorchOn() {
+        isFlashOn = true
+        binding.btnFlash.text = "플래시 끄기"
+    }
+
+    override fun onTorchOff() {
+        isFlashOn = false
+        binding.btnFlash.text = "플래시 켜기"
+    }
+
     // 권한 요청 결과 처리
     override fun onRequestPermissionsResult(
         requestCode: Int,

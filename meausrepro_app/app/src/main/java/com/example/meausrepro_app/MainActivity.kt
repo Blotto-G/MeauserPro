@@ -67,33 +67,33 @@ class MainActivity : AppCompatActivity() {
             })
         }
         // 테스트용 로그인 버튼
-        binding.btnTest.setOnClickListener {
-            val id = "test"
-            val pw = "test123"
-
-            val loginUser = MeausreProUser(null, id, pw, null, null, null, null, null)
-
-            MeausreProClient.retrofit.login(loginUser).enqueue(object : Callback<MeausreProUser> {
-                override fun onResponse(
-                    call: Call<MeausreProUser>,
-                    response: Response<MeausreProUser>
-                ) {
-                    if (response.isSuccessful) {
-                        Log.d("MeausreProLog Login", response.body().toString())
-                        val intent = Intent(this@MainActivity, MainActivity_MeausrePro::class.java)
-                        intent.putExtra("id", id)
-                        startActivity(intent)
-                    }
-                    else {
-                        // 커스텀 다이얼로그
-                        showCustomDialog("아이디와 비밀번호를 확인하세요.")
-                    }
-                }
-                override fun onFailure(call: Call<MeausreProUser>, t: Throwable) {
-                    Log.d("MeausreProLog Login Fail", t.toString())
-                }
-            })
-        }
+//        binding.btnTest.setOnClickListener {
+//            val id = "test"
+//            val pw = "test123"
+//
+//            val loginUser = MeausreProUser(null, id, pw, null, null, null, null, null)
+//
+//            MeausreProClient.retrofit.login(loginUser).enqueue(object : Callback<MeausreProUser> {
+//                override fun onResponse(
+//                    call: Call<MeausreProUser>,
+//                    response: Response<MeausreProUser>
+//                ) {
+//                    if (response.isSuccessful) {
+//                        Log.d("MeausreProLog Login", response.body().toString())
+//                        val intent = Intent(this@MainActivity, MainActivity_MeausrePro::class.java)
+//                        intent.putExtra("id", id)
+//                        startActivity(intent)
+//                    }
+//                    else {
+//                        // 커스텀 다이얼로그
+//                        showCustomDialog("아이디와 비밀번호를 확인하세요.")
+//                    }
+//                }
+//                override fun onFailure(call: Call<MeausreProUser>, t: Throwable) {
+//                    Log.d("MeausreProLog Login Fail", t.toString())
+//                }
+//            })
+//        }
     }
     // 커스텀 다이얼로그 함수
     private fun showCustomDialog(message: String) {

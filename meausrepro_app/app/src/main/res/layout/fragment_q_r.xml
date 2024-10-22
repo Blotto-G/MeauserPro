@@ -72,13 +72,6 @@
             android:text="QR 코드를 스캔하여 주세요."
             android:textSize="19sp"
             android:textStyle="bold"/>
-        <!-- QR 코드 스캐너 영역 (정사각형) -->
-<!--        <androidx.camera.view.PreviewView-->
-<!--            android:id="@+id/qr_scanner"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="300dp"-->
-<!--            android:layout_marginTop="15dp"-->
-<!--            android:background="@color/black" />-->
         <com.journeyapps.barcodescanner.DecoratedBarcodeView
             android:id="@+id/qrScanner"
             android:layout_width="match_parent"
