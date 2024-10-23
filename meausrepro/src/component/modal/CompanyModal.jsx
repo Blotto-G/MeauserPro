@@ -63,10 +63,10 @@ function CompanyModal(props) {
                     <div className={'modal-header'}>
                         <div className={'modal-header-text'}>
                             <span className={'modal-title'} id={'companyModalLabel'}>
-                                MeausrePro
+                                MeasurePro
                             </span>
                             <span className={'modal-info'}>
-                                MeausrePro 작업그룹 추가
+                                MeasurePro 작업그룹 추가
                             </span>
                         </div>
                     </div>

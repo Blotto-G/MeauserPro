@@ -137,10 +137,10 @@ function UserUpdateModal(props) {
                     <div className={'modal-header'}>
                         <div className={'modal-header-text'}>
                             <span className={'modal-title'} id={'userModalLabel'}>
-                                MeausrePro
+                                MeasurePro
                             </span>
                             <span className={'modal-info'}>
-                                MeausrePro 관리자 정보 수정
+                                MeasurePro 관리자 정보 수정
                             </span>
                         </div>
                     </div>

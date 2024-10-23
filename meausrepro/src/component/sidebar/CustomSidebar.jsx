@@ -39,7 +39,7 @@ function CustomSidebar(props) {
         <div className={'customSideBar'}>
             <div className={'customSideBarList'}>
                 <span className={'customSideBarTitle'}>
-                    MeausrePro
+                    MeasurePro
                 </span>
                 <Link
                     to="/MeausrePro"

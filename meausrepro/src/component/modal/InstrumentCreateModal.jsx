@@ -267,7 +267,7 @@ function InstrumentCreateModal(props) {
                     <div className={'modal-header'}>
                         <div className={'modal-header-text'}>
                             <span id={'cpModalLabel'} className={'modal-title'}>
-                                MeausrePro
+                                MeasurePro
                             </span>
                             <span className={'modal-info'}>
                                 계측기 생성

@@ -106,7 +106,7 @@ function ProjectCreateModal(props) {
                     <div className={'modal-header'}>
                         <div className={'modal-header-text'}>
                             <span id={'cpModalLabel'} className={'modal-title'}>
-                                MeausrePro
+                                MeasurePro
                             </span>
                             <span className={'modal-info'}>
                                 공사 프로젝트 생성

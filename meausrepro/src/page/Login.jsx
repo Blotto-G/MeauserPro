@@ -93,7 +93,7 @@ function Login() {
         <div className={'loginBackground'}>
             <div className={'loginSection'}>
                 <span className={'fs-3 fw-bold'}>
-                    MeausrePro
+                    MeasurePro
                 </span>
                 <span className={'fs-6'}>
                     보다 정확한, 계측관리시스템

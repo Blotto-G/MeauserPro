@@ -169,10 +169,10 @@ function UserSignUpModal(props) {
                     <div className={'modal-header'}>
                         <div className={'modal-header-text'}>
                             <span className={'modal-title'} id={'userModalLabel'}>
-                                MeausrePro
+                                MeasurePro
                             </span>
                             <span className={'modal-info'}>
-                                MeausrePro 관리자 추가
+                                MeasurePro 관리자 추가
                             </span>
                         </div>
                     </div>

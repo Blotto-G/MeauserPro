@@ -63,10 +63,10 @@ function CompanyUpdateModal(props) {
                     <div className={'modal-header'}>
                         <div className={'modal-header-text'}>
                             <span className={'modal-title'} id={'companyModalLabel'}>
-                                MeausrePro
+                                MeasurePro
                             </span>
                             <span className={'modal-info'}>
-                                MeausrePro 작업그룹 수정
+                                MeasurePro 작업그룹 수정
                             </span>
                         </div>
                     </div>
