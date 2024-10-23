@@ -5,7 +5,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object MeausreProClient {
     val retrofit: MeausreProInterface = Retrofit.Builder()
-        .baseUrl("http://10.100.105.204:8080/")
+        .baseUrl("http://10.100.105.217:8080/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
         .create(MeausreProInterface::class.java)

@@ -2,7 +2,9 @@ package com.example.meausrepro_app
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.ExperimentalGetImage
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
@@ -13,6 +15,8 @@ import com.example.meausrepro_app.fragment.QRFragment
 
 class MainActivity_MeausrePro : AppCompatActivity() {
     lateinit var binding:ActivityMainMeausreProBinding
+
+    @OptIn(ExperimentalGetImage::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
