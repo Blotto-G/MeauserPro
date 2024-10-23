@@ -134,30 +134,35 @@ function SectionDetailSideBar(props) {
 
     // 이미지 다운
     const handleImgDownload = async (img) => {
-        if(!img || !img.imgSrc) {
+        if (!img || !img.imgSrc) {
             console.error("이미지 정보가 정의되지 않았습니다.");
             return;
         }
 
+        // 파일 이름 추출 및 URL 인코딩
         const imgName = img.imgSrc.substring(img.imgSrc.lastIndexOf('/') + 1);
-        const downloadUrl = img.imgSrc.toString();
+        const encodedImgName = encodeURIComponent(imgName);  // URL 인코딩
+
+        // 백엔드에서 제공하는 파일 다운로드 URL
+        const downloadUrl = `http://localhost:8080/MeausrePro/Img/download/${encodedImgName}`;
 
         try {
             const response = await axios.get(downloadUrl, {
-                responseType: 'blob',
+                responseType: 'blob',  // blob 형식으로 응답받음
             });
 
+            // Blob 객체를 생성하여 URL 객체 생성
             const url = window.URL.createObjectURL(new Blob([response.data]));
 
             // 다운로드 링크 생성
             const a = document.createElement('a');
             a.href = url;
-            a.download = imgName;
+            a.download = imgName;  // 다운로드할 때 사용할 파일명
             document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            a.click();  // 링크 클릭 이벤트로 다운로드 실행
+            document.body.removeChild(a);  // 클릭 후 요소 삭제
 
-            // url 해제
+            // 생성된 URL 객체 메모리 해제
             window.URL.revokeObjectURL(url);
 
         } catch (e) {
@@ -166,10 +171,10 @@ function SectionDetailSideBar(props) {
                 icon: "error",
                 text: `다운로드 중 오류가 발생했습니다.`,
                 showCancelButton: false,
-                confirmButtonText: '확인'
-            })
+                confirmButtonText: '확인',
+            });
         }
-    }
+    };
 
     // 이미지 업로드
     const handleSectionUpdateImg = (file) => {
