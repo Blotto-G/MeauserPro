@@ -32,7 +32,7 @@ public class ImgService {
             uploadDir.mkdirs();
         }
 
-        File uploadFile = new File(uploadDir + fileName);
+        File uploadFile = new File(uploadDir, fileName);
 
         MeausreProSection section = sectionRepository.findByIdx(sectionId).get();
 

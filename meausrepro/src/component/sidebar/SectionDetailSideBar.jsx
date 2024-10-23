@@ -400,16 +400,16 @@ function SectionDetailSideBar(props) {
     }, [section]);
 
     // 이미지 리스트 변화 생길때마다
-    useEffect(() => {
-        if (imageList.length > 0) {
-            const lastImg = imageList[imageList.length -1];
-            descriptionInputRefs.current[lastImg.idx]?.focus();
-
-            for (let i = 0; i < imageList.length; i++) {
-                console.log(imageList[i].imgSrc);
-            }
-        }
-    }, [imageList]);
+    // useEffect(() => {
+    //     if (imageList.length > 0) {
+    //         const lastImg = imageList[imageList.length -1];
+    //         descriptionInputRefs.current[lastImg.idx]?.focus();
+    //
+    //         for (let i = 0; i < imageList.length; i++) {
+    //             console.log(imageList[i].imgSrc);
+    //         }
+    //     }
+    // }, [imageList]);
 
     return (
         <div className={`sectionDetailSideBar ${isOpen ? 'open' : ''}`}>
