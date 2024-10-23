@@ -26,13 +26,14 @@ public class ImgService {
     @Transactional
     public MeausreProImg uploadImage(MultipartFile file, int sectionId) {
         String fileName = file.getOriginalFilename();
-        File uploadDir = new File(System.getProperty("user.home") + "/Downloads/");
+        String uploadDirPath = "C:/fullstack405/MeausrePro/meausrepro_spring/image/";
+        File uploadDir = new File(uploadDirPath);
 
         if (!uploadDir.exists()) {
             uploadDir.mkdirs();
         }
 
-        File uploadFile = new File(uploadDir + fileName);
+        File uploadFile = new File(uploadDir, fileName);
 
         MeausreProSection section = sectionRepository.findByIdx(sectionId).get();
 
@@ -80,7 +81,9 @@ public class ImgService {
 
         if (imgOptional.isPresent()) {
             MeausreProImg img = imgOptional.get();
-            File fileToDelete = new File(System.getProperty("user.home") + "/Downloads/" + img.getImgSrc().substring(img.getImgSrc().lastIndexOf("/") + 1));
+
+            String fileName = img.getImgSrc().substring(img.getImgSrc().lastIndexOf("/") + 1);
+            File fileToDelete = new File("C:/fullstack405/MeausrePro/meausrepro_spring/image/" + fileName);
 
             if (fileToDelete.exists()) {
                 boolean deleted = fileToDelete.delete();

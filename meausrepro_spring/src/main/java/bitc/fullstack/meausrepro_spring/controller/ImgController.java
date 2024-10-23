@@ -50,8 +50,8 @@ public class ImgController {
     public ResponseEntity<Resource> downloadImage(@PathVariable String fileName) {
         try {
             // 파일 경로 설정 (uploads 디렉토리 또는 다른 경로)
-            Path filePath = Paths.get(System.getProperty("user.home") + "/Downloads/uploads/" + fileName);
-            Resource resource = new UrlResource(filePath.toUri());
+            Path downloadPath = Paths.get("C:/fullstack405/MeausrePro/meausrepro_spring/image/" + fileName);
+            Resource resource = new UrlResource(downloadPath.toUri());
 
             if (resource.exists() && resource.isReadable()) {
                 String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString());
